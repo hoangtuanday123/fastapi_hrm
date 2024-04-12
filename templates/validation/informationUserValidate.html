@@ -1,0 +1,51 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<body class="body_login">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <main class="form-signin w-100 m-auto">
+                <form role="form" method="post" action="">
+                    {{ form.csrf_token }}
+                    <h1 class="h3 mb-3 fw-normal text-center">USER INFORMATION </h1>
+                    <div class="form-floating" style="border-radius: 20px;">
+                        <label>Fullname</label>
+                        <input class="form-control mb-2" type="text" name="Fullname" value="{{ form.Fullname }}">
+                    </div>
+                    <div class="form-floating" style="border-radius: 20px;">
+                        <label>Nickname</label>
+                        <input class="form-control mb-2" type="text" name="Nickname" value="{{ form.Nickname }}">
+                        
+                    </div>
+                    {% if current_user.authenticated_by != "google" %}
+                        <div class="form-floating" style="border-radius: 20px;">
+                            <label>Email</label>
+                            <input class="form-control mb-2" type="text" name="Email" value="{{ form.Email }}">
+
+                        </div>
+                    {% endif %}
+                    <!-- <div class="form-floating" style="border-radius: 20px;">
+                        <label>Contactaddress</label>
+                        <input class="form-control mb-2" type="text" name="Contactaddress" value="{{ form.Contactaddress }}">
+
+                    </div>
+                    <div class="form-floating" style="border-radius: 20px;">
+                        <label>phone</label>
+                        <input class="form-control mb-2" type="text" name="phone" value="{{ form.phone }}">
+
+                    </div> -->
+                    <button class="button login__submit" type="submit" style="background-color:rgb(181, 181, 244);">
+                        <span class="button__text">SIGN IN</span>
+                        <i class="button__icon fas fa-chevron-right" style="color:rgb(224, 18, 52)"></i>
+                    </button>
+                </form>
+            </main>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
+</body>
+
+{% endblock %}
