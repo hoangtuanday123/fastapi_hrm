@@ -303,7 +303,6 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
 # edit information user profile
 @core_bp.post('/edit_userInformation/{col}/{informationuserid}/{data_col}', response_class=HTMLResponse)
 def edit_userInformation(request:Request,col,informationuserid,data_col,current_user: User = Depends(get_current_user_from_token)):
-    return str(data_col)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
