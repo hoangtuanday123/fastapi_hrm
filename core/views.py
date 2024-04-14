@@ -8,7 +8,7 @@ from authentication.models import User
 import db
 from ultils import file_path_default
 from globalvariable import is_admin,roleuser,rolegroup,readrights,writerights,idaccountadminmanager
-
+from admin.forms import groupuserForm
 import pyotp
 from authentication.models import verifyPassword
 from globalvariable import verify_password,messages
@@ -78,19 +78,24 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     #     return redirect(url_for("clientmanager.clientmanagerpage",image_path = _image_path,fullname = _fullname))
     # elif user_role[0]=="account_manager":
     #     return redirect(url_for("accountmanager.accountmanagerpage",image_path = _image_path,fullname = _fullname))
-    # elif user_role[0]=="admin":
+    elif user_role[0]=="admin":
         
 
-    #     _roleadmin = "admin"
-    #     _roleuser = ""
-    #     _image_path_admin = _image_path
+        _roleadmin = "admin"
+        _roleuser = ""
+        _image_path_admin = file_path_default
        
-    #     _fullname_admin = _fullname
+        _fullname_admin = _fullname
 
 
-    #     #session['writerights']=1
-    #     writerights.value=1
-    #     return redirect(url_for("admin.adminpage",image_path_admin=_image_path_admin,fullname_admin = _fullname_admin,roleadmin = _roleadmin))
+        #session['writerights']=1
+        writerights.value=1
+
+        image_path_admin=_image_path_admin
+        fullname_admin = _fullname_admin
+        return RedirectResponse(url=f'/adminpage/{image_path_admin}/{fullname_admin}')
+
+       
         
     else:
         return "You have not been granted access to the resource"
@@ -335,3 +340,26 @@ def edit_userInformation(request:Request,col,informationuserid,data_col,current_
         idaccount= idaccountadminmanager.value
         return RedirectResponse(f'/userinformation/{idaccount}')
         
+@core_bp.get('/groupuserpage/{idinformationuser}', response_class=HTMLResponse)
+def groupuserpage(request: Request,idinformationuser,current_user: User = Depends(get_current_user_from_token)):
+    #return idinformationuser
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""select g.*,r.rolename from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser join informationUser i
+    on i.id=gd.iduser join rolegroupuser r on r.id=gd.idrolegroupuser where i.id=?"""
+    value=(str(decode_id(idinformationuser)))
+    cursor.execute(sql,value)
+    grouptemp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    groups=[(group[0],group[1],group[2],group[8]) for group in grouptemp]
+    form =groupuserForm(request)
+    context={
+        "request":request,
+        "current_user":current_user,
+        "groups":groups,
+        "image_path":file_path_default,
+        "roleuser":_roleuser,
+        "form":form
+    }
+    return templates.TemplateResponse("admin/groupuserpage.html",context)

@@ -47,3 +47,12 @@ class idaccountadminmanagerdata:
         self.value=None
 idaccountadminmanager=idaccountadminmanagerdata()
 
+class selectionItemdata:
+    def __init__(self):
+        self.value=None
+selectionItem=selectionItemdata()
+
+class tabledata:
+    def __init__(self): 
+        self.value=None
+tablesession=tabledata()

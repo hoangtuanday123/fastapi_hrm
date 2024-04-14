@@ -24,7 +24,7 @@ def candidatepage_get(request: Request,image_path, fullname,current_user: User =
         "image_path":image_path,
         "fullname":fullname,
         "current_user":current_user,
-        "idinformationuser":user_temp[0]
+        "idinformationuser":encode_id(user_temp[0])
     }
     return templates.TemplateResponse("candidate/candidatepage.html",context)
     #return render_template("candidate/candidatepage.html",roleuser="candidate",image_path=image_path,fullname=fullname,idinformationuser=user_temp[0])

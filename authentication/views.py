@@ -188,7 +188,7 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
                 
         else:
             messages=[("danger","Invalid OTP. Please try again.")]
-            return RedirectResponse(url=VERIFY_2FA_URL)
+            return RedirectResponse(url=VERIFY_2FA_URL, status_code=status.HTTP_302_FOUND)
     else:
         if not current_user.is_two_authentication_enabled:
             messages=[("info","You have not enabled 2-Factor Authentication. Please enable it first.")]

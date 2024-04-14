@@ -1,0 +1,149 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <main class="form-signin w-100 m-auto">
+        <h1 class="h3 mb-3 fw-normal text-center">group user</h1>
+        <form role="form" method="post">
+            <div >
+                <div class="form-floating">
+                    <label>group</label>
+                    <input class="form-control mb-2" type="text" name="group" value="{{ form.group }}">
+                  
+                </div>
+                <div class="form-floating">
+                    <label>alias</label>
+                    <input class="form-control mb-2" type="text" name="alias" value="{{ form.alias }}">
+                  
+                </div>
+                <div class="form-floating">
+                    <label>email</label>
+                    <input class="form-control mb-2" type="text" name="email" value="{{ form.email }}">
+                  
+                </div>
+                <label>url</label>
+                <div class="form-floating">
+                    <input class="form-control mb-2" type="text" name="url" value="{{ form.url }}">
+                  
+                </div>
+                <div class="form-floating">
+                    <label>description</label>
+                    <input class="form-control mb-2" type="text" name="description" value="{{ form.description }}">
+                  
+                </div>
+                {% if rolegroup =="admin" or rolegroup =="manager" %}
+                <div class="input-group-append">
+                    <button name="updategroup" value="updategroup" type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Update</button>
+                    <button name="deletegroup" value="deletegroup" type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+        {% if rolegroup =="admin" or rolegroup =="manager" %}
+        <div class="row">
+            <div class="col-sm-3">
+                <p class="mb-0" style="color:red">ADD USER</p>    
+            </div>
+        </div>
+        <br>
+    
+        <form method="post">
+            <div class="row">
+              
+              <div class="col-sm-9">
+                  <div class="row">
+                    <div class="col-sm-3">
+                        <label for="chooseuser" class="mb-0">choose user</label>
+                    </div>
+                      <div class="col-md-6">
+                          <select class="form-select" id="usersSelect" name="usersSelect" style="width: 200px;">
+                            {% for user in usersSelect %}
+                            <option value="{{ user[0] }}">{{ user[1] }}</option>
+                            {% endfor %}
+                          </select>
+                      </div>
+                      
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-3">
+                        <label for="chooseuser" class="mb-0">choose group role</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" id="grouprole" name="grouprole" style="width: 200px;">
+                          {% for role in grouprole %}
+                          <option value="{{ role[0] }}">{{ role[1] }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <button type="submit" value="adduser" name="adduser" class="btn btn-primary">ADD</button>
+                  </div>
+                  
+              </div>
+          </div>
+        </form>
+        {% endif %}
+        <!-- Display existing records -->
+        {% if rolegroup=='leader' or rolegroup=='member' or rolegroup=='client'  %}
+            <div class="row">
+              <div class="col-sm-3">
+                  <p class="mb-0" style="color:red">LIST USER</p>    
+              </div>
+            </div>
+            <br>
+        {% endif %}
+
+  <table class="table">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>role group</th>
+            <th>group name</th>
+            <th>created date</th>
+            {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client" %}
+            <th>Detail</th>
+            {% endif %}
+            {% if rolegroup =="admin" or rolegroup =="manager" %}
+            <th>Delete</th>
+            {% endif %}
+    
+
+        </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+            <tr>
+                <td>{{user[1]}}</td>
+                <td>{{user[2]}}</td>
+                <td>{{user[3]}}</td>
+                <td>{{user[4]}}</td>
+                {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client"%}
+                <td>
+                  <button onclick="location.href='/userinformation/{{user[5]}}/{{totp}}'" >view</button>
+                </td>
+                {% endif %}
+                {% if rolegroup =="admin" or rolegroup =="manager" %}
+                <td>
+                  <a href="/adminpage/groupuserpage/updategroupuser/deleteuser/{{user[0]}}/{{idgroup}}/{{rolegroup}}"
+                
+                    class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash-alt"></i> 
+                </a>
+                </td>
+                {% endif %}
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </main>
+  </div>
+  <div class="col-md-4"></div>
+</div>
+
+{% endblock %}

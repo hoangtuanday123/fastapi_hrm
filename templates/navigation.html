@@ -6,9 +6,9 @@
         <a href="/home" class="w3-bar-item w3-button w3-wide">CONNEXUS</a>
         <div class="w3-right w3-hide-small" style="display: flex; align-items: center;">
             <!-- Chỗ này chỉ hiển thị khi người dùng chưa đăng nhập -->
-            <a href="{{url_for('admin.displayRoles')}}" onclick="w3_close()" class="w3-bar-item w3-button">ROLE MANAGEMENT</a>
-            <a href="{{url_for('admin.displayusers')}}" class="w3-bar-item w3-button">USER MANAGEMENT</a>
-            <a href="{{url_for('admin.groupuserpage')}}" class="w3-bar-item w3-button">GROUP USER</a>
+            <a href="/adminpage/roles" onclick="w3_close()" class="w3-bar-item w3-button">ROLE MANAGEMENT</a>
+            <a href="/adminpage/usersmanager" class="w3-bar-item w3-button">USER MANAGEMENT</a>
+            <a href="/adminpage/groupuserpage" class="w3-bar-item w3-button">GROUP USER</a>
             <div class="profile-dropdown" >
                 <div onclick="toggle()" id="profile-dropdown-btn" class="btn">
                     <img id="avatarImage" src="/static/source/{{image_path_admin}}" alt="avatar" style="border-radius: 10%; width: 40px; height: 40px;">
@@ -40,7 +40,7 @@
             </p>
             <hr />
             <p class="profile-dropdown-list-item">
-                <a href="{{url_for('authentication.logout')}}">
+                <a href="/logout">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                     Log out
                 </a>
