@@ -1,0 +1,157 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<style>
+  .grid-container {
+    display: grid;
+    /* grid-template-columns: auto auto auto; */
+    background-color: rgba(255, 255, 255, 0.8);;
+    padding: 10px;
+    height: 100vh;
+    overflow: auto;
+  }
+  .grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    /* font-size: 30px; */
+    /* text-align: center; */
+  }
+  table {
+      border-collapse: collapse;
+      width: 100%;
+  }
+  th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+  }
+  th {
+      background-color: #f2f2f2;
+  }
+  </style>
+
+      <div class="grid-container" style="grid-template-columns: 50% 50%;">
+        <div class="grid-item" style="text-align: center;" >
+        <h1 class="h3 mb-3 fw-normal text-center" style="color:red">List Task</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>created date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>
+                        <div hidden>{{task[0]}}</div>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ task[1] }}
+                        </div>
+                    </td>
+                    <td>
+                      {{task[2]}}
+                    </td>
+                    <td>
+                      <a href="/ERP/deleteTask/{{ idproject }}/{{task[0]}}" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                  
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+          <div id="createTaskForm" style="display: none;">
+            <form role="form" method="post" action="">
+              {{ form.csrf_token }}
+              <h2 class="h3 mb-3 fw-normal text-center">Create Task</h2>
+              <div class="form-floating">
+                <label>task</label>
+                <input class="login__input" type="text" name="task" value="{{ form.task }}">
+                
+              </div>
+              <button class="w-100 btn btn-lg btn-primary" type="submit" name="taskbutton" value="taskbutton">Create</button>
+            </form>
+          </div>
+          <button id="toggleCreateTaskForm" class="btn btn-success w-100 mb-3">
+            <i class="fas fa-plus"></i> Create Task
+          </button>
+        </div>
+        <div class="grid-item" style="text-align: center;" >
+        <h1 class="h3 mb-3 fw-normal text-center" style="color:red">List Component</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>created date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for component in components %}
+                <tr>
+                    <td>
+                        <div hidden>{{component[0]}}</div>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ component[1] }}
+                        </div>
+                    </td>
+                    <td>
+                      {{component[2]}}
+                    </td>
+                    <td>
+                      <a href="/ERP/deleteComponent/{{ idproject }}/{{component[0]}}" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                  
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+          <div id="createComponentForm" style="display: none;">
+            <form role="form" method="post" action="">
+              {{ form.csrf_token }}
+              <h2 class="h3 mb-3 fw-normal text-center">Create Component</h2>
+              <div class="form-floating">
+                <label>component</label>
+                <input class="login__input" type="text" name="component" value="{{ form.component }}">
+              </div>
+              <button class="w-100 btn btn-lg btn-primary" type="submit" name="componentbutton" value="componentbutton">Create</button>
+            </form>
+          </div>
+          <button id="toggleCreateComponentForm" class="btn btn-success w-100 mb-3">
+            <i class="fas fa-plus"></i> Create Component
+          </button>
+        </div>
+      </div>
+      <div>
+        <button onclick="location.href='/ERP/assigngroup/{{idproject}}'">next</button>
+      </div>
+
+<script>
+  document.getElementById("toggleCreateTaskForm").addEventListener("click", function() {
+    var createTaskForm = document.getElementById("createTaskForm");
+    var toggleCreateTaskBtn = document.getElementById("toggleCreateTaskForm");
+    if (createTaskForm.style.display === "none") {
+      createTaskForm.style.display = "block";
+      toggleCreateTaskBtn.style.display = "none";
+    } else {
+      createTaskForm.style.display = "none";
+      toggleCreateTaskBtn.style.display = "block";
+    }
+  });
+
+  document.getElementById("toggleCreateComponentForm").addEventListener("click", function() {
+    var createComponentForm = document.getElementById("createComponentForm");
+    var toggleCreateComponentBtn = document.getElementById("toggleCreateComponentForm");
+    if (createComponentForm.style.display === "none") {
+      createComponentForm.style.display = "block";
+      toggleCreateComponentBtn.style.display = "none";
+    } else {
+      createComponentForm.style.display = "none";
+      toggleCreateComponentBtn.style.display = "block";
+    }
+  });
+</script>
+
+{% endblock %}

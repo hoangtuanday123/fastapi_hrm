@@ -8,6 +8,7 @@ from core.views import core_bp
 from validation.views import validate
 from candidate.views import candidate 
 from admin.views import admin
+from ERP.views import ERP
 from decouple import Config, RepositoryEnv
 from fastapi.staticfiles import StaticFiles
 
@@ -34,3 +35,4 @@ app.include_router(core_bp)
 app.include_router(validate)
 app.include_router(candidate)
 app.include_router(admin)
+app.include_router(ERP)

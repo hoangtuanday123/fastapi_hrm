@@ -1,0 +1,33 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center bg-purple-light py-4" style="background-color:rgb(170, 229, 237)">
+  <div class="col-md-6">
+    <main class="form-signin">
+        <h1 class="h3 mb-3 fw-normal text-center">update project</h1>
+        <form method="post">
+            <div class="mb-3">
+                <label for="inputprojectname" class="form-label">project :</label>
+                <input id="projectname" name="projectname" value="{{ projectname }}">
+            </div>
+            <div class="mb-3">
+                <label for="projecttype" class="mb-0"> Select project type</label>
+                <select class="form-select" id="projecttype" name="projecttype" style="width: 200px;">
+                    <option value="{{ projecttypeid }}">{{ projecttypename }}</option>
+                    {% for project in projecttype %}
+                    <option value="{{ project[0] }}">{{ project[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary me-2">update</button> 
+            
+        </form>
+        <button type="button" onclick="location.href='/ERP/createtaskandcomponent/{{idproject}}'">update task and component</button>
+        <button type="button" onclick="location.href='/ERP/assigngroup/{{idproject}}'">update group</button>
+        <button type="button" onclick="location.href='/ERP/deleteproject/{{idproject}}'" class="btn btn-danger">delete project</button>
+    </main>
+  </div>
+</div>
+
+{% endblock %}

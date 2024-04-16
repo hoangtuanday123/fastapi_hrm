@@ -1,0 +1,83 @@
+{% extends "_base.html" %}
+
+{% block content %}
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div >
+            <main class="form-signin w-100 m-auto">
+                <div class="col-md-4" >
+                    <form method="post">
+                        <div class="col-md-6">
+                            <label for="searchproject" class="mb-0"> Select project</label>
+                            <select class="form-select" id="project" name="project" style="width: 200px;">
+                                
+                                {% for project in projects %}
+                                <option value="{{ project[0] }}">{{ project[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button  class="w-100 btn btn-lg btn-primary" type="submit" name="searchproject" value="searchproject" onclick="sendProjectName()"></button>
+                    </form>
+                </div>
+                <table>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll"></th>
+                        <th>Project Num</th>
+                        <th>Project Type</th>
+                        <th>Prọject</th>
+                        <th>Component</th>
+                        <th>Task</th>
+                        <th>(Mon)</th>
+                        <th>(Tue)</th>
+                        <th>(Wed)</th>
+                        <th>(Thu)</th>
+                        <th>(Fri)</th>
+                        <th>(Sat)</th>
+                        <th>(Sun)</th>
+                        <th>progress</th>
+                        <th>date</th>
+                        <th>Status timesheet</th>
+                        <th>Notes</th>
+                    </tr>
+                    <form method="post">
+                        {% for project in weeklytimesheetvalues%}
+                        <tr>
+                            <td><input type="checkbox" name="checkbox" value="{{project[14]}}"></td>
+                            <td>{{project[0]}}</td>
+                            <td>{{project[1]}}</td>
+                            <td>{{project[2]}}</td>
+                            <td>{{project[3]}}</td>
+                            <td>{{project[4]}}</td>
+                            <td>{{project[5]}}</td>
+                            <td>{{project[6]}}</td>
+                            <td>{{project[7]}}</td>
+                            <td>{{project[8]}}</td>
+                            <td>{{project[9]}}</td>
+                            <td>{{project[10]}}</td>
+                            <td>{{project[11]}}</td>
+                            <td>{{project[15]}}</td>
+                            <td>{{project[16]}}</td>
+                            <td>{{project[12]}}</td>
+                            <td>{{project[13]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </form>
+                </table>
+            </main>
+        </div>
+    </div>
+{% endblock %}

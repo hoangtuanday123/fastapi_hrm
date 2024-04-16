@@ -1,0 +1,38 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <main class="form-signin w-100 m-auto">
+      <form role="form" method="post" action="">
+        {{ form.csrf_token }}
+        <h1 class="h3 mb-3 fw-normal text-center">create project</h1>
+        <div class="col-md-6">
+          <label for="roletype" class="mb-0"> Select project type</label>
+            <select class="form-select" id="projecttype" name="projecttype" style="width: 200px;">
+              {% for project in projecttype %}
+              <option value="{{ project[0] }}">{{ project[1] }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <div class="form-floating">
+            <label>project</label>
+            <input class="login__input" type="text" name="project" value="{{ form.project }}">
+          
+        </div>
+        <div class="form-floating">
+            <label>enddate</label>
+            <input class="login__input" type="date" name="enddate" value="{{ form.enddate }}">
+           
+        </div>
+          
+        <button class="w-100 btn btn-lg btn-primary" type="submit">next</button>
+      </form>
+    </main>
+  </div>
+  <div class="col-md-4"></div>
+</div>
+
+{% endblock %}

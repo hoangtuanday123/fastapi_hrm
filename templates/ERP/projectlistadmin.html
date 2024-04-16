@@ -1,0 +1,86 @@
+{% extends "admin/adminpage.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-4"></div>
+  <div >
+    <main class="form-signin w-100 m-auto">
+        <h1 class="h3 mb-3 fw-normal text-center" style="color:red">List project</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>project id</th>
+                    <th>project name</th>
+                    <th>project type</th>
+                    <th>manager</th>
+                    <th>project team</th>
+                    <th>start date</th>
+                    <th>end date</th>
+                    <th>status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                <tr>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[0] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[1] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[2] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[3] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[4] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[5] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[6] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ project[7] }}
+                        </div>
+                    </td>
+                    <td>
+                        <a href="/ERP/updateproject/{{project[0]}}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> 
+                        </a>
+                    </td>
+                  
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button onclick="location.href='/ERP/createproject'" class="btn btn-success w-100 mb-3">
+            <i class="fas fa-plus"></i> Create project
+        </button>
+    </main>
+  </div> 
+  <div class="col-md-4"></div>
+</div>
+
+
+{% endblock %}

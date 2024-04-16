@@ -7,7 +7,7 @@ from authentication.models import get_current_user_from_cookie,get_current_user_
 from authentication.models import User
 from ultils import file_path_default,encode_id,decode_id,send_mail
 from .forms import roleForm,groupuserForm
-from globalvariable import roleuser,is_admin,rolegroup,selectionItem,tablesession,messages,writerights,readrights
+from globalvariable import roleuser,is_admin,rolegroup,selectionItem,tablesession,messages,writerights,readrights,image_path_adminsession,fullname_adminsession
 import pyotp
 import pandas as pd
 import pdfkit
@@ -26,6 +26,8 @@ def adminpage_get(request: Request,image_path_admin, fullname_admin,current_user
     global _image_path_admin,_fullname_admin
     _image_path_admin=image_path_admin
     _fullname_admin = fullname_admin
+    image_path_adminsession.value=image_path_admin
+    fullname_adminsession.value=fullname_admin
     print("admin fullname is " + _fullname_admin)
     context={
         "request":request,

@@ -91,7 +91,7 @@ async def register(request: Request):
                 user = User(id=encode_id(id_user[0]),email=form.email, password=form.password,
                             created_date=str(created_date),authenticated_by="normal",
                             secret_token=secret,is_two_authentication_enabled=False,is_information_validate=False,
-                            is_validate_email=False,role_user=None,is_active=True,idinformationuser=None,is_admin=None,getdate=str(datetime.now()),is_authenticated=True)
+                            is_validate_email=False,role_user=None,is_active=True,idinformationuser=None,is_admin=None,getdate=str(datetime.now()),is_authenticated=True,statuslogin=False)
                 response= RedirectResponse(url=SETUP_2FA_URL)
                 resgister_for_access_token(response=response, user=user)
                 messages=[("success","You are registered. You have to enable 2-Factor Authentication first to login")]
@@ -159,6 +159,7 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
     await form.load_data()
     if await form.is_valid(): 
         if current_user.is_otp_valid(form.otp):
+            current_user.statuslogin=True
             if current_user.is_two_authentication_enabled:
                 messages=[("success","2FA verification successful. You are logged in!")]
                 if not current_user.is_information_validate:
@@ -256,8 +257,10 @@ async def login(request: Request):
                     messages=[("info","waiting for admin assign role")]
                     
                     return RedirectResponse(url="/logout")
-                return RedirectResponse(url=HOME_URL)    
-                
+                if current_user.statuslogin:
+                    
+                    return RedirectResponse(url=HOME_URL)    
+                return RedirectResponse(url="/logout")
             else:
                 messages=[("info","You have not enabled 2-Factor Authentication. Please enable first to login.")]
                 return RedirectResponse(url=SETUP_2FA_URL)
@@ -293,7 +296,7 @@ async def login(request: Request):
             user=User(id=encode_id(int(user_temp[0])),email=user_temp[2],password=user_temp[3],created_date=user_temp[4],
                       authenticated_by=user_temp[5],secret_token=user_temp[6],
                       is_two_authentication_enabled=user_temp[7],is_information_validate=user_temp[8],
-                      is_validate_email=user_temp[9],role_user=str(user_temp[10]),is_active=user_temp[11],idinformationuser=None,is_admin=None,getdate=str(datetime.now()),is_authenticated=True)
+                      is_validate_email=user_temp[9],role_user=str(user_temp[10]),is_active=user_temp[11],idinformationuser=None,is_admin=None,getdate=str(datetime.now()),is_authenticated=True,statuslogin=False)
             if user.role_user is None :
                 messages=[("info","waiting for admin assign role")]
                

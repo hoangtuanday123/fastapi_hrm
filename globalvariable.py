@@ -56,3 +56,13 @@ class tabledata:
     def __init__(self): 
         self.value=None
 tablesession=tabledata()
+
+class image_path_admindata:
+    def __init__(self): 
+        self.value=None
+image_path_adminsession=image_path_admindata()
+
+class fullname_admindata:
+    def __init__(self): 
+        self.value=None
+fullname_adminsession=fullname_admindata()

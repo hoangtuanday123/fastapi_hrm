@@ -83,7 +83,7 @@ class User(BaseModel):
     is_admin:str|None
     getdate:str
     is_authenticated:bool|None
-
+    statuslogin:bool=False
     def get_authentication_setup_uri(self):
         return pyotp.totp.TOTP(self.secret_token).provisioning_uri(
         name=str(self.email), issuer_name=(os.getenv('APP_NAME')))

@@ -1,0 +1,82 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <main class="form-signin w-100 m-auto">
+      <form  role="form" method="post" action="">
+        
+        <h1 class="h3 mb-3 fw-normal text-center">addtask</h1>
+        <div class="col-md-6">
+          <label for="project" class="mb-0"> Select project</label>
+            <select class="form-select" id="project" name="project" style="width: 200px;">
+              {% for project in projects %}
+              <option value="{{ project[0] }}">{{ project[1] }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="tasktype" class="mb-0"> Select task</label>
+            <select class="form-select" id="task" name="task" style="width: 200px;">
+              {% for task in tasks %}
+              <option value="{{ task[0] }}">{{ task[1] }}</option>
+              {% endfor %}
+            </select>
+        </div>  
+        <div class="col-md-6">
+          <label for="componenttype" class="mb-0"> Select component</label>
+            <select class="form-select" id="component" name="component" style="width: 200px;">
+              {% for component in components %}
+              <option value="{{ component[0] }}">{{ component[1] }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Add</button>
+      </form>
+
+    </main>
+  </div>
+  <div class="col-md-4"></div>
+</div>
+
+<script>
+  $(document).ready(function(){
+      $('#project').change(function(){
+          var selectedProject = $(this).val();
+          $.ajax({
+              url: '/get_tasks_and_components',
+              type: 'POST',
+              data: {
+                  selected_project: selectedProject
+              },
+              success: function(response) {
+                $('#task').html(response.tasks);
+                var taskSelect = $('#task');
+                taskSelect.empty(); // Xóa tất cả các option hiện có
+                // Thêm các option mới từ dữ liệu được trả về
+                $.each(response.tasks, function(index, task) {
+                    taskSelect.append($('<option>', {
+                        value: task[0],
+                        text: task[1]
+                    }));
+                });
+                $('#component').html(response.components);
+                var componentSelect = $('#component');
+                componentSelect.empty(); // Xóa tất cả các option hiện có
+                // Thêm các option mới từ dữ liệu được trả về
+                $.each(response.components, function(index, component) {
+                    componentSelect.append($('<option>', {
+                        value: component[0],
+                        text: component[1]
+                    }));
+                });
+              }
+          });
+      });
+  });
+</script>
+{% endblock %}
