@@ -247,23 +247,23 @@ async def login(request: Request):
     #session['is_admin']="None"
     is_admin.value="None"
     messages=[]
-    if current_user:
-        if current_user.is_authenticated:
-            if current_user.is_two_authentication_enabled:
-                messages=[("info","You are already logged in.")]
-                if not current_user.is_information_validate:
-                    return RedirectResponse(url="/informationuser")
-                if current_user.role_user == None :
-                    messages=[("info","waiting for admin assign role")]
+    # if current_user:
+    #     if current_user.is_authenticated:
+    #         if current_user.is_two_authentication_enabled:
+    #             messages=[("info","You are already logged in.")]
+    #             if not current_user.is_information_validate:
+    #                 return RedirectResponse(url="/informationuser")
+    #             if current_user.role_user == None :
+    #                 messages=[("info","waiting for admin assign role")]
                     
-                    return RedirectResponse(url="/logout")
-                if current_user.statuslogin:
+    #                 return RedirectResponse(url="/logout")
+    #             if current_user.statuslogin:
                     
-                    return RedirectResponse(url=HOME_URL)    
-                return RedirectResponse(url="/logout")
-            else:
-                messages=[("info","You have not enabled 2-Factor Authentication. Please enable first to login.")]
-                return RedirectResponse(url=SETUP_2FA_URL)
+    #                 return RedirectResponse(url=HOME_URL)    
+    #             return RedirectResponse(url="/logout")
+    #         else:
+    #             messages=[("info","You have not enabled 2-Factor Authentication. Please enable first to login.")]
+    #             return RedirectResponse(url=SETUP_2FA_URL)
         
     form = LoginForm(request)
     await form.load_data()

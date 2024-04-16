@@ -758,7 +758,7 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
     }
     return templates.TemplateResponse("ERP/addtaskweeklytimesheet.html",context)     
     
-@ERP.get('/get_tasks_and_components')
+@ERP.post('/get_tasks_and_components')
 async def get_tasks_and_components(request:Request):
     form=await request.form()
     selected_project = form['selected_project']
@@ -781,4 +781,4 @@ async def get_tasks_and_components(request:Request):
     conn.commit()
     conn.close()
     components_options =[(component[0],component[1])for component in components_temp]
-    return JSONResponse(tasks=tasks_options,components=components_options)
+    return JSONResponse(content={'tasks':tasks_options,'components':components_options})
