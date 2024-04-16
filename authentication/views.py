@@ -15,7 +15,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status,Cookie
 from .models import create_access_token
 from fastapi.security import OAuth2, OAuth2PasswordRequestForm
-from ultils import settings,get_b64encoded_qr_image,file_path_default,send_mail,encode_id
+from ultils import settings,get_b64encoded_qr_image,file_path_default,send_mail,encode_id,decode_id
 from authentication.models import get_current_user_from_cookie,get_current_user_from_token
 import os
 from fastapi.responses import JSONResponse
@@ -173,7 +173,7 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
                 conn=db.connection()
                 cursor=conn.cursor()
                 sql="update user_account set enabled_authentication=1 where id=?"
-                value=(current_user.id)
+                value=(decode_id(current_user.id))
                 cursor.execute(sql,value)
                 conn.commit()
                 conn.close()
