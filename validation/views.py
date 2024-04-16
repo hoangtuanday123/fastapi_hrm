@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.security import OAuth2, OAuth2PasswordRequestForm
-from ultils import send_mail,file_path_default
+from ultils import send_mail,file_path_default,decode_id,encode_id
 from authentication.models import get_current_user_from_cookie,get_current_user_from_token
 from .forms import informationUserForm
 from authentication.models import User
@@ -48,7 +48,7 @@ async def informationuser(request: Request,current_user: User = Depends(get_curr
         conn=db.connection()
         cursor=conn.cursor()
         sql="select * from informationUser where id_useraccount=?"
-        value=(current_user.id)
+        value=(decode_id(current_user.id))
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -62,7 +62,7 @@ async def informationuser(request: Request,current_user: User = Depends(get_curr
                     DECLARE @id int;
                     SET @id = SCOPE_IDENTITY();    
                     insert into latestEmployment(idinformationuser) values (@id)"""
-            value=(form.Fullname,form.Nickname,email,form.Contactaddress,current_user.id)
+            value=(form.Fullname,form.Nickname,email,form.Contactaddress,decode_id(current_user.id))
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
@@ -133,19 +133,19 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
         conn=db.connection()
         cursor=conn.cursor()
         sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(current_user.id)
+        value=(decode_id(current_user.id))
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
         conn.close()
-        current_user.idinformationuser=userinfor[0]
+        current_user.idinformationuser=encode_id(userinfor[0])
         messages=[("success","Account already confirmed.")]
         return RedirectResponse(url="/home")
     email = confirm_token(token)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from informationUser where id_useraccount=?"
-    value=(current_user.id)
+    value=(decode_id(current_user.id))
     cursor.execute(sql,value)
     information=cursor.fetchone()
     conn.commit()
@@ -155,7 +155,7 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
         conn=db.connection()
         cursor=conn.cursor()
         sql="update user_account set infor_validate=1 where id=?"
-        value=(current_user.id)
+        value=(decode_id(current_user.id))
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -163,12 +163,12 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
         conn=db.connection()
         cursor=conn.cursor()
         sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(current_user.id)
+        value=(decode_id(current_user.id))
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
         conn.close()
-        current_user.idinformationuser=userinfor[0]
+        current_user.idinformationuser=encode_id(userinfor[0])
         messages=[("success","You have confirmed your account. Thanks!")]
     else:
         messages=[("danger","The confirmation link is invalid or has expired.")]
@@ -185,19 +185,19 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
         conn=db.connection()
         cursor=conn.cursor()
         sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(current_user.id)
+        value=(decode_id(current_user.id))
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
         conn.close()
-        current_user.idinformationuser=userinfor[0]
+        current_user.idinformationuser=encode_id(userinfor[0])
         messages=[("success","Account already confirmed.")]
         return RedirectResponse(url="/home")
     email = confirm_token(token)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from informationUser where id_useraccount=?"
-    value=(current_user.id)
+    value=(decode_id(current_user.id))
     cursor.execute(sql,value)
     information=cursor.fetchone()
     conn.commit()
@@ -207,7 +207,7 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
         conn=db.connection()
         cursor=conn.cursor()
         sql="update user_account set infor_validate=1 where id=?"
-        value=(current_user.id)
+        value=(decode_id(current_user.id))
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -215,12 +215,12 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
         conn=db.connection()
         cursor=conn.cursor()
         sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(current_user.id)
+        value=(decode_id(current_user.id))
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
         conn.close()
-        current_user.idinformationuser=userinfor[0]
+        current_user.idinformationuser=encode_id(userinfor[0])
         messages=[("success","You have confirmed your account. Thanks!")]
     else:
         # conn=db.connection()
