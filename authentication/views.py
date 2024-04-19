@@ -438,13 +438,13 @@ async def verifypassword(request:Request):
                 conn.close()
                 #session['id_useraccount']=user_temp[5]
                 id_useraccount.value=user_temp[5]
-            return RedirectResponse(url="/changepassword")    
+            return RedirectResponse(url="/changepassword",status_code=status.HTTP_302_FOUND)    
             #return redirect(url_for("authentication.changepassword"))
         else:
             messages.categorary="danger"
             messages.message="Invalid OTP. Please try again."
             #("Invalid OTP. Please try again.", "danger")
-            return RedirectResponse(url="/verifypassword")
+            return RedirectResponse(url="/verifypassword",status_code=status.HTTP_302_FOUND)
             #return redirect(url_for("authentication.verifypassword"))
     context={
         "request":request,
@@ -462,6 +462,7 @@ async def changepassword_get(request:Request):
     except:
         current_user = None
     form=ChangePasswordForm(request)
+    
     context={
         "request":request,
         "form":form,
@@ -478,6 +479,7 @@ async def changepassword(request:Request):
         current_user = None
     #id_user=session.get('id_useraccount')
     id_user=id_useraccount.value
+    id_user=decode_id(id_user)
     form=ChangePasswordForm(request)
     await form.load_data()
     if await form.is_valid():
