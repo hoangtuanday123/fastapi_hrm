@@ -32,7 +32,7 @@ def employeepage(request:Request,image_path,fullname,current_user: User = Depend
     _fullname = fullname
     context={
         "request":request,
-        "roleuser":"empoloyee",
+        "roleuser":"employee",
         "image_path":image_path,
         "fullname":fullname,
         "current_user":current_user,

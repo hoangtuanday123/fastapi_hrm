@@ -366,7 +366,7 @@ async def forgotpassword(request: Request):
                 #flash("A confirmation email has been sent via email.", "success")
                 messages.categorary="success"
                 messages.message="A confirmation email has been sent via email."
-                return RedirectResponse(url="/verifypassword")
+                return RedirectResponse(url="/verifypassword",status_code=status.HTTP_302_FOUND)
                 #return redirect(url_for("authentication.verifypassword"))
             else:
                 #flash("account have not set password")
@@ -437,7 +437,7 @@ async def verifypassword(request:Request):
                 conn.commit()
                 conn.close()
                 #session['id_useraccount']=user_temp[5]
-                id_useraccount.value=user_temp[5]
+                id_useraccount.value=encode_id(user_temp[5])
             return RedirectResponse(url="/changepassword",status_code=status.HTTP_302_FOUND)    
             #return redirect(url_for("authentication.changepassword"))
         else:
