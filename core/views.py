@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+import pandas as pd
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
@@ -12,7 +13,7 @@ from admin.forms import groupuserForm
 import pyotp
 from authentication.models import verifyPassword
 from globalvariable import verify_password,messages
-from validation.forms import informationUserForm
+from validation.forms import informationUserForm,latestEmploymentForm,usercccdForm
 core_bp = APIRouter()
 templates = Jinja2Templates(directory="templates")
 # global variables
@@ -253,6 +254,10 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
         "roleuser":_roleuser,
         "idaccount":idaccount,
         "readrights":readrights.value,
+        "fullname":_fullname,
+        
+        "roleadmin":_roleadmin,
+        "fullname_admin":_fullname_admin,
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -360,6 +365,213 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
         "groups":groups,
         "image_path":file_path_default,
         "roleuser":_roleuser,
-        "form":form
+        "form":form,
+        "fullname":_fullname
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
+
+@core_bp.get('/latestEmployment/{informationuserid}', response_class=HTMLResponse)
+
+def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):     
+        form = latestEmploymentForm(request)
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select * from latestEmployment where idinformationuser=?"
+        cursor.execute(sql,decode_id(informationuserid))
+        user_temp=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        if user_temp:
+            form.Employer=user_temp[1]
+            form.Jobtittle=user_temp[2]
+            form.AnnualSalary=user_temp[3]
+            form.AnnualBonus=user_temp[4]
+            form.RetentionBonus=user_temp[5]
+            form.RetentionBonusExpiredDate=user_temp[6]
+            form.StockOption=user_temp[7]
+            form.StartDate = user_temp[8]
+            form.EndDate=user_temp[9]
+        idaccount=current_user.id
+        if _roleadmin=="admin" :
+            idaccount=idaccountadminmanager.value
+        context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":_roleuser,
+        "form":form,
+        "fullname":_fullname,
+        "informationuserid":informationuserid,
+        "image_path_admin":_image_path_admin,
+        "roleadmin":_roleadmin,
+        "fullname_admin":_fullname_admin,
+        "idaccount":idaccount,
+        "readrights":readrights.value
+        } 
+        return templates.TemplateResponse("core/latestEmployment.html",context)
+
+@core_bp.get('/usercccd/{informationuserid}', response_class=HTMLResponse)
+def usercccd(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    global _image_path,_front_cccd,_fullname,_roleuser
+    
+    # global _image_path,_front_cccd,_fullname,_roleuser
+    form = usercccdForm(request)
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from information_cccd where idinformationuser=?"
+    cursor.execute(sql,decode_id(informationuserid))
+    user_temp=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    if user_temp:
+        form.No=user_temp[1]
+        form.FullName=user_temp[2]
+        form.DateOfbirth=user_temp[3]
+        form.PlaceOfBirth=user_temp[4]
+        form.Address=user_temp[5]
+        form.IssueOn=user_temp[6]
+    if user_temp is None:
+        id = 0
+    else:
+        id = user_temp[0]
+    print("id user is %d" % id)
+    #found_cccd = user_cccd.find_picture_name_by_id(id)
+    found_cccd=" "
+    back_cccd=" "
+    # if found_cccd and found_cccd[2] != "":
+    #     _front_cccd = found_cccd[2]
+    # else:
+    #     _front_cccd = ""
+
+    # if found_cccd and found_cccd[3] != "":
+    #     _back_cccd = found_cccd[3]
+
+    # else:
+    #     _back_cccd = ""
+    idaccount=current_user.id
+    if _roleadmin=="admin" :
+        idaccount=idaccountadminmanager.value
+    print("front image is: "+ _front_cccd) 
+    print("back image is: "+ _front_cccd)
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":_roleuser,
+        "form":form,
+        "fullname":_fullname,
+        "image_path_admin":_image_path_admin,
+        "roleadmin":_roleadmin,
+        "fullname_admin":_fullname_admin,
+        "informationuserid":informationuserid,
+        "front_cccd":_front_cccd,
+        "back_cccd":_back_cccd,
+        "idaccount":idaccount,
+        "readrights":readrights.value
+    }
+    return templates.TemplateResponse("core/user_cccd.html",context)
+    
+
+@core_bp.get('/healthCheckCertificates/{informationuserid}',response_class=HTMLResponse)
+
+def healthCheckCertificates(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    
+    global _fullname
+    
+    # global _fullname
+    conn = db.connection()
+    cursor = conn.cursor()
+    sql = "SELECT * from healthCheckCertificates where idinformationuser = ?"
+    cursor.execute(sql,decode_id(informationuserid))
+    temp = cursor.fetchall()
+    df = pd.DataFrame()
+    for record in temp:
+        df2 = pd.DataFrame(list(record)).T
+        df = pd.concat([df,df2])
+    conn.close()
+    idaccount=current_user.id
+    if _roleadmin=="admin" :
+        idaccount=idaccountadminmanager.value
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":_roleuser,
+        "fullname":_fullname,
+        "image_path_admin":_image_path_admin,
+        "roleadmin":_roleadmin,
+        "fullname_admin":_fullname_admin,
+        "informationuserid":informationuserid,
+        "temp":temp,
+        "idaccount":idaccount,
+        "readrights":readrights.value
+    }    
+    return templates.TemplateResponse("core/healthCheckCertificates.html",context)
+
+@core_bp.get('/educationbackground/{informationuserid}', response_class=HTMLResponse)
+def educationbackground(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    idaccount=current_user.id
+    if _roleadmin=="admin" :
+        idaccount=idaccountadminmanager.value
+    global _fullname
+   
+    # global _fullname
+    conn = db.connection()
+    cursor = conn.cursor()
+    sql = "SELECT * from educationbackground where idinformationuser = ?"
+    cursor.execute(sql,decode_id(informationuserid))
+    temp = cursor.fetchall()
+    df = pd.DataFrame()
+    for record in temp:
+        df2 = pd.DataFrame(list(record)).T
+        df = pd.concat([df,df2])
+    conn.close()
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":_roleuser,
+        "fullname":_fullname,
+        "image_path_admin":_image_path_admin,
+        "roleadmin":_roleadmin,
+        "fullname_admin":_fullname_admin,
+        "informationuserid":informationuserid,
+        "temp":temp,
+        "idaccount":idaccount,
+        "readrights":readrights.value
+    }
+    return templates.TemplateResponse("core/educationbackground.html",context)       
+
+@core_bp.get('/qualification/{informationuserid}', response_class=HTMLResponse)
+def qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    global _fullname
+    # global _fullname
+    conn = db.connection()
+    cursor = conn.cursor()
+    sql = "SELECT * from qualification where idinformationuser = ?"
+    cursor.execute(sql,decode_id(informationuserid))
+    temp = cursor.fetchall()
+    df = pd.DataFrame()
+    for record in temp:
+        df2 = pd.DataFrame(list(record)).T
+        df = pd.concat([df,df2])
+    conn.close()   
+    idaccount=current_user.id
+    if _roleadmin=="admin" :
+        idaccount=idaccountadminmanager.value 
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":_roleuser,
+        "fullname":_fullname,
+        "image_path_admin":_image_path_admin,
+        "roleadmin":_roleadmin,
+        "fullname_admin":_fullname_admin,
+        "informationuserid":informationuserid,
+        "temp":temp,
+        "idaccount":idaccount,
+        "readrights":readrights.value
+    }
+    return templates.TemplateResponse("core/qualification.html",context)       
+    

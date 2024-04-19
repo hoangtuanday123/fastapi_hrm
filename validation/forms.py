@@ -1,6 +1,6 @@
 from typing import List
 from typing import Optional
-
+from datetime import date
 from fastapi import Request
 from pydantic import BaseModel
 
@@ -55,26 +55,62 @@ class informationUserForm:
         return False
 
 
-# class latestEmploymentForm(FlaskForm):
-#     Employer = StringField("Employer", validators=[InputRequired(message='Employer name is required')])
-#     Jobtittle = StringField("Jobtittle")
-#     AnnualSalary = IntegerField("AnnualSalary")
-#     AnnualBonus = IntegerField("AnnualBonus")
-#     RetentionBonus = IntegerField("RetentionBonus")
-#     RetentionBonusExpiredDate = DateTimeField("RetentionBonusExpiredDate")
-#     StockOption = IntegerField("StockOption")
-#     StartDate = DateTimeField("StartDate")
-#     EndDate = DateTimeField("EndDate")
-#     IdInformationUser = IntegerField("IdInformationUser")
+class latestEmploymentForm:
+    def __init__(self, request: Request):
+        self.request: Request = request
+        self.errors: List = []
+        self.Employer: Optional[str] = None
+        self.Jobtittle: Optional[str] = None
+        self.AnnualSalary: Optional[str] = None
+        self.AnnualBonus: Optional[str] = None
+        self.RetentionBonus: Optional[str] = None
+        self.RetentionBonusExpiredDate: Optional[date] = None
+        self.StockOption: Optional[str] = None
+        self.StartDate: Optional[date] = None
+        self.EndDate: Optional[date] = None
+        self.IdInformationUser: Optional[str] = None
+    
+    async def load_data(self):
+        form = await self.request.form()
+        self.Employer = form.get(
+            "Employer"
+        )  # since outh works on username field we are considering email as username
+        self.Jobtittle = form.get("Jobtittle")
+        self.AnnualSalary = form.get("AnnualSalary")
+        self.AnnualBonus = form.get("AnnualBonus")
+        self.RetentionBonus = form.get("RetentionBonus")
+        self.RetentionBonusExpiredDate = form.get("RetentionBonusExpiredDate")
+        self.StockOption = form.get("StockOption")
+        self.StartDate = form.get("StartDate")
+        self.IdInformationUser = form.get("IdInformationUser")
+        self.EndDate = form.get("EndDate")
+        
 
-# class usercccdForm(FlaskForm):
-#     No = IntegerField("No", validators=[InputRequired(message='Citizen Identification No is required')])
-#     FullName = StringField("Full Name", validators=[InputRequired(message='Full Name is required')])
-#     DateOfbirth = DateTimeField("Date Of Birth")
-#     PlaceOfBirth = StringField("Place Of Birth")
-#     Address = StringField("Address")
-#     IssueOn = DateTimeField("Issue On")
-#     IdInformationUser = IntegerField("IdInformationUser")
+class usercccdForm:
+    def __init__(self, request: Request):
+        self.request: Request = request
+        self.errors: List = []
+        self.No: Optional[str] = None
+        self.FullName: Optional[str] = None
+        self.DateOfbirth: Optional[date] = None
+        self.PlaceOfBirth: Optional[str] = None
+        self.Address: Optional[str] = None
+        self.IssueOn: Optional[date] = None
+        self.IdInformationUser: Optional[date] = None
+    
+    async def load_data(self):
+        form = await self.request.form()
+        self.No = form.get(
+            "No"
+        )  # since outh works on username field we are considering email as username
+        self.DateOfbirth = form.get("DateOfbirth")
+        self.PlaceOfBirth = form.get("PlaceOfBirth")
+        self.Address = form.get("Address")
+        self.IssueOn = form.get("IssueOn")
+        self.IdInformationUser = form.get("IdInformationUser")
+        
+
+    
 
 
 
