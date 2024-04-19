@@ -69,10 +69,13 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     if user_role[0]=="candidate":
         image_path = file_path_default
         fullname = _fullname
-        return RedirectResponse(url=f"/candidate/{image_path}/{fullname}")
+        return RedirectResponse(url=f"/candidate/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
         #return redirect(url_for("candidate.candidatepage",image_path = _image_path,fullname = _fullname))
-    # elif user_role[0]=="employee":
-    #     return redirect(url_for("employee.employeepage",image_path = _image_path,fullname = _fullname))
+    elif user_role[0]=="employee":
+        image_path = file_path_default
+        fullname = _fullname
+        return RedirectResponse(url=f"/employeepage/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
+
     # elif user_role[0]=="employee_manager":
     #     return redirect(url_for("employeemanager.employeemanagerpage",image_path = _image_path,fullname = _fullname))
     # elif user_role[0]=="client_manager":
