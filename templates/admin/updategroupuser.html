@@ -124,7 +124,7 @@
                 <td>{{user[4]}}</td>
                 {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client"%}
                 <td>
-                  <button onclick="location.href='/userinformation/{{user[5]}}/{{totp}}'" >view</button>
+                  <button onclick="location.href='/adminpage/usersmanager/lookinformationuser/{{user[5]}}'" >view</button>
                 </td>
                 {% endif %}
                 {% if rolegroup =="admin" or rolegroup =="manager" %}

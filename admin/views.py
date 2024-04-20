@@ -7,7 +7,9 @@ from authentication.models import get_current_user_from_cookie,get_current_user_
 from authentication.models import User
 from ultils import file_path_default,encode_id,decode_id,send_mail
 from .forms import roleForm,groupuserForm
-from globalvariable import roleuser,is_admin,rolegroup,selectionItem,tablesession,messages,writerights,readrights,image_path_adminsession,fullname_adminsession
+from employee.forms import Employeeinformation
+from core.forms import informationUserJob,laborcontractForm,forexsalaryForm
+from globalvariable import roleuser,is_admin,rolegroup,selectionItem,tablesession,messages,writerights,readrights,image_path_adminsession,fullname_adminsession,idaccountadminmanager,roleadmin
 import pyotp
 import pandas as pd
 import pdfkit
@@ -201,7 +203,7 @@ def displayusers_get(request:Request,current_user: User = Depends(get_current_us
     users=cursor.fetchall()
     conn.commit()
     conn.close()
-    usersrole=[(user[0],user[1],user[2],user[3]) for user in users]
+    usersrole=[(encode_id(user[0]),user[1],user[2],user[3]) for user in users]
     #list of blocked users
     conn=db.connection()
     cursor=conn.cursor()
@@ -210,7 +212,7 @@ def displayusers_get(request:Request,current_user: User = Depends(get_current_us
     users=cursor.fetchall()
     conn.commit()
     conn.close()
-    usersblock=[(user[0],user[1],user[2],user[3]) for user in users]
+    usersblock=[(encode_id(user[0]),user[1],user[2],user[3]) for user in users]
 
     roles=[]
     roles.append('ALL')
@@ -272,7 +274,7 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
     users=cursor.fetchall()
     conn.commit()
     conn.close()
-    usersrole=[(user[0],user[1],user[2],user[3]) for user in users]
+    usersrole=[(encode_id(user[0]),user[1],user[2],user[3]) for user in users]
     #list of blocked users
     conn=db.connection()
     cursor=conn.cursor()
@@ -281,7 +283,7 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
     users=cursor.fetchall()
     conn.commit()
     conn.close()
-    usersblock=[(user[0],user[1],user[2],user[3]) for user in users]
+    usersblock=[(encode_id(user[0]),user[1],user[2],user[3]) for user in users]
 
     roles=[]
     roles.append('ALL')
@@ -431,6 +433,7 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
 
             return response
         #return redirect(url_for("admin.exportfilepdf"))
+
     context={
         "request":request,
         "current_user":current_user,
@@ -679,7 +682,7 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
-    value=(idaccount)
+    value=(decode_id(idaccount))
     cursor.execute(sql,value)
     idinformation_temp=cursor.fetchone()
     conn.commit()
@@ -698,7 +701,7 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
     conn=db.connection()
     cursor=conn.cursor()
     sql="select  i.email from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
-    value=idaccount
+    value=decode_id(idaccount)
     cursor.execute(sql,value)
     email=cursor.fetchall()
     conn.commit()
@@ -713,7 +716,7 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
         "idaccount":idaccount,
         "roleuser":roleuser.value,
         "userrole":userrole,
-        "informationuserid":idinformationuser,
+        "informationuserid":encode_id(idinformationuser),
         "image_path_admin":_image_path_admin,
         "roleadmin":_roleadmin,
         "fullname_admin":_fullname_admin
@@ -726,7 +729,7 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
-    value=(idaccount)
+    value=(decode_id(idaccount))
     cursor.execute(sql,value)
     idinformation_temp=cursor.fetchone()
     conn.commit()
@@ -745,7 +748,7 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
     conn=db.connection()
     cursor=conn.cursor()
     sql="select  i.email from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
-    value=idaccount
+    value=decode_id(idaccount)
     cursor.execute(sql,value)
     email=cursor.fetchall()
     conn.commit()
@@ -763,7 +766,7 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
         conn=db.connection()
         cursor=conn.cursor()
         sql="select * from informationUserJob ij join informationUser i on ij.idinformationuser=i.id where id_useraccount=?"
-        values=(idaccount)
+        values=(decode_id(idaccount))
         cursor.execute(sql,values)
         validate=cursor.fetchone()
         conn.commit()
@@ -789,7 +792,7 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
         "idaccount":idaccount,
         "roleuser":roleuser.value,
         "userrole":userrole,
-        "informationuserid":idinformationuser,
+        "informationuserid":encode_id(idinformationuser),
         "image_path_admin":_image_path_admin,
         "roleadmin":_roleadmin,
         "fullname_admin":_fullname_admin
@@ -801,7 +804,7 @@ def blockaccount(idaccount,current_user: User = Depends(get_current_user_from_to
     conn=db.connection()
     cursor=conn.cursor()
     sql="update user_account set is_active=0 where id=?"
-    values=(idaccount)
+    values=(decode_id(idaccount))
     cursor.execute(sql,values)
     conn.commit()
     conn.close()
@@ -813,16 +816,26 @@ def openblock(idaccount,current_user: User = Depends(get_current_user_from_token
     conn=db.connection()
     cursor=conn.cursor()
     sql="update user_account set is_active=1 where id=?"
-    values=(idaccount)
+    values=(decode_id(idaccount))
     cursor.execute(sql,values)
     conn.commit()
     conn.close()
-    messages=('open account '+ idaccount + ' successfully')
+    messages=('open account '+ str(decode_id(idaccount)) + ' successfully')
     return RedirectResponse(url="/adminpage/usersmanager", status_code=status.HTTP_302_FOUND) 
 
 @admin.get('/adminpage/usersmanager/lookinformationuser/{idaccount}')
 def info(idaccount,current_user: User = Depends(get_current_user_from_token)):
-    idaccount_encode=encode_id(idaccount)
+    idaccount_encode=idaccount
+    idaccountadminmanager.value=idaccount
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
+    value=(decode_id(idaccount_encode))
+    cursor.execute(sql,value)
+    user_role=cursor.fetchone()
+    #session['roleuser']=user_role[0]
+    roleuser.value=user_role[0]
+    roleadmin.value="admin"
     return RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
 
 def readrights_func(rolegroup):
@@ -915,6 +928,7 @@ async def groupuserpage(request:Request,current_user: User = Depends(get_current
 async def updategropuser_get(request:Request,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
     readrights_func(rolegroupvalue)
     rolegroup.value=rolegroupvalue
+    
     if str(rolegroup.value) !='admin':
         _roleadmin=""
     else:
@@ -963,7 +977,7 @@ async def updategropuser_get(request:Request,idgroup,rolegroupvalue,current_user
     userstemp=cursor.fetchall()
     conn.commit()
     conn.close()
-    users=[(user[0],user[1],user[2],user[3],user[4],user[5]) for user in userstemp]
+    users=[(user[0],user[1],user[2],user[3],user[4],encode_id(user[5])) for user in userstemp]
     form.group=group[1]
     form.alias=group[4]
     form.email=group[5]
@@ -1039,7 +1053,7 @@ async def updategropuser(request:Request,idgroup,rolegroupvalue,current_user: Us
     userstemp=cursor.fetchall()
     conn.commit()
     conn.close()
-    users=[(user[0],user[1],user[2],user[3],user[4],user[5]) for user in userstemp]
+    users=[(user[0],user[1],user[2],user[3],user[4],encode_id(user[5])) for user in userstemp]
     await form.load_data()
     form_method = await request.form() 
     if await form.is_valid() and 'updategroup' in form_method and form_method['updategroup']=='updategroup':
@@ -1207,3 +1221,283 @@ def deletegroupuser(idgroup,current_user: User = Depends(get_current_user_from_t
         subject = "notice of member deletion from "+ str(notify[2])+" group"
         send_mail(notify[0], subject, html,2)
     return RedirectResponse(url="/adminpage/groupuserpage",status_code=status.HTTP_302_FOUND)
+
+@admin.get('/adminpage/usersmanager/createemployee/{idinformation}',response_class=HTMLResponse)
+async def createemployeeinfor_get(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from informationUserJob where idinformationuser=? and is_active=1"
+    value=(decode_id(idinformation))
+    cursor.execute(sql,value)
+    informationjob=cursor.fetchone()
+    conn.close()
+    if informationjob is  None:
+        form=Employeeinformation(request)
+        userjob=informationUserJob(EmployeeNo=None,Companysitecode=None,Department=None,Directmanager=None,Workforcetype=None,Workingphone=None,Workingemail=None,
+                    Bankaccount=None,Bankname=None,Taxcode=None,Socialinsurancecode=None,Healthinsurancecardcode=None,Registeredhospitalname=None,Registeredhospitalcode=None)
+        temp=(0,' ')
+        companysitecode=[]
+        companysitecode.append(temp)
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select * from forextype "
+        cursor.execute(sql)
+        companysitecode_temp=cursor.fetchall()
+        conn.close()
+        for code in companysitecode_temp:
+            temp=(code[0],code[1])
+            companysitecode.append(temp)
+    else:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="""select * from laborContract l join  informationUserJob ij on l.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
+        where i.id=? and l.is_active=1 and ij.is_active=1"""
+        value=(decode_id(idinformation))
+        cursor.execute(sql,value)
+        labor=cursor.fetchone()  
+        conn.close() 
+        if labor is None:
+            return RedirectResponse(url=f"/adminpage/usersmanager/createlaborcontract/{idinformation}",status_code=status.HTTP_302_FOUND)
+        else:
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="""select * from forexSalary f join  informationUserJob ij on f.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
+            where i.id=? and f.is_active=1 and ij.is_active=1"""
+            value=(decode_id(idinformation))
+            cursor.execute(sql,value)
+            forex=cursor.fetchone()  
+            conn.close()
+            if forex is None:
+                return RedirectResponse(url=f"/adminpage/usersmanager/createforexsalary/{idinformation}",status_code=status.HTTP_302_FOUND)
+                
+            else:
+                
+                messages=[('success','information job employee is exist')]
+                return RedirectResponse(url="/adminpage/usersmanager",status_code=status.HTTP_302_FOUND)
+    
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":roleuser.value,
+        "roleadmin" : _roleadmin,
+        "image_path_admin":_image_path_admin,
+        "fullname_admin" : _fullname_admin,
+        "informationuserid":idinformation,
+        "userjob":userjob,
+        "form":form,
+        "companysitecode":companysitecode,
+     
+    }
+    return templates.TemplateResponse("admin/admininformationuser.html",context)
+
+@admin.post('/adminpage/usersmanager/createemployee/{idinformation}',response_class=HTMLResponse)
+async def createemployeeinfor(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from informationUserJob where idinformationuser=? and is_active=1"
+    value=(decode_id(idinformation))
+    cursor.execute(sql,value)
+    informationjob=cursor.fetchone()
+    conn.close()
+    if informationjob is  None:
+        form=Employeeinformation(request)
+        userjob=informationUserJob(EmployeeNo=None,Companysitecode=None,Department=None,Directmanager=None,Workforcetype=None,Workingphone=None,Workingemail=None,
+                    Bankaccount=None,Bankname=None,Taxcode=None,Socialinsurancecode=None,Healthinsurancecardcode=None,Registeredhospitalname=None,Registeredhospitalcode=None)
+        temp=(0,' ')
+        companysitecode=[]
+        companysitecode.append(temp)
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select * from forextype "
+        cursor.execute(sql)
+        companysitecode_temp=cursor.fetchall()
+        conn.close()
+        for code in companysitecode_temp:
+            temp=(code[0],code[1])
+            companysitecode.append(temp)
+        await form.load_data()
+        if await form.is_valid():
+            form_method= await request.form()
+            code=form_method['companysitecode']
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="insert into informationUserJob values(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            value=(code,form.department,form.directmanager,
+                form.workfortype,form.Bankaccount,form.bankname,form.Taxcode,
+                form.Socialinsurancecode,form.Healthinsurancecardcode,form.Registeredhospitalname,
+                form.Registeredhospitalcode,decode_id(idinformation),1)
+            cursor.execute(sql,value)
+            conn.commit()
+            conn.close()
+            return RedirectResponse(url=f"/adminpage/usersmanager/createlaborcontract/{idinformation}",status_code=status.HTTP_302_FOUND)
+    else:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="""select * from laborContract l join  informationUserJob ij on l.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
+        where i.id=? and l.is_active=1 and ij.is_active=1"""
+        value=(decode_id(idinformation))
+        cursor.execute(sql,value)
+        labor=cursor.fetchone()  
+        conn.close() 
+        if labor is None:
+            return RedirectResponse(url=f"/adminpage/usersmanager/createlaborcontract/{idinformation}",status_code=status.HTTP_302_FOUND)
+        else:
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="""select * from forexSalary f join  informationUserJob ij on f.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
+            where i.id=? and f.is_active=1 and ij.is_active=1"""
+            value=(decode_id(idinformation))
+            cursor.execute(sql,value)
+            forex=cursor.fetchone()  
+            conn.close()
+            if forex is None:
+                return RedirectResponse(url=f"/adminpage/usersmanager/createforexsalary/{idinformation}",status_code=status.HTTP_302_FOUND)
+                
+            else:
+                
+                messages=[('success','information job employee is exist')]
+                return RedirectResponse(url="/adminpage/usersmanager",status_code=status.HTTP_302_FOUND)
+
+@admin.get('/adminpage/usersmanager/createlaborcontract/{idinformation}',response_class=HTMLResponse)
+async def createlaborcontract_get(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
+    form=laborcontractForm(request)
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUserJob where idinformationuser=? and is_active=1"
+    value=(decode_id(idinformation))
+    cursor.execute(sql,value)
+    idinformationuserjob=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":roleuser.value,
+        "roleadmin" : _roleadmin,
+        "image_path_admin":_image_path_admin,
+        "fullname_admin" : _fullname_admin,
+        "informationuserid":idinformation,
+        "form":form,
+       
+    }
+    return templates.TemplateResponse("admin/adminlaborcontract.html",context)
+
+@admin.post('/adminpage/usersmanager/createlaborcontract/{idinformation}',response_class=HTMLResponse)
+async def createlaborcontract(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
+    form=laborcontractForm(request)
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUserJob where idinformationuser=? and is_active=1"
+    value=(decode_id(idinformation))
+    cursor.execute(sql,value)
+    idinformationuserjob=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    await form.load_data()
+    if await form.is_valid():
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="insert into laborContract values(null,?,?,?,?,?,?,?)"
+        value=(form.Laborcontracttype,form.Laborcontractterm,form.Commencementdate,form.Position,form.Employeelevel,idinformationuserjob[0],1)
+        cursor.execute(sql,value)
+        conn.commit()
+        conn.close()
+        return RedirectResponse(url=f"/adminpage/usersmanager/createforexsalary/{idinformation}",status_code=status.HTTP_302_FOUND)
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":roleuser.value,
+        "roleadmin" : _roleadmin,
+        "image_path_admin":_image_path_admin,
+        "fullname_admin" : _fullname_admin,
+        "informationuserid":idinformation,
+        "form":form
+        
+    }
+    return templates.TemplateResponse("admin/adminlaborcontract.html",context)
+
+@admin.get('/adminpage/usersmanager/createforexsalary/{idinformation}',response_class=HTMLResponse)
+async def createforexsalary(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id,companysitecode from informationUserJob where idinformationuser=? and is_active=1"
+    value=(decode_id(idinformation))
+    cursor.execute(sql,value)
+    idinformationuserjob=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    form=forexsalaryForm(request)
+    form.forextype=idinformationuserjob[1]
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":roleuser.value,
+        "roleadmin" : _roleadmin,
+        "image_path_admin":_image_path_admin,
+        "fullname_admin" : _fullname_admin,
+        "informationuserid":idinformation,
+        "form":form
+        
+    }
+    return templates.TemplateResponse("admin/adminforexsalary.html",context)
+    
+   
+@admin.post('/adminpage/usersmanager/createforexsalary/{idinformation}',response_class=HTMLResponse)
+async def createforexsalary(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id,companysitecode from informationUserJob where idinformationuser=? and is_active=1"
+    value=(decode_id(idinformation))
+    cursor.execute(sql,value)
+    idinformationuserjob=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    form=forexsalaryForm(request)
+    form.forextype=idinformationuserjob[1]
+    await form.load_data()
+    if await form.is_valid():
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="insert into forexSalary values(?,?,?,?,?,?,?,1)"
+        value=(form.forextype,form.Annualsalary,form.Monthlysalary,
+               form.Monthlysalaryincontract,form.Quaterlybonustarget,form.Annualbonustarget,idinformationuserjob[0])
+        cursor.execute(sql,value)
+        conn.commit()
+        conn.close()
+
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select u.id from user_account u join informationUser i on u.id=i.id_useraccount where i.id=?"
+        value=(decode_id(idinformation))
+        cursor.execute(sql,value)
+        idaccount=cursor.fetchone()
+        conn.commit()
+        conn.close()
+
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="update user_account set role_id =1 where id=?"
+        value=(idaccount[0])
+        cursor.execute(sql,value)
+        conn.commit()
+        conn.close()
+        messages=['success','create information job employee is successful']
+        return RedirectResponse(url="/adminpage/usersmanager",status_code=status.HTTP_302_FOUND)
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":file_path_default,
+        "roleuser":roleuser.value,
+        "roleadmin" : _roleadmin,
+        "image_path_admin":_image_path_admin,
+        "fullname_admin" : _fullname_admin,
+        "informationuserid":idinformation,
+        "form":form,
+        
+    }
+    return templates.TemplateResponse("admin/adminforexsalary.html",context)
+    

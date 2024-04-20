@@ -66,3 +66,8 @@ class fullname_admindata:
     def __init__(self): 
         self.value=None
 fullname_adminsession=fullname_admindata()
+
+class role_admindata:
+    def __init__(self): 
+        self.value=None
+roleadmin=role_admindata()

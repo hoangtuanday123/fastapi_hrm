@@ -12,7 +12,7 @@ from globalvariable import is_admin,roleuser,rolegroup,readrights,writerights,id
 from admin.forms import groupuserForm
 import pyotp
 from authentication.models import verifyPassword
-from globalvariable import verify_password,messages
+from globalvariable import verify_password,messages,fullname_adminsession,image_path_adminsession,roleadmin
 from validation.forms import informationUserForm,latestEmploymentForm,usercccdForm
 core_bp = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -66,6 +66,9 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     #session['writerights']=None
     writerights.value=None
 
+    image_path_adminsession.value=None
+    fullname_adminsession.value=None
+    roleadmin.value=None
     if user_role[0]=="candidate":
         image_path = file_path_default
         fullname = _fullname
@@ -97,6 +100,9 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
 
         image_path_admin=_image_path_admin
         fullname_admin = _fullname_admin
+        image_path_adminsession.value=image_path_admin
+        fullname_adminsession.value=fullname_admin
+        roleadmin.value="admin"
         return RedirectResponse(url=f'/adminpage/{image_path_admin}/{fullname_admin}')
 
        
@@ -216,7 +222,7 @@ def getcodechangepassword(request:Request,current_user: User = Depends(get_curre
 @core_bp.get('/userinformation/{idaccount}', response_class=HTMLResponse)
 def userinformation_get(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
     global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
-    readrights.value=None    
+    #readrights.value=None    
     #session['readrights']=None
     form = informationUserForm(request)
     conn=db.connection()
@@ -251,16 +257,15 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
         "current_user":current_user,
         "form":form,
         "image_path":_image_path,
-        "image_path_admin":_image_path,
         "informationuserid":encode_id(str(user_temp[0])),
         "fullname":user_temp[1],
-        "roleuser":_roleuser,
+        "roleuser":roleuser.value,
         "idaccount":idaccount,
         "readrights":readrights.value,
         "fullname":_fullname,
-        
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -269,7 +274,7 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
 @core_bp.post('/userinformation/{idaccount}', response_class=HTMLResponse)
 def userinformation(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
     global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
-    readrights.value=None    
+    #readrights.value=None    
     #session['readrights']=None
     form = informationUserForm(request)
     conn=db.connection()
@@ -304,12 +309,15 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
         "current_user":current_user,
         "form":form,
         "image_path":_image_path,
-        "image_path_admin":_image_path,
+        
         "informationuserid":encode_id(str(user_temp[0])),
         "fullname":user_temp[1],
-        "roleuser":_roleuser,
+        "roleuser":roleuser.value,
         "idaccount":idaccount,
         "readrights":readrights.value,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -395,21 +403,24 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
             form.StartDate = user_temp[8]
             form.EndDate=user_temp[9]
         idaccount=current_user.id
-        if _roleadmin=="admin" :
+        if roleadmin.value=="admin" :
             idaccount=idaccountadminmanager.value
         context={
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":_roleuser,
+        "roleuser":roleuser.value,
         "form":form,
         "fullname":_fullname,
         "informationuserid":informationuserid,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+
+       
+       
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
@@ -452,25 +463,25 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     # else:
     #     _back_cccd = ""
     idaccount=current_user.id
-    if _roleadmin=="admin" :
-        idaccount=idaccountadminmanager.value
+    if roleadmin.value=="admin" :
+            idaccount=idaccountadminmanager.value
     print("front image is: "+ _front_cccd) 
     print("back image is: "+ _front_cccd)
     context={
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":_roleuser,
+        "roleuser":roleuser.value,
         "form":form,
         "fullname":_fullname,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
         "informationuserid":informationuserid,
         "front_cccd":_front_cccd,
         "back_cccd":_back_cccd,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value
     }
     return templates.TemplateResponse("core/user_cccd.html",context)
     
@@ -493,17 +504,17 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         df = pd.concat([df,df2])
     conn.close()
     idaccount=current_user.id
-    if _roleadmin=="admin" :
+    if roleadmin.value=="admin" :
         idaccount=idaccountadminmanager.value
     context={
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":_roleuser,
+        "roleuser":roleuser.value,
         "fullname":_fullname,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
@@ -514,7 +525,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
 @core_bp.get('/educationbackground/{informationuserid}', response_class=HTMLResponse)
 def educationbackground(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     idaccount=current_user.id
-    if _roleadmin=="admin" :
+    if roleadmin.value=="admin" :
         idaccount=idaccountadminmanager.value
     global _fullname
    
@@ -533,11 +544,11 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":_roleuser,
+        "roleuser":roleuser.value,
         "fullname":_fullname,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
@@ -560,17 +571,17 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
         df = pd.concat([df,df2])
     conn.close()   
     idaccount=current_user.id
-    if _roleadmin=="admin" :
+    if roleadmin.value=="admin" :
         idaccount=idaccountadminmanager.value 
     context={
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":_roleuser,
+        "roleuser":roleuser.value,
         "fullname":_fullname,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
