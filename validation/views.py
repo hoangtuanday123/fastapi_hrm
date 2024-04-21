@@ -20,7 +20,7 @@ env = Environment(
 )
 
 
-@validate.get("/informationuser",response_class=HTMLResponse)
+@validate.get("/informationuser",tags=["validation"],response_class=HTMLResponse)
 async def informationuser_get(request: Request,current_user: User = Depends(get_current_user_from_token)):
     form = informationUserForm(request)
     context={
@@ -32,7 +32,7 @@ async def informationuser_get(request: Request,current_user: User = Depends(get_
     return templates.TemplateResponse("validation/informationUserValidate.html",context)
 
 
-@validate.post("/informationuser",response_class=HTMLResponse)
+@validate.post("/informationuser",tags=["validation"],response_class=HTMLResponse)
 async def informationuser(request: Request,current_user: User = Depends(get_current_user_from_token)):
     messages=[]
     form = informationUserForm(request)
@@ -90,7 +90,7 @@ async def informationuser(request: Request,current_user: User = Depends(get_curr
     return templates.TemplateResponse("validation/informationUserValidate.html",context)
 
 
-@validate.get("/inactiveEmail",response_class=HTMLResponse)
+@validate.get("/inactiveEmail",tags=["validation"],response_class=HTMLResponse)
 def inactive_get(request: Request,current_user: User = Depends(get_current_user_from_token)):
     if current_user.is_information_validate:
         return RedirectResponse(url="/home")
@@ -101,7 +101,7 @@ def inactive_get(request: Request,current_user: User = Depends(get_current_user_
     }
     return templates.TemplateResponse("validation/inactiveEmail.html",context)
 
-@validate.post("/inactiveEmail",response_class=HTMLResponse)
+@validate.post("/inactiveEmail",tags=["validation"],response_class=HTMLResponse)
 def inactive(request: Request,current_user: User = Depends(get_current_user_from_token)):
     if current_user.is_information_validate:
         return RedirectResponse(url="/home")
@@ -126,7 +126,7 @@ def confirm_token(token, expiration=3600):
     except Exception:
         return False
     
-@validate.post("/confirm/{token}",response_class=HTMLResponse)
+@validate.post("/confirm/{token}",tags=["validation"],response_class=HTMLResponse)
 async def confirm_email(token,request: Request,current_user: User = Depends(get_current_user_from_token)):
     messages=[]
     if current_user.is_information_validate:
@@ -178,7 +178,7 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
         return RedirectResponse(url="/logout")
     return RedirectResponse(url="/home")
 
-@validate.get("/confirm/{token}",response_class=HTMLResponse)
+@validate.get("/confirm/{token}",tags=["validation"],response_class=HTMLResponse)
 async def confirm_email_get(token,request: Request,current_user: User = Depends(get_current_user_from_token)):
     messages=[]
     if current_user.is_information_validate:

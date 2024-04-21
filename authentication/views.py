@@ -27,7 +27,7 @@ VERIFY_2FA_URL = "/verify-2fa"
 templates = Jinja2Templates(directory="templates")
 
 
-@auth.get("/register", response_class=HTMLResponse)
+@auth.get("/register", response_class=HTMLResponse,tags=["authentication"])
 def register_get(request: Request):
     try:
         user = get_current_user_from_cookie(request)
@@ -42,7 +42,7 @@ def register_get(request: Request):
     return templates.TemplateResponse("authentication/register.html", context)
 
 
-@auth.post("resgisteraccersstoken")
+@auth.post("resgisteraccersstoken",tags=["authentication"])
 def resgister_for_access_token(response: Response, user: OAuth2PasswordRequestForm = Depends()) -> Dict[str, str]:
     access_token = create_access_token(data={"id":user.id})
     response.set_cookie(
@@ -52,7 +52,7 @@ def resgister_for_access_token(response: Response, user: OAuth2PasswordRequestFo
     )  
     return {settings.COOKIE_NAME: access_token, "token_type": "bearer"}
 
-@auth.post("/register", response_class=HTMLResponse)
+@auth.post("/register",tags=["authentication"], response_class=HTMLResponse)
 async def register(request: Request):
     messages=[]
     try:
@@ -113,7 +113,7 @@ async def register(request: Request):
     
     return templates.TemplateResponse("authentication/register.html", context)
 
-@auth.post("/setup-2fa", response_class=HTMLResponse)
+@auth.post("/setup-2fa",tags=["authentication"], response_class=HTMLResponse)
 async def setup_two_factor_auth(request: Request,current_user: User = Depends(get_current_user_from_token)):
     secret = current_user.secret_token
     uri = current_user.get_authentication_setup_uri()
@@ -127,7 +127,7 @@ async def setup_two_factor_auth(request: Request,current_user: User = Depends(ge
     }
     return templates.TemplateResponse("authentication/setup-2fa.html",context)
 
-@auth.get("/setup-2fa", response_class=HTMLResponse)
+@auth.get("/setup-2fa",tags=["authentication"], response_class=HTMLResponse)
 async def setup_two_factor_auth_get(request: Request,current_user: User = Depends(get_current_user_from_token)):
     secret = current_user.secret_token
     uri = current_user.get_authentication_setup_uri()
@@ -141,7 +141,7 @@ async def setup_two_factor_auth_get(request: Request,current_user: User = Depend
     }
     return templates.TemplateResponse("authentication/setup-2fa.html",context)
 
-@auth.get("/verify-2fa", response_class=HTMLResponse)
+@auth.get("/verify-2fa",tags=["authentication"], response_class=HTMLResponse)
 async def verify_two_factor_auth_get(request: Request,current_user: User = Depends(get_current_user_from_token)):
     form = TwoFactorForm(request)
     context={
@@ -150,7 +150,7 @@ async def verify_two_factor_auth_get(request: Request,current_user: User = Depen
         "current_user":current_user
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
-@auth.post("/verify-2fa", response_class=HTMLResponse)
+@auth.post("/verify-2fa",tags=["authentication"], response_class=HTMLResponse)
 async def verify_two_factor_auth(request: Request,current_user: User = Depends(get_current_user_from_token)):
     messages=[]
     form = TwoFactorForm(request)
@@ -203,7 +203,7 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
 
 
-@auth.get("/signin", response_class=HTMLResponse)
+@auth.get("/signin",tags=["authentication"], response_class=HTMLResponse)
 async def login_get(request: Request,response:Response):
     is_admin.value="None"
     try:
@@ -238,7 +238,7 @@ async def login_get(request: Request,response:Response):
 #     return is_admin.value
 
 
-@auth.post("/signin", response_class=HTMLResponse)
+@auth.post("/signin",tags=["authentication"], response_class=HTMLResponse)
 async def login(request: Request):
     try:
         current_user = get_current_user_from_cookie(request)
@@ -323,7 +323,7 @@ async def login(request: Request):
     }
     return templates.TemplateResponse("authentication/login.html", context)
 
-@auth.get("/forgotpassword", response_class=HTMLResponse )
+@auth.get("/forgotpassword",tags=["authentication"], response_class=HTMLResponse )
 async def forgotpassword_get(request: Request):
     try:
         current_user = get_current_user_from_cookie(request)
@@ -337,7 +337,7 @@ async def forgotpassword_get(request: Request):
         "current_user":current_user
     }
     return templates.TemplateResponse("authentication/forgotpassword.html",context)
-@auth.post("/forgotpassword", response_class=HTMLResponse )
+@auth.post("/forgotpassword",tags=["authentication"], response_class=HTMLResponse )
 async def forgotpassword(request: Request):
     try:
         current_user = get_current_user_from_cookie(request)
@@ -390,7 +390,7 @@ async def forgotpassword(request: Request):
     }
     return templates.TemplateResponse("authentication/forgotpassword.html",context)
     #return render_template("authentication/forgotpassword.html",form=form)
-@auth.get("/verifypassword", response_class=HTMLResponse)
+@auth.get("/verifypassword",tags=["authentication"], response_class=HTMLResponse)
 async def verifypassword_get(request:Request):
     try:
         current_user = get_current_user_from_cookie(request)
@@ -409,7 +409,7 @@ async def verifypassword_get(request:Request):
         "current_user":current_user
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
-@auth.post("/verifypassword", response_class=HTMLResponse)
+@auth.post("/verifypassword",tags=["authentication"], response_class=HTMLResponse)
 async def verifypassword(request:Request):
     try:
         current_user = get_current_user_from_cookie(request)
@@ -455,7 +455,7 @@ async def verifypassword(request:Request):
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
     #return render_template("authentication/verify-2fa.html", form=form)
 
-@auth.get("/changepassword",response_class=HTMLResponse)
+@auth.get("/changepassword",tags=["authentication"],response_class=HTMLResponse)
 async def changepassword_get(request:Request):
     try:
         current_user = get_current_user_from_cookie(request)
@@ -471,7 +471,7 @@ async def changepassword_get(request:Request):
     }
     return templates.TemplateResponse("authentication/changepassword.html",context)
 
-@auth.post("/changepassword",response_class=HTMLResponse)
+@auth.post("/changepassword",tags=["authentication"],response_class=HTMLResponse)
 async def changepassword(request:Request):
     try:
         current_user = get_current_user_from_cookie(request)

@@ -38,7 +38,7 @@ def calendar(year):
     weeks_in_year.pop()
     return weeks_in_year
 
-@ERP.get("/ERP/projectlist", response_class=HTMLResponse)
+@ERP.get("/ERP/projectlist",tags=['ERP'], response_class=HTMLResponse)
 def projectlist(request:Request,current_user: User = Depends(get_current_user_from_token)):
     global _image_path_admin,_fullname_admin
     conn=db.connection()
@@ -64,7 +64,7 @@ def projectlist(request:Request,current_user: User = Depends(get_current_user_fr
     return templates.TemplateResponse("ERP/projectlistadmin.html",context)
     #return render_template("ERP/projectlistadmin.html",projects=projects)
 
-@ERP.get("/ERP/createproject", response_class=HTMLResponse)
+@ERP.get("/ERP/createproject",tags=['ERP'], response_class=HTMLResponse)
 async def createproject_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
     global _image_path_admin,_fullname_admin
     form=addtaskweeklytimesheetForm(request)
@@ -90,7 +90,7 @@ async def createproject_get(request:Request,current_user: User = Depends(get_cur
     }
     return templates.TemplateResponse("ERP/createprojectadmin.html",context)
 
-@ERP.post("/ERP/createproject", response_class=HTMLResponse)
+@ERP.post("/ERP/createproject",tags=['ERP'], response_class=HTMLResponse)
 async def createproject(request:Request,current_user: User = Depends(get_current_user_from_token)):
     global _image_path_admin,_fullname_admin
     form=addtaskweeklytimesheetForm(request)
@@ -137,7 +137,7 @@ async def createproject(request:Request,current_user: User = Depends(get_current
     return templates.TemplateResponse("ERP/createprojectadmin.html",context)
 
 
-@ERP.get("/ERP/createtaskandcomponent/{idproject}",response_class=HTMLResponse)
+@ERP.get("/ERP/createtaskandcomponent/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def createtaskandcomponent_get(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
     form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
@@ -173,7 +173,7 @@ async def createtaskandcomponent_get(request:Request,idproject,current_user: Use
     }
     return templates.TemplateResponse("ERP/addtaskscomponentprojectadmin.html",context)
 
-@ERP.post("/ERP/createtaskandcomponent/{idproject}",response_class=HTMLResponse)
+@ERP.post("/ERP/createtaskandcomponent/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def createtaskandcomponent(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
     form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
@@ -230,7 +230,7 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
     }
     return templates.TemplateResponse("ERP/addtaskscomponentprojectadmin.html",context)
 
-@ERP.get("/ERP/deleteTask/{idproject}/{idtask}")
+@ERP.get("/ERP/deleteTask/{idproject}/{idtask}",tags=['ERP'])
 def deleteTask(idproject,idtask):
     conn=db.connection()
     cursor=conn.cursor()
@@ -241,7 +241,7 @@ def deleteTask(idproject,idtask):
     conn.close()
     return RedirectResponse(url=f"/ERP/createtaskandcomponent/{idproject}",status_code=status.HTTP_302_FOUND)
 
-@ERP.get("/ERP/deleteComponent/{idproject}/{idcomponent}")
+@ERP.get("/ERP/deleteComponent/{idproject}/{idcomponent}",tags=['ERP'])
 def deleteComponent(idproject,idcomponent):
     conn=db.connection()
     cursor=conn.cursor()
@@ -252,7 +252,7 @@ def deleteComponent(idproject,idcomponent):
     conn.close()
     return RedirectResponse(url=f"/ERP/createtaskandcomponent/{idproject}",status_code=status.HTTP_302_FOUND)
 
-@ERP.get("/ERP/assigngroup/{idproject}",response_class=HTMLResponse)
+@ERP.get("/ERP/assigngroup/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def assigngroupproject_get(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -272,7 +272,7 @@ async def assigngroupproject_get(request:Request,idproject,current_user: User = 
     }
     return templates.TemplateResponse("ERP/assigngroupprojectadmin.html",context)
 
-@ERP.post("/ERP/assigngroup/{idproject}",response_class=HTMLResponse)
+@ERP.post("/ERP/assigngroup/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def assigngroupproject(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -315,7 +315,7 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
     return templates.TemplateResponse("ERP/assigngroupprojectadmin.html",context)
 
 
-@ERP.get("/ERP/updateproject/{idproject}",response_class=HTMLResponse)
+@ERP.get("/ERP/updateproject/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def updateproject_get(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -349,7 +349,7 @@ async def updateproject_get(request:Request,idproject,current_user: User = Depen
     return templates.TemplateResponse("ERP/updateprojectadmin.html",context)   
     
 
-@ERP.post("/ERP/updateproject/{idproject}",response_class=HTMLResponse)
+@ERP.post("/ERP/updateproject/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def updateproject(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -395,7 +395,7 @@ async def updateproject(request:Request,idproject,current_user: User = Depends(g
     } 
     return templates.TemplateResponse("ERP/updateprojectadmin.html",context)   
     
-@ERP.get("/ERP/deleteproject/{idproject}")
+@ERP.get("/ERP/deleteproject/{idproject}",tags=['ERP'])
 def deleteproject(idproject,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -406,7 +406,7 @@ def deleteproject(idproject,current_user: User = Depends(get_current_user_from_t
     conn.close()
     return RedirectResponse(url="/ERP/projectlist",status_code=status.HTTP_302_FOUND)
 
-@ERP.get("/WeeklyTimesheet/{iduser}",response_class=HTMLResponse)
+@ERP.get("/WeeklyTimesheet/{iduser}",tags=['ERP'],response_class=HTMLResponse)
 def calendertimesheet_get(request:Request,iduser,current_user: User = Depends(get_current_user_from_token)):
     current_datetime = datetime.now()
     year=current_datetime.year
@@ -416,7 +416,7 @@ def calendertimesheet_get(request:Request,iduser,current_user: User = Depends(ge
     #weeks_in_year=calendar(year)
     return RedirectResponse(url=f"/WeeklyTimesheet/{iduser}/{year}/{weeknum}",status_code=status.HTTP_302_FOUND)
     
-@ERP.get("/WeeklyTimesheet/{iduser}/{year}/{weeknum}",response_class=HTMLResponse)
+@ERP.get("/WeeklyTimesheet/{iduser}/{year}/{weeknum}",tags=['ERP'],response_class=HTMLResponse)
 async def weeklytimesheet_get(request:Request,iduser,year,weeknum,current_user: User = Depends(get_current_user_from_token)):
     weeks_in_year=calendar(year)
     
@@ -468,7 +468,7 @@ async def weeklytimesheet_get(request:Request,iduser,year,weeknum,current_user: 
     } 
     return templates.TemplateResponse("ERP/WeeklyTimesheet.html",context)
 
-@ERP.post("/WeeklyTimesheet/{iduser}/{year}/{weeknum}",response_class=HTMLResponse)
+@ERP.post("/WeeklyTimesheet/{iduser}/{year}/{weeknum}",tags=['ERP'],response_class=HTMLResponse)
 async def weeklytimesheet(request:Request,iduser,year,weeknum,current_user: User = Depends(get_current_user_from_token)):
     # current_datetime = datetime.now()
     # year=current_datetime.year
@@ -649,7 +649,7 @@ def removetasks(weeklytimesheetid):
     conn.commit()
     conn.close()
 
-@ERP.get("/WeeklyTimesheet_addtask/{iduser}/{year}/{weeknum}/{weekdates}",status_code=status.HTTP_302_FOUND)
+@ERP.get("/WeeklyTimesheet_addtask/{iduser}/{year}/{weeknum}/{weekdates}",tags=['ERP'],status_code=status.HTTP_302_FOUND)
 async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user: User = Depends(get_current_user_from_token)): 
         #form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
@@ -693,7 +693,7 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
     }
     return templates.TemplateResponse("ERP/addtaskweeklytimesheet.html",context)     
     
-@ERP.post("/WeeklyTimesheet_addtask/{iduser}/{year}/{weeknum}/{weekdates}",status_code=status.HTTP_302_FOUND)
+@ERP.post("/WeeklyTimesheet_addtask/{iduser}/{year}/{weeknum}/{weekdates}",tags=['ERP'],status_code=status.HTTP_302_FOUND)
 async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: User = Depends(get_current_user_from_token)): 
     #form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
@@ -758,7 +758,7 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
     }
     return templates.TemplateResponse("ERP/addtaskweeklytimesheet.html",context)     
     
-@ERP.post('/get_tasks_and_components')
+@ERP.post('/get_tasks_and_components',tags=['ERP'])
 async def get_tasks_and_components(request:Request):
     form=await request.form()
     selected_project = form['selected_project']

@@ -21,7 +21,7 @@ _roleadmin = ""
 _image_path_admin = ""
 _fullname_admin = ""
 
-@employee.get("/employeepage/{image_path}/{fullname}", response_class=HTMLResponse)
+@employee.get("/employeepage/{image_path}/{fullname}",tags=['employee'], response_class=HTMLResponse)
 
 def employeepage(request:Request,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
@@ -45,7 +45,7 @@ def employeepage(request:Request,image_path,fullname,current_user: User = Depend
     }
     return templates.TemplateResponse("employee/employeepage.html",context)
 
-@employee.get("/informationuserjob/{informationuserid}",response_class=HTMLResponse)
+@employee.get("/informationuserjob/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 async def informationuserjob_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _informationuserjobid, _image_path_admin,_fullname_admin,_fullname,_roleuser,_image_path
     
@@ -132,7 +132,7 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
     } 
     return templates.TemplateResponse("core/informationuserjob.html",context)
     
-@employee.post("/informationuserjob/{informationuserid}",response_class=HTMLResponse)
+@employee.post("/informationuserjob/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 async def informationuserjob(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _informationuserjobid, _image_path_admin,_fullname_admin,_fullname,_roleuser,_image_path
     
@@ -254,7 +254,7 @@ def addlist(informationuserid,employeerelativeid,type):
     conn.close()
     return result[0]
 
-@employee.get("/employeepage/informationuserjob/laborcontract/{informationuserjobid}/{informationuserid}",response_class=HTMLResponse)
+@employee.get("/employeepage/informationuserjob/laborcontract/{informationuserjobid}/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 def laborcontract(request:Request,informationuserjobid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _image_path,_fullname,_roleuser,_informationuserjobid
     _roleadmin=""
@@ -294,7 +294,7 @@ def laborcontract(request:Request,informationuserjobid,informationuserid,current
     }
     return templates.TemplateResponse("core/contract.html",context)
     
-@employee.get("/employeepage/informationuserjob/forexsalary/{informationuserjobid}/{informationuserid}",response_class=HTMLResponse)
+@employee.get("/employeepage/informationuserjob/forexsalary/{informationuserjobid}/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 
 def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _image_path,_fullname,_roleuser,_informationuserjobid
@@ -331,7 +331,7 @@ def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,c
     }
     return templates.TemplateResponse("core/forexsalary.html",context)
     
-@employee.get("/employeepage/informationuserjob/employeerelativelist/{informationuserid}",response_class=HTMLResponse)
+@employee.get("/employeepage/informationuserjob/employeerelativelist/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 
 def employeerelativelist(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
@@ -365,7 +365,7 @@ def employeerelativelist(request:Request,informationuserid,current_user: User = 
         }
     return templates.TemplateResponse("core/employeeRelativeList.html",context)
 
-@employee.get("/employeepage/informationuserjob/employeerelativelist/addemployeerelationship/{informationuserid}",response_class=HTMLResponse)
+@employee.get("/employeepage/informationuserjob/employeerelativelist/addemployeerelationship/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 
 async def addemployeerelative_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _image_path, _fullname, _roleuser
@@ -402,7 +402,7 @@ async def addemployeerelative_get(request:Request,informationuserid,current_user
     
  
 
-@employee.post("/employeepage/informationuserjob/employeerelativelist/addemployeerelationship/{informationuserid}",response_class=HTMLResponse)
+@employee.post("/employeepage/informationuserjob/employeerelativelist/addemployeerelationship/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 
 async def addemployeerelative(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _image_path, _fullname, _roleuser
@@ -439,7 +439,7 @@ async def addemployeerelative(request:Request,informationuserid,current_user: Us
     return RedirectResponse(url=f"/employeepage/informationuserjob/employeerelativelist/{informationuserid}",status_code=status.HTTP_302_FOUND)
     
     
-@employee.get("/employeepage/informationuserjob/employeerelativelist/delete/{employeerelativeid}/{informationuserid}")
+@employee.get("/employeepage/informationuserjob/employeerelativelist/delete/{employeerelativeid}/{informationuserid}",tags=['employee'])
 
 def delete(employeerelativeid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
@@ -453,7 +453,7 @@ def delete(employeerelativeid,informationuserid,current_user: User = Depends(get
     conn.close()
     return RedirectResponse(url=f"/employeepage/informationuserjob/employeerelativelist/{informationuserid}",status_code=status.HTTP_302_FOUND)
 
-@employee.get("/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}",response_class=HTMLResponse)
+@employee.get("/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}",tags=['employee'],response_class=HTMLResponse)
 def employeerelative(request:Request,employeerelativeid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _image_path,_fullname,_roleuser        
     conn=db.connection()
@@ -494,7 +494,7 @@ def employeerelative(request:Request,employeerelativeid,informationuserid,curren
         }
     return templates.TemplateResponse("core/employeerelative.html",context)
     
-@employee.get("/employeepage/informationuserjob/deleterelative/{informationuserid}/{employeerelativeid}/{type}")
+@employee.get("/employeepage/informationuserjob/deleterelative/{informationuserid}/{employeerelativeid}/{type}",tags=['employee'])
 
 def deleterelative(informationuserid,employeerelativeid,type,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()

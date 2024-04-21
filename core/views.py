@@ -110,23 +110,23 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     else:
         return "You have not been granted access to the resource"
 
-@core_bp.get("/home")
+@core_bp.get("/home",tags=['user'])
 def home(current_user: User = Depends(get_current_user_from_token)): 
     return authorizationUser(current_user)
 
-@core_bp.post("/home")
+@core_bp.post("/home",tags=['user'])
 def home_get(current_user: User = Depends(get_current_user_from_token)): 
     return authorizationUser(current_user)
 
-@core_bp.get('/')
+@core_bp.get('/',tags=['user'])
 def index_get():
     return RedirectResponse(url='/startPage')
-@core_bp.post('/')
+@core_bp.post('/',tags=['user'])
 def index():
     return RedirectResponse(url='/startPage')
 
 
-@core_bp.get("/startPage",response_class=HTMLResponse)
+@core_bp.get("/startPage",tags=['user'],response_class=HTMLResponse)
 def startPage_get(request: Request):
     try:
         user = get_current_user_from_cookie(request)
@@ -136,7 +136,7 @@ def startPage_get(request: Request):
              "current_user":user}
     return templates.TemplateResponse("core/startPage.html",context)
 
-@core_bp.post("/startPage",response_class=HTMLResponse)
+@core_bp.post("/startPage",tags=['user'],response_class=HTMLResponse)
 def startPage(request: Request):
     try:
         user = get_current_user_from_cookie(request)
@@ -146,19 +146,19 @@ def startPage(request: Request):
              "current_user":user}
     return templates.TemplateResponse("core/startPage.html",context)
 
-@core_bp.get("/logout", response_class=HTMLResponse)
+@core_bp.get("/logout",tags=['user'], response_class=HTMLResponse)
 def logout_get():
     response = RedirectResponse(url="/")
     response.delete_cookie(settings.COOKIE_NAME)
     return response
 
-@core_bp.post("/logout", response_class=HTMLResponse)
+@core_bp.post("/logout",tags=['user'], response_class=HTMLResponse)
 def logout():
     response = RedirectResponse(url="/")
     response.delete_cookie(settings.COOKIE_NAME)
     return response
 
-@core_bp.get("/getcodechangepassword", response_class=HTMLResponse)
+@core_bp.get("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
 def getcodechangepassword_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
         messages.categorary=None
         messages.message=None
@@ -188,7 +188,7 @@ def getcodechangepassword_get(request:Request,current_user: User = Depends(get_c
             return RedirectResponse(url="/startPage")
             #return redirect(url_for("core.startPage"))
 
-@core_bp.post("/getcodechangepassword", response_class=HTMLResponse)
+@core_bp.post("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
 def getcodechangepassword(request:Request,current_user: User = Depends(get_current_user_from_token)):
         messages.categorary=None
         messages.message=None
@@ -219,7 +219,7 @@ def getcodechangepassword(request:Request,current_user: User = Depends(get_curre
             #return redirect(url_for("core.startPage"))
 
 # user profile page
-@core_bp.get('/userinformation/{idaccount}', response_class=HTMLResponse)
+@core_bp.get('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
 def userinformation_get(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
     global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
     #readrights.value=None    
@@ -271,7 +271,7 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
     return templates.TemplateResponse("core/user_information.html",context)
     
 
-@core_bp.post('/userinformation/{idaccount}', response_class=HTMLResponse)
+@core_bp.post('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
 def userinformation(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
     global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
     #readrights.value=None    
@@ -322,7 +322,7 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
     }
     return templates.TemplateResponse("core/user_information.html",context)
 # edit information user profile
-@core_bp.post('/edit_userInformation/{col}/{informationuserid}/{data_col}', response_class=HTMLResponse)
+@core_bp.post('/edit_userInformation/{col}/{informationuserid}/{data_col}',tags=['user'], response_class=HTMLResponse)
 def edit_userInformation(request:Request,col,informationuserid,data_col,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -356,7 +356,7 @@ def edit_userInformation(request:Request,col,informationuserid,data_col,current_
         idaccount= idaccountadminmanager.value
         return RedirectResponse(f'/userinformation/{idaccount}')
         
-@core_bp.get('/groupuserpage/{idinformationuser}', response_class=HTMLResponse)
+@core_bp.get('/groupuserpage/{idinformationuser}',tags=['user'], response_class=HTMLResponse)
 def groupuserpage(request: Request,idinformationuser,current_user: User = Depends(get_current_user_from_token)):
     #return idinformationuser
     conn=db.connection()
@@ -381,7 +381,7 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
-@core_bp.get('/latestEmployment/{informationuserid}', response_class=HTMLResponse)
+@core_bp.get('/latestEmployment/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 
 def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):     
         form = latestEmploymentForm(request)
@@ -424,7 +424,7 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
-@core_bp.get('/usercccd/{informationuserid}', response_class=HTMLResponse)
+@core_bp.get('/usercccd/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def usercccd(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _image_path,_front_cccd,_fullname,_roleuser
     
@@ -486,7 +486,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     return templates.TemplateResponse("core/user_cccd.html",context)
     
 
-@core_bp.get('/healthCheckCertificates/{informationuserid}',response_class=HTMLResponse)
+@core_bp.get('/healthCheckCertificates/{informationuserid}',tags=['user'],response_class=HTMLResponse)
 
 def healthCheckCertificates(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     
@@ -522,7 +522,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
     }    
     return templates.TemplateResponse("core/healthCheckCertificates.html",context)
 
-@core_bp.get('/educationbackground/{informationuserid}', response_class=HTMLResponse)
+@core_bp.get('/educationbackground/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def educationbackground(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     idaccount=current_user.id
     if roleadmin.value=="admin" :
@@ -556,7 +556,7 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     }
     return templates.TemplateResponse("core/educationbackground.html",context)       
 
-@core_bp.get('/qualification/{informationuserid}', response_class=HTMLResponse)
+@core_bp.get('/qualification/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _fullname
     # global _fullname
