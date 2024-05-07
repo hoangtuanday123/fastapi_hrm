@@ -8,164 +8,222 @@
               <div class="col-lg-8">
                   <div class="card mb-4">
                     <div class="card-body">
-                        
-                      <form action="/edit_informationcccd/No/{{informationuserid}}" role="form" method="POST">
+                      <form action="/edit_informationcccd/No/{{informationuserid}}/{{form.No}}" role="form" method="POST">
                         <div id = "" class="row">
                           <div class="col-sm-3">
                             <label for="No" class="mb-0">No</label>
                           </div>
                           <div class="col-sm-9" id="No-container">
-                            <input type="hidden" id="edit_mode_No" name="edit_mode" value="{{ edit_mode }}">
-                            
-                            {% if edit_mode %}
-                              <div class="input-group">
-                                <input type="text" id="No" name="No" class="form-control" placeholder="{{ form.No }}" style="margin-right: 5px;">
-                                <div class="input-group-append">
-                                  <button type="submit" class="btn btn-primary">Save</button>
+                            <div id="edit_mode_No_edit" style="display: none;" >
+                              <div class="row">
+                                <div class="col">
+                                    <input type="text" id="No" name="No" class="form-control" placeholder="{{ form.No }}">
                                 </div>
-                              </div>
-                            {% else %}
-                              <p class="text-muted mb-0">
-                                {{ form.No }}
-                                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('No','{{ form.No }}')"></i>
+                                <div class="col-auto ml-auto"> 
+                                    <div class="d-flex">
+                                        <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                        <button type="button" onclick="cancelEdit('No')" class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            </div>
+        
+                            <div id="edit_mode_No_show">
+                              <p class="col text-muted mb-0">
+                                  {{ form.No }}
+                                  {% if readrights == 4 or readrights == None %}
+                                      <span class="float-right">
+                                          <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('No','{{ form.No }}')"></i>
+                                      </span>
+                                  {% endif %}
                               </p>
-                            {% endif %}
+                          </div>
+                            
+                            
                           </div>
                         </div>
                       </form>
                       
                       <hr>
-                      
-                      <form action="/edit_informationcccd/FullName/{{informationuserid}}" role="form" method="POST">
+                      <form action="/edit_informationcccd/FullName/{{informationuserid}}/{{form.FullName}}" role="form" method="POST">
                         <div class="row">
                           <div class="col-sm-3">
                             <label for="FullName" class="mb-0">Full Name</label>
                           </div>
                           <div class="col-sm-9" id="FullName-container">
-                            <input type="hidden" id="edit_mode_FullName" name="edit_mode" value="{{ edit_mode }}">
-                            
-                            {% if edit_mode %}
-                            <div class="input-group">
-                              <input type="text" id="FullName" name="FullName" class="form-control" placeholder="{{form.FullName}}" style="margin-right: 5px;">
-                              <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Save</button>
-                              </div>
+                            <div id="edit_mode_FullName_edit" style="display: none;" >
+                              <div class="row">
+                                <div class="col">
+                                    <input type="text" id="FullName" name="FullName" class="form-control" placeholder="{{ form.FullName }}">
+                                </div>
+                                <div class="col-auto ml-auto"> 
+                                    <div class="d-flex">
+                                        <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                        <button type="button" onclick="cancelEdit('FullName')" class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
                             </div>
-                            {% else %}
-                              <p class="text-muted mb-0">
-                                {{ form.FullName }}
-                                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('FullName','{{form.FullName}}')"></i>
+                            
+                            </div>
+        
+                            <div id="edit_mode_FullName_show">
+                              <p class="col text-muted mb-0">
+                                  {{ form.FullName }}
+                                  {% if readrights == 4 or readrights == None %}
+                                      <span class="float-right">
+                                          <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('FullName','{{ form.FullName }}')"></i>
+                                      </span>
+                                  {% endif %}
                               </p>
-                            {% endif %}
+                          </div>
                           </div>
                         </div>
                       </form>
               
                       <hr>
-                      
-                      <form action="/edit_informationcccd/DateOfbirth/{{informationuserid}}" role="form" method="POST">
+              
+                      <form action="/edit_informationcccd/DateOfbirth/{informationuserid}/{form.DateOfbirth}}" role="form" method="POST">
                         <div class="row">
                           <div class="col-sm-3">
                             <label for="DateOfbirth" class="mb-0">Date Of Birth</label>
                           </div>
                           <div class="col-sm-9" id="DateOfbirth-container">
-                            <input type="hidden" id="edit_mode_DateOfbirth" name="edit_mode" value="{{ edit_mode }}">
-                            
-                            {% if edit_mode %}
-                            <div class="input-group">
-                              <input type="text" id="DateOfbirth" name="DateOfbirth" class="form-control" placeholder="{{form.DateOfbirth}}" style="margin-right: 5px;">
-                              <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Save</button>
-              
-                              </div>
+                            <div id="edit_mode_DateOfbirth_edit" style="display: none;" >
+                              <div class="row">
+                                <div class="col">
+                                    <input type="text" id="DateOfbirth" name="DateOfbirth" class="form-control" placeholder="{{ form.DateOfbirth }}">
+                                </div>
+                                <div class="col-auto ml-auto"> 
+                                    <div class="d-flex">
+                                        <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                        <button type="button" onclick="cancelEdit('DateOfbirth')" class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
                             </div>
-                            {% else %}
-                              <p class="text-muted mb-0">
-                                {{ form.DateOfbirth }}
-                                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('DateOfbirth','{{form.DateOfbirth}}')"></i>
+                            
+                            </div>
+        
+                            <div id="edit_mode_DateOfbirth_show">
+                              <p class="col text-muted mb-0">
+                                  {{ form.DateOfbirth}}
+                                  {% if readrights == 4 or readrights == None %}
+                                      <span class="float-right">
+                                          <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('FullDateOfbirthname','{{ form.DateOfbirth}}')"></i>
+                                      </span>
+                                  {% endif %}
                               </p>
-                            {% endif %}
+                          </div>
                           </div>
                         </div>
                       </form>
               
                       <hr>
-                      
-                      <form action="/edit_informationcccd/PlaceOfBirth/{{informationuserid}}" role="form" method="POST">
+                      <form action="/edit_informationcccd/PlaceOfBirth/{{informationuserid}}/{{form.PlaceOfBirth}}" role="form" method="POST">
                         <div class="row">
                           <div class="col-sm-3">
                             <label for="PlaceOfBirth" class="mb-0">Place Of Birth</label>
                           </div>
                           <div class="col-sm-9" id="PlaceOfBirth-container">
-                            <input type="hidden" id="edit_mode_PlaceOfBirth" name="edit_mode" value="{{ edit_mode }}">
-                            
-                            {% if edit_mode %}
-                            <div class="input-group">
-                              <input type="text" id="PlaceOfBirth" name="PlaceOfBirth" class="form-control" placeholder="{{form.PlaceOfBirth}}" style="margin-right: 5px;">
-                              <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Save</button>
-                              </div>
+                            <div id="edit_mode_PlaceOfBirth_edit" style="display: none;" >
+                              <div class="row">
+                                <div class="col">
+                                    <input type="text" id="PlaceOfBirth" name="PlaceOfBirth" class="form-control" placeholder="{{ form.PlaceOfBirth }}">
+                                </div>
+                                <div class="col-auto ml-auto"> 
+                                    <div class="d-flex">
+                                        <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                        <button type="button" onclick="cancelEdit('PlaceOfBirth')" class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
                             </div>
-                            {% else %}
-                              <p class="text-muted mb-0">
-                                {{ form.PlaceOfBirth }}
-                                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('PlaceOfBirth','{{form.PlaceOfBirth}}')"></i>
+                            
+                            </div>
+        
+                            <div id="edit_mode_PlaceOfBirth_show">
+                              <p class="col text-muted mb-0">
+                                  {{ form.PlaceOfBirth }}
+                                  {% if readrights == 4 or readrights == None %}
+                                      <span class="float-right">
+                                          <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('PlaceOfBirth','{{ form.PlaceOfBirth }}')"></i>
+                                      </span>
+                                  {% endif %}
                               </p>
-                            {% endif %}
+                          </div>
                           </div>
                         </div>
                       </form>
               
                       <hr>
-                      
-                      <form action="/edit_informationcccd/Address/{{informationuserid}}" role="form" method="POST">
+              
+                      <form action="/edit_informationcccd/Address/{{informationuserid}}/{{form.Address}}" role="form" method="POST">
                         <div class="row">
                           <div class="col-sm-3">
                             <label for="Address" class="mb-0">Address</label>
                           </div>
                           <div class="col-sm-9" id="Address-container">
-                            <input type="hidden" id="edit_mode_Address" name="edit_mode" value="{{ edit_mode }}">
-                            
-                            {% if edit_mode %}
-                            <div class="input-group">
-                              <input type="text" id="Address" name="Address" class="form-control" placeholder="{{form.Address}}" style="margin-right: 5px;">
-                              <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Save</button>
-                              </div>
+                            <div id="edit_mode_Address_edit" style="display: none;" >
+                              <div class="row">
+                                <div class="col">
+                                    <input type="text" id="Address" name="Address" class="form-control" placeholder="{{ form.Address}}">
+                                </div>
+                                <div class="col-auto ml-auto"> 
+                                    <div class="d-flex">
+                                        <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                        <button type="button" onclick="cancelEdit('Address')" class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
                             </div>
-                            {% else %}
-                              <p class="text-muted mb-0">
-                                {{ form.Address }}
-                                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Address','{{form.Address}}')"></i>
+                            
+                            </div>
+        
+                            <div id="edit_mode_Address_show">
+                              <p class="col text-muted mb-0">
+                                  {{ form.Address }}
+                                  {% if readrights == 4 or readrights == None %}
+                                      <span class="float-right">
+                                          <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Address','{{ form.Address }}')"></i>
+                                      </span>
+                                  {% endif %}
                               </p>
-                            {% endif %}
+                          </div>
                           </div>
                         </div>
                       </form>
               
                       <hr>
-                      
-                      <form action="/edit_informationcccd/IssueOn/{{informationuserid}}" role="form" method="POST">
+              
+                      <form action="/edit_informationcccd/IssueOn/{{informationuserid}}/{{form.IssueOn}}" role="form" method="POST">
                         <div class="row">
                           <div class="col-sm-3">
                             <label for="IssueOn" class="mb-0">Issue On</label>
                           </div>
                           <div class="col-sm-9" id="IssueOn-container">
-                            <input type="hidden" id="edit_mode_IssueOn" name="edit_mode" value="{{ edit_mode }}">
-                            
-                            {% if edit_mode %}
-                            <div class="input-group">
-                              <input type="text" id="IssueOn" name="IssueOn" class="form-control" placeholder="{{form.IssueOn}}" style="margin-right: 5px;">
-                              <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Save</button>
-                              </div>
+                            <div id="edit_mode_IssueOn_edit" style="display: none;" >
+                              <div class="row">
+                                <div class="col">
+                                    <input type="text" id="IssueOn" name="IssueOn" class="form-control" placeholder="{{ form.IssueOn }}">
+                                </div>
+                                <div class="col-auto ml-auto"> 
+                                    <div class="d-flex">
+                                        <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                        <button type="button" onclick="cancelEdit('IssueOn')" class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
                             </div>
-                            {% else %}
-                              <p class="text-muted mb-0">
-                                {{ form.IssueOn }}
-                                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('IssueOn','{{form.IssueOn}}')"></i>
+                            
+                            </div>
+        
+                            <div id="edit_mode_IssueOn_show">
+                              <p class="col text-muted mb-0">
+                                  {{ form.IssueOn }}
+                                  {% if readrights == 4 or readrights == None %}
+                                      <span class="float-right">
+                                          <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('IssueOn','{{ form.IssueOn }}')"></i>
+                                      </span>
+                                  {% endif %}
                               </p>
-                            {% endif %}
+                          </div>
                           </div>
                         </div>
                       </form>
@@ -190,8 +248,7 @@
                                   {% if front_cccd %}
                                       <div class="spacer"></div>
                                       <div style="width: 150px; height: auto;">
-                                        
-                                          <img src="/display/front_cccd" class="rotated-image" alt="front CCCD image">
+                                          <img src="{{ url_for('display_image', path=front_cccd) }}" class="rotated-image" alt="front CCCD image">
                                       </div>
                                   {% endif %}
                               </div>
@@ -207,14 +264,13 @@
                                   {% if front_cccd %}
                                       <div class="spacer"></div>
                                       <div style="width: 150px; height: auto;">
-                                        
-                                          <img src="/display/back_cccd" class="rotated-image" alt="back CCCD image">
+                                          <img src="{{ url_for('display_image', path=back_cccd) }}" class="rotated-image" alt="back CCCD image">
                                       </div>
                                   {% endif %}
                               </div>
                                 <div class="row">
                                   <div class="col-sm-3">
-                                    <input type=submit value=Upload, style="margin-top: 10px;">
+                                    <input class="btn btn-primary mb-3" type=submit value=Upload>
                                   </div>
                                   
                                 </div>

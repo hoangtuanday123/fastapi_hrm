@@ -15,6 +15,8 @@ _role_user = ""
 _roleadmin = "admin"
 _image_path_admin = ""
 _fullname_admin = ""
+_image_path = ""
+_fullname = ""
 
 ERP=APIRouter()
 def calendar(year):

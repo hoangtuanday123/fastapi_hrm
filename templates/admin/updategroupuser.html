@@ -2,148 +2,221 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-    <main class="form-signin w-100 m-auto">
-        <h1 class="h3 mb-3 fw-normal text-center">group user</h1>
-        <form role="form" method="post">
-            <div >
-                <div class="form-floating">
-                    <label>group</label>
-                    <input class="form-control mb-2" type="text" name="group" value="{{ form.group }}">
-                  
-                </div>
-                <div class="form-floating">
-                    <label>alias</label>
-                    <input class="form-control mb-2" type="text" name="alias" value="{{ form.alias }}">
-                  
-                </div>
-                <div class="form-floating">
-                    <label>email</label>
-                    <input class="form-control mb-2" type="text" name="email" value="{{ form.email }}">
-                  
-                </div>
-                <label>url</label>
-                <div class="form-floating">
-                    <input class="form-control mb-2" type="text" name="url" value="{{ form.url }}">
-                  
-                </div>
-                <div class="form-floating">
-                    <label>description</label>
-                    <input class="form-control mb-2" type="text" name="description" value="{{ form.description }}">
-                  
-                </div>
-                {% if rolegroup =="admin" or rolegroup =="manager" %}
-                <div class="input-group-append">
-                    <button name="updategroup" value="updategroup" type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Update</button>
-                    <button name="deletegroup" value="deletegroup" type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-                </div>
-                {% endif %}
-            </div>
-        </form>
-        {% if rolegroup =="admin" or rolegroup =="manager" %}
-        <div class="row">
-            <div class="col-sm-3">
-                <p class="mb-0" style="color:red">ADD USER</p>    
-            </div>
-        </div>
-        <br>
-    
-        <form method="post">
-            <div class="row">
-              
-              <div class="col-sm-9">
-                  <div class="row">
-                    <div class="col-sm-3">
-                        <label for="chooseuser" class="mb-0">choose user</label>
-                    </div>
-                      <div class="col-md-6">
-                          <select class="form-select" id="usersSelect" name="usersSelect" style="width: 200px;">
-                            {% for user in usersSelect %}
-                            <option value="{{ user[0] }}">{{ user[1] }}</option>
-                            {% endfor %}
-                          </select>
-                      </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 bg-light">
+            <form role="form" method="post">
+                <div >
+                    <div class="form-floating">
+                        <label>Group</label>
+                        <input class="form-control mb-2" type="text" name="group" placeholder="Enter Your New Group Name">
                       
-                  </div>
-                  <div class="row">
-                    <div class="col-sm-3">
-                        <label for="chooseuser" class="mb-0">choose group role</label>
                     </div>
-                    <div class="col-md-6">
-                        <select class="form-select" id="grouprole" name="grouprole" style="width: 200px;">
-                          {% for role in grouprole %}
-                          <option value="{{ role[0] }}">{{ role[1] }}</option>
-                          {% endfor %}
-                        </select>
-                      </div>
-                  </div>
-                  
-                  <div class="col-md-6">
-                    <button type="submit" value="adduser" name="adduser" class="btn btn-primary">ADD</button>
-                  </div>
-                  
-              </div>
-          </div>
-        </form>
-        {% endif %}
-        <!-- Display existing records -->
-        {% if rolegroup=='leader' or rolegroup=='member' or rolegroup=='client'  %}
-            <div class="row">
-              <div class="col-sm-3">
-                  <p class="mb-0" style="color:red">LIST USER</p>    
-              </div>
+                    <div class="form-floating">
+                        <label>Alias</label>
+                        <input class="form-control mb-2" type="text" name="alias" placeholder="Enter Your Alias">
+                      
+                    </div>
+                    <div class="form-floating">
+                        <label>Email</label>
+                        <input class="form-control mb-2" type="text" name="email" placeholder="Enter Your Email Address" >
+                      
+                    </div>
+                    <label>URL</label>
+                    <div class="form-floating">
+                        <input class="form-control mb-2" type="text" name="url" placeholder="Enter Your URL Address" >
+                      
+                    </div>
+                    <div class="form-floating">
+                        <label>Description</label>
+                        <input class="form-control mb-2" type="text" name="description" placeholder="Enter Your Description About New Group" >
+                      
+                    </div>
+                    {% if rolegroup =="admin" or rolegroup =="manager" %}
+                    <div class="input-group-append">
+                        <button name="deletegroup" value="deletegroup" type="submit" class="btn btn-danger ml-auto mr-2"> Cancel</button>
+                        <button name="updategroup" value="updategroup" type="submit" class="btn btn-success"> Save</button>
+                        
+                    </div>
+                    {% endif %}
+                </div>
+            </form>
+
+           
+        </div>
+
+        <div class="col-md-9 bg-lightblue">
+            <div class="card-header">
+                LIST USER
             </div>
-            <br>
-        {% endif %}
-
-  <table class="table">
-    <thead>
-        <tr>
-            <th>Full Name</th>
-            <th>role group</th>
-            <th>group name</th>
-            <th>created date</th>
-            {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client" %}
-            <th>Detail</th>
+            {% if rolegroup =="admin" or rolegroup =="manager" %}  
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p class="text-danger">ADD USER</p>
+                    </div>
+                </div>
+            
+                <form method="post">
+                    <div class="row align-items-end mb-4">
+                        <div class="col-sm-3">
+                            <label for="usersSelect" class="mb-0 mr-1">Choose user:</label>
+                            <select class="custom-select" id="usersSelect" name="usersSelect">
+                                {% for user in usersSelect %}
+                                <option value="{{ user[0] }}">{{ user[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-">
+                            <label for="grouprole" class="mb-0 mr-1">Choose group role:</label>
+                            <select class="custom-select" id="grouprole" name="grouprole">
+                                {% for role in grouprole %}
+                                <option value="{{ role[0] }}">{{ role[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="submit" name="adduser" value="adduser" class="btn btn-primary">ADD</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            
+            
             {% endif %}
-            {% if rolegroup =="admin" or rolegroup =="manager" %}
-            <th>Delete</th>
+            {% if rolegroup=='leader' or rolegroup=='member' or rolegroup=='client'  %}
+                <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0" style="color:red">LIST USER</p>    
+                </div>
+                </div>
+                <br>
             {% endif %}
-    
 
-        </tr>
-    </thead>
-    <tbody>
-      {% for user in users %}
-            <tr>
-                <td>{{user[1]}}</td>
-                <td>{{user[2]}}</td>
-                <td>{{user[3]}}</td>
-                <td>{{user[4]}}</td>
-                {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client"%}
-                <td>
-                  <button onclick="location.href='/adminpage/usersmanager/lookinformationuser/{{user[5]}}'" >view</button>
-                </td>
-                {% endif %}
-                {% if rolegroup =="admin" or rolegroup =="manager" %}
-                <td>
-                  <a href="/adminpage/groupuserpage/updategroupuser/deleteuser/{{user[0]}}/{{idgroup}}/{{rolegroup}}"
-                
-                    class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash-alt"></i> 
-                </a>
-                </td>
-                {% endif %}
-                
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-    </main>
-  </div>
-  <div class="col-md-4"></div>
+            <div class="container-fluid" >
+                        <div class="card-body py-2 row">
+                                <div class="mr-auto d-flex align-items-center ml-4">
+                                    <label for="entries" class="mr-2">Show</label>
+                                    <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
+                                        <option value="5">5</option>
+                                        <option value="10" selected>10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                    <label for="entries" class="mr-4">Entries</label>
+                                    
+                                    <button class="btn btn-danger">Remove</button>
+                                </div>
+                                <div class="search-container ml-auto mr-4">
+                                    <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
+                                </div>
+                            </div>
+                    
+                    <div class="card-body"  >
+                        <div class="text-center" >
+                            <table id="myTable"  width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                        <th>Full Name 
+                                            <!-- <br> <input  id="columnSearch" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Search On Role Column"> -->
+                                        </th>
+                                        <th>Group Name</th>
+                                            
+                                        <th>Role</th>
+                                        <th>Created Date</th>
+                                        {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client" %}
+                                        <th>Detail</th>
+                                        {% endif %}
+                                        {% if rolegroup =="admin" or rolegroup =="manager" %}
+                                        <th>Delete</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                
+        
+                                
+                                <tbody >
+                                    {% for user in users %}
+                                    <tr>
+                                        <td class="text-center"><input type="checkbox"></td>
+                                        <td>{{user[1]}}</td>
+                                        <td class="text-center">{{user[3]}}</td>
+                                        <td >{{user[2]}}
+                                        </td>
+                                        <td> {{user[4]}}</td>
+                                        {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client"%}
+                                        <td class="text-center">
+                                            <a href="/userinformation/{{user[5]}}" style="color:#858796" >
+                                                View
+                                            </a></td>
+                                        {% endif %}
+                                        {% if rolegroup =="admin" or rolegroup =="manager" %}
+                                        <td class="text-center">
+                                            <a href="/adminpage/groupuserpage/updategroupuser/deleteuser/{{user[0]}}/{{idgroup}}/{{rolegroup}}" style="color:#858796" >
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                        {% endif %}
+                                        
+                                    </tr>
+                                {% endfor %}    
+                                </tbody>
+                            </table>
+                            <div class="row" >
+                                <p class="mr-auto ml-3" >
+                                    Showing <span id="startEntry"></span> to <span id="endEntry"></span> of <span id="totalEntries"></span> entries
+        
+                                </p>
+                                <p class="ml-auto">
+                                    <div class="pagination mr-3">
+                                        <!-- Button with double chevron left -->
+                                        <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                                        <!-- Button with single chevron left -->
+                                        <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                                        <!-- Pagination container for page numbers -->
+                                        <div id="paginationContainer" class="pagination-container">
+                                            <!-- Page numbers will be dynamically added here -->
+                                        </div>
+                                        <!-- Button with single chevron right -->
+                                        <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                                        <!-- Button with double chevron right -->
+                                        <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+                                    </div>
+                                    <!-- Hidden div for displaying current page and total pages -->
+                                    <div style="display: none;">
+                                        Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+                                    </div>
+                                </p>
+                                
+                            </div>
+                            
+                        </div>
+                              </div>
+                </div>
+        
+            </div>
+            
+        </div>
+    </div>
 </div>
+{% block JavaScript%}
+<script src="{{url_for('static',path='js/table_role.js')}}"></script>
+<script>
+    // Function to handle the click event of the "Select All" checkbox
+    document.getElementById("selectAllCheckbox").addEventListener("click", function() {
+        // Get all checkboxes in the table body
+        var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+
+        // Loop through each checkbox and set its checked state to match the "Select All" checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = document.getElementById("selectAllCheckbox").checked;
+        });
+    });
+</script>
+
+{%endblock%}
 
 {% endblock %}

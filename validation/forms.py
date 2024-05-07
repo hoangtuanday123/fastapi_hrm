@@ -60,7 +60,7 @@ class latestEmploymentForm:
         self.request: Request = request
         self.errors: List = []
         self.Employer: Optional[str] = None
-        self.Jobtittle: Optional[str] = None
+        self.JobTitle: Optional[str] = None
         self.AnnualSalary: Optional[str] = None
         self.AnnualBonus: Optional[str] = None
         self.RetentionBonus: Optional[str] = None
@@ -75,7 +75,7 @@ class latestEmploymentForm:
         self.Employer = form.get(
             "Employer"
         )  # since outh works on username field we are considering email as username
-        self.Jobtittle = form.get("Jobtittle")
+        self.JobTittle = form.get("Jobtittle")
         self.AnnualSalary = form.get("AnnualSalary")
         self.AnnualBonus = form.get("AnnualBonus")
         self.RetentionBonus = form.get("RetentionBonus")

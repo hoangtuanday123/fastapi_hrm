@@ -1,86 +1,183 @@
 {% extends "admin/adminpage.html" %}
-
 {% block content %}
 
-<div class="row">
-  <div class="col-md-4"></div>
-  <div >
-    <main class="form-signin w-100 m-auto">
-        <h1 class="h3 mb-3 fw-normal text-center" style="color:red">List project</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>project id</th>
-                    <th>project name</th>
-                    <th>project type</th>
-                    <th>manager</th>
-                    <th>project team</th>
-                    <th>start date</th>
-                    <th>end date</th>
-                    <th>status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for project in projects %}
-                <tr>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[0] }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[1] }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[2] }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[3] }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[4] }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[5] }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[6] }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ project[7] }}
-                        </div>
-                    </td>
-                    <td>
-                        <a href="/ERP/updateproject/{{project[0]}}" class="btn btn-warning">
-                            <i class="fas fa-edit"></i> 
-                        </a>
-                    </td>
-                  
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<body>
+    <div >
+        
+             <!-- Begin Page Content -->
+    <div class="container-fluid" >
+        <!-- Page Heading -->
+        <!-- <h1 class="h3 mb-2 text-gray-800">Role List</h1> -->
+
+        <!-- DataTales Example -->
         <button onclick="location.href='/ERP/createproject'" class="btn btn-success w-100 mb-3">
             <i class="fas fa-plus"></i> Create project
         </button>
-    </main>
-  </div> 
-  <div class="col-md-4"></div>
+            <div class="card-header py-3 row">
+                <h6 class="m-0 font-weight-bold text-primary">The List Of Project</h6>
+            </div>
+            <!-- HTML -->
+                <div class="card-body py-2 row">
+                        <div class="mr-auto d-flex align-items-center ml-4">
+                            <label for="entries" class="mr-2">Show</label>
+                            <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label for="entries" class="mr-4">Entries</label>
+                            
+                            <button class="btn btn-danger mr-2">Remove</button>
+                            <a href="/ERP/createproject" class="btn btn-success">New</a>
+
+                        </div>
+                        <div class="search-container ml-auto mr-4">
+                            <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
+                        </div>
+                    </div>
+            
+            <div class="card-body"  >
+                <div class="text-center" >
+                    <table id="myTable"  width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                <th>Project ID 
+                                    <!-- <br> <input  id="columnSearch" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Search On Role Column"> -->
+                                </th>
+                                <th>Project Name</th>
+                                <th>Project Type</th>
+                                <th>Manager</th>
+                                <th>Teams</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Update</th>
+                                
+                            </tr>
+                        </thead>
+                        
+
+                        
+                        <tbody >
+                            {% for project in projects %}
+                            <tr>
+                                <tr>
+                                    <td class="text-center"><input type="checkbox"></td>
+                                    <td>
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[0] }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[1] }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[2] }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[3] }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[4] }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[5] }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[6] }}
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ project[7] }}
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <a href="/ERP/updateproject/{{project[0]}}" style="color:#858796" >
+                                            <i class="fas fa-edit"></i> 
+                                            </a>
+                                    </td>
+                                  
+                                </tr>
+                        {% endfor %}    
+                        </tbody>
+                    </table>
+                    <div class="row" >
+                        <p class="mr-auto ml-3" >
+                            Showing <span id="startEntry"></span> to <span id="endEntry"></span> of <span id="totalEntries"></span> entries
+
+                        </p>
+                        <p class="ml-auto">
+                            <div class="pagination mr-3">
+                                <!-- Button with double chevron left -->
+                                <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                                <!-- Button with single chevron left -->
+                                <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                                <!-- Pagination container for page numbers -->
+                                <div id="paginationContainer" class="pagination-container">
+                                    <!-- Page numbers will be dynamically added here -->
+                                </div>
+                                <!-- Button with single chevron right -->
+                                <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                                <!-- Button with double chevron right -->
+                                <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+                            </div>
+                            <!-- Hidden div for displaying current page and total pages -->
+                            <div style="display: none;">
+                                Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+                            </div>
+                        </p>
+                        
+                    </div>
+                    
+                </div>
+                      </div>
+        </div>
+
+    </div>
+    <!-- /.container-fluid -->
+
 </div>
+<!-- End of Main Content -->
 
 
+
+
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+<i class="fas fa-angle-up"></i>
+</a>
+    </div>
+</body>
+{% block JavaScript%}
+<script src="{{url_for('static',path='js/table_role.js')}}"></script>
+<script>
+    // Function to handle the click event of the "Select All" checkbox
+    document.getElementById("selectAllCheckbox").addEventListener("click", function() {
+        // Get all checkboxes in the table body
+        var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+
+        // Loop through each checkbox and set its checked state to match the "Select All" checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = document.getElementById("selectAllCheckbox").checked;
+        });
+    });
+</script>
+
+{%endblock%}
 {% endblock %}

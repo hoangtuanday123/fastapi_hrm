@@ -9,10 +9,9 @@
       <form role="form" method="post" action="">
         {{ form.csrf_token }}
         <h1 class="h3 mb-3 fw-normal text-center">Enter OTP</h1>
-
+        <p class="text-center">Please check your Google Authentication App for the OTP</p>
         <div class="form-floating">
-          <label>OTP</label>
-          <input class="form-control mb-2" type="text" name="otp" value="{{ form.otp }}">
+          <input class="form-control mb-2" placeholder="Enter OTP" type="text" name="otp">
         </div>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Verify</button>
       </form>

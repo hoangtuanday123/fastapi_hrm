@@ -1,642 +1,723 @@
 {% extends "core/user_profile.html" %}
 
 {% block content_body %}
-              <!-- child template -->
+          
+<!-- child template -->
 {% if readrights==2 or readrights==3 or readrights==4 or readrights is none %}
 <div class="col-lg-8">
     <div class="card mb-4">
-      <div class="card-body">
-        
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="EmployeeNo" class="mb-0">Employee No</label>
-            </div>
-            <div class="col-sm-9" id="EmployeeNo-container">
-              <p class="text-muted mb-0">
-                {{userjob.EmployeeNo}}
-              </p>
-            </div>
-        <hr>
-            <hr>
+      
+      <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+          <button class="btn btn-sm btn-outline-secondary mr-1" data-table="informationJob" type="button">Information Job</button>
+          <button class="btn btn-sm btn-outline-secondary mr-1" data-table="Insurance" type="button">Insurance</button>
 
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="Companysitecode" class="mb-0">Company Site Code</label>
-          </div>
-          <div class="col-sm-9" id="Companysitecode-container">
-            <p class="text-muted mb-0">
-              {{userjob.Companysitecode}}
-            </p>
-          </div>
+          {% if readrights==3 or readrights==4 or readrights is none %}
+          <button class="btn btn-sm btn-outline-secondary mr-1" onclick="location.href='/employeepage/informationuserjob/laborcontract/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Contract</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="location.href='/employeepage/informationuserjob/forexsalary/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Forex Salary</button>
+          {% endif %}
+        </form>
+      </nav>
+      <div id="section">
+        <div  id="informationJob" style="display: none;" >
+          <div  class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <label  class="mb-0">Employee No</label>
+                </div>
+                <div class="col-sm-9" >     
+        
+                      <div >
+                        <p class="col text-muted mb-0">
+                          {{userjob.EmployeeNo}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        
+          
           <hr>
-
-
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="Department" class="mb-0">Department</label>
-          </div>
-          <div class="col-sm-9" id="Department-container">
-            <p class="text-muted mb-0">
-              {{userjob.Department}}
-            </p>
-          </div>
-    
-          <hr>
-
-          <div id = "" class="row">
+          <div class="row">
             <div class="col-sm-3">
-              <label for="Directmanager" class="mb-0">Direct Manager</label>
+                <label  class="mb-0">Company Site Code</label>
             </div>
-            <div class="col-sm-9" id="Directmanager-container">
-              <p class="text-muted mb-0">
-                {{userjob.Directmanager}}
-              </p>
-            </div>
-
-            <hr>
-
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Workforcetype" class="mb-0">Work Force Type</label>
-            </div>
-            <div class="col-sm-9" id="Workforcetype-container">
-              <p class="text-muted mb-0">
-                {{userjob.Workforcetype}}
-              </p>
-            </div>
-            <hr>
-           
-        <form action="/edit_employeeinformation/Workingphone/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Workingphone" class="mb-0">Working Phone</label>
-            </div>
-            <div class="col-sm-9" id="Workingphone-container">
-              <input type="hidden" id="edit_mode_Workingphone" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Workingphone" name="Workingphone" class="form-control" placeholder="{{userjob.Workingphone}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
+            <div class="col-sm-9" >     
+        
+                  <div >
+                    <p class="col text-muted mb-0">
+                      {{userjob.Companysitecode}}
+                    </p>
                 </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Workingphone}}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Workingphone','{{userjob.Workingphone}}')"></i>
-                  {% endif  %}
-                </p>
-              {% endif %}
             </div>
-          </div>
-        </form>
-
-        <hr>
-
-       
-        <form action="/edit_employeeinformation/Bankaccount/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Bankaccount" class="mb-0">Bank Account</label>
-            </div>
-            <div class="col-sm-9" id="Bankaccount-container">
-              <input type="hidden" id="edit_mode_Bankaccount" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Bankaccount" name="Bankaccount" class="form-control" placeholder="{{userjob.Bankaccount}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Bankaccount}}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Bankaccount','{{userjob.Bankaccount}}')"></i>
-                  {% endif  %}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </form>
-
-        <hr>
-        
-        <form action="/edit_employeeinformation/Bankname/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Bankname" class="mb-0">Bank Name</label>
-            </div>
-            <div class="col-sm-9" id="Bankname-container">
-              <input type="hidden" id="edit_mode_Bankname" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Bankname" name="Bankname" class="form-control" placeholder="{{userjob.Bankname}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Bankname}}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Bankname','{{userjob.Bankname}}')"></i>
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </form>
-
-        <hr>
-        
-        <form action="/edit_employeeinformation/Taxcode/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Taxcode" class="mb-0">Tax Code</label>
-            </div>
-            <div class="col-sm-9" id="Taxcode-container">
-              <input type="hidden" id="edit_mode_Taxcode" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Taxcode" name="Taxcode" class="form-control" placeholder="{{userjob.Taxcode}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Taxcode}}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Taxcode','{{userjob.Taxcode}}')"></i>
-                  {% endif  %}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </form>
-        
-        <hr>
-        
-        {% if readrights==4 or readrights==None %}
-        <form action="/edit_employeeinformation/Socialinsurancecode/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Socialinsurancecode" class="mb-0">Social Insurance Code</label>
-            </div>
-            <div class="col-sm-9" id="Socialinsurancecode-container">
-              <input type="hidden" id="edit_mode_Socialinsurancecode" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Socialinsurancecode" name="Socialinsurancecode" class="form-control" placeholder="{{userjob.Socialinsurancecode}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Socialinsurancecode}}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Socialinsurancecode','{{userjob.Socialinsurancecode}}')"></i>
-                  {% endif  %}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </form>
-
-        
-        <hr>
-        
-        <form action="/edit_employeeinformation/Healthinsurancecardcode/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Healthinsurancecardcode" class="mb-0">Health Insurance Card Code</label>
-            </div>
-            <div class="col-sm-9" id="Healthinsurancecardcode-container">
-              <input type="hidden" id="edit_mode_Healthinsurancecardcode" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Healthinsurancecardcode" name="Healthinsurancecardcode" class="form-control" placeholder="{{userjob.Healthinsurancecardcode}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Healthinsurancecardcode}}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Healthinsurancecardcode','{{userjob.Healthinsurancecardcode}}')"></i>
-                  {% endif  %}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </form>
-
-        <hr>
-        
-        <form action="/edit_employeeinformation/Registeredhospitalname/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Registeredhospitalname" class="mb-0">Registered Hospital Name</label>
-            </div>
-            <div class="col-sm-9" id="Registeredhospitalname-container">
-              <input type="hidden" id="edit_mode_Registeredhospitalname" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Registeredhospitalname" name="Registeredhospitalname" class="form-control" placeholder="{{userjob.Registeredhospitalname}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Registeredhospitalname}}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Registeredhospitalname','{{userjob.Registeredhospitalname}}')"></i>
-                  {% endif  %}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </form>
-
-        
-        <hr>
-        
-        <form action="/edit_employeeinformation/Registeredhospitalcode/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="Registeredhospitalcode" class="mb-0">Registered Hospital Code</label>
-            </div>
-            <div class="col-sm-9" id="Registeredhospitalcode-container">
-              <input type="hidden" id="edit_mode_Registeredhospitalcode" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Registeredhospitalcode" name="Registeredhospitalcode" class="form-control" placeholder="{{userjob.Registeredhospitalcode}}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{userjob.Registeredhospitalcode}}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Registeredhospitalcode','{{userjob.Registeredhospitalcode}}')"></i>
-                  {% endif  %}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </form>
-
         </div>
+        
+        
+          <hr>
+        
+          <div class="row">
+            <div class="col-sm-3">
+                <label  class="mb-0">Department</label>
+            </div>
+            <div class="col-sm-9" >     
+        
+                  <div >
+                    <p class="col text-muted mb-0">
+                      {{userjob.Department}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+          <hr>
+          <div class="row">
+            <div class="col-sm-3">
+                <label  class="mb-0">Direct Manager</label>
+            </div>
+            <div class="col-sm-9" >     
+        
+                  <div >
+                    <p class="col text-muted mb-0">
+                      {{userjob.Directmanager}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+          <hr>
+        
+          <div class="row">
+            <div class="col-sm-3">
+                <label  class="mb-0">Work Force Type</label>
+            </div>
+            <div class="col-sm-9" >     
+        
+                  <div >
+                    <p class="col text-muted mb-0">
+                      {{userjob.Workforcetype}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+          <hr>
+          <!-- <form action="/edit_employeeinformation/Workingphone/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Workingphone" class="mb-0">Working Phone</label>
+              </div>
+              <div class="col-sm-9" id="Workingphone-container">
+        
+                <div id="edit_mode_Workingphone_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Workingphone" name="Workingphone" class="form-control" placeholder="{{userjob.Workingphone}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Workingphone')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Workingphone_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Workingphone}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Workingphone','{{userjob.Workingphone}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+        
+          <hr> -->
+          <form action="/edit_employeeinformation/Bankaccount/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Bankaccount" class="mb-0">Bank Account</label>
+              </div>
+              <div class="col-sm-9" id="Bankaccount-container">
+        
+                <div id="edit_mode_Bankaccount_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Bankaccount" name="Bankaccount" class="form-control" placeholder="{{userjob.Bankaccount}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Bankaccount')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Bankaccount_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Bankaccount}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Bankaccount','{{userjob.Bankaccount}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+        
+          <hr>
+          <form action="/edit_employeeinformation/Bankname/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Bankname" class="mb-0">Bank Name</label>
+              </div>
+              <div class="col-sm-9" id="Bankname-container">
+        
+                <div id="edit_mode_Bankname_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Bankname" name="Bankname" class="form-control" placeholder="{{userjob.Bankname}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Bankname')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Bankname_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Bankname}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Bankname','{{userjob.Bankname}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+        
+          <hr>
+          <form action="/edit_employeeinformation/Taxcode/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Taxcode" class="mb-0">Tax Code</label>
+              </div>
+              <div class="col-sm-9" id="Taxcode-container">
+        
+                <div id="edit_mode_Taxcode_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Taxcode" name="Taxcode" class="form-control" placeholder="{{userjob.Taxcode}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Taxcode')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Taxcode_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Taxcode}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Taxcode','{{userjob.Taxcode}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+        
+          <hr>
+          <form action="/edit_employeeinformation/Socialinsurancecode/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Socialinsurancecode" class="mb-0">Social Insurance Code</label>
+              </div>
+              <div class="col-sm-9" id="Socialinsurancecode-container">
+        
+                <div id="edit_mode_Socialinsurancecode_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Socialinsurancecode" name="Socialinsurancecode" class="form-control" placeholder="{{userjob.Socialinsurancecode}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Socialinsurancecode')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Socialinsurancecode_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Socialinsurancecode}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Socialinsurancecode','{{userjob.Socialinsurancecode}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+        
+          <hr>
+          <form action="/edit_employeeinformation/Healthinsurancecardcode/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Healthinsurancecardcode" class="mb-0">Health Insurance Card Code</label>
+              </div>
+              <div class="col-sm-9" id="Healthinsurancecardcode-container">
+        
+                <div id="edit_mode_Healthinsurancecardcode_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Healthinsurancecardcode" name="Healthinsurancecardcode" class="form-control" placeholder="{{userjob.Healthinsurancecardcode}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Healthinsurancecardcode')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Healthinsurancecardcode_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Healthinsurancecardcode}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Healthinsurancecardcode','{{userjob.Healthinsurancecardcode}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+          
+        
+          <hr>
+          <form action="/edit_employeeinformation/Registeredhospitalname/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Registeredhospitalname" class="mb-0">Registered Hospital Name</label>
+              </div>
+              <div class="col-sm-9" id="Registeredhospitalname-container">
+        
+                <div id="edit_mode_Registeredhospitalname_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Registeredhospitalname" name="Registeredhospitalname" class="form-control" placeholder="{{userjob.Registeredhospitalname}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Registeredhospitalname')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Registeredhospitalname_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Registeredhospitalname}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Registeredhospitalname','{{userjob.Registeredhospitalname}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+        
+          <hr>
+          <form action="/edit_employeeinformation/Registeredhospitalcode/{{informationuserid}}" role="form" method="POST">
+            <div class="row">
+              <div class="col-sm-3">
+                <label for="Registeredhospitalcode" class="mb-0">Registered Hospital Code</label>
+              </div>
+              <div class="col-sm-9" id="Registeredhospitalcode-container">
+        
+                <div id="edit_mode_Registeredhospitalcode_edit" style="display: none;" >
+                  <div class="row">
+                    <div class="col">
+                        <input type="text" id="Registeredhospitalcode" name="Registeredhospitalcode" class="form-control" placeholder="{{userjob.Registeredhospitalcode}}">
+                    </div>
+                    <div class="col-auto ml-auto"> 
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                            <button type="button" onclick="cancelEdit('Registeredhospitalcode')" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+                <div id="edit_mode_Registeredhospitalcode_show">
+                  <p class="col text-muted mb-0">
+                    {{userjob.Registeredhospitalcode}}
+                      {% if readrights == 4 or readrights == None %}
+                          <span class="float-right">
+                              <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Registeredhospitalcode','{{userjob.Registeredhospitalcode}}')"></i>
+                          </span>
+                      {% endif %}
+                  </p>
+              </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+          <hr>
+  
+          <div style="display:none;" id="Insurance"   >
+            <div style="background-color: aliceblue; color: black;" >
+              <div class="ml-4 mr-4">
+                <div class="row ">
+                  <div class="col-sm-3">
+                    <p class="mb-0" style="color:red">Private Insurance</p>
+                       
+                  </div>
+              </div>
+              <br>
+                
+                
+                <!-- Display existing records -->
+                <form method="post" >
+                  <div class="row  mb-2">
+                    <div class="col-sm-3">
+                        <label for="Employeerelative" >Employee Relatives</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <select id="Employeerelative1" name="Employeerelative1" class="form-select mr-2 align-self-stretch form-select-sm">
+                          {% for person in Employeerelative %}
+                          <option value="{{ person[0] }}">{{ person[1] }}</option>
+                          {% endfor %}
+                      </select>
+                      <button  type="submit" onclick="updateValue()" name="Privateinsurance" value="Privateinsurance" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                  </div>
+  
+                </div>
+                </form>
+  
+                <table class="table">
+                    <thead >
+                        <tr >
+                            <th hidden>ID</th>
+                            <th style="text-align: center;">FullName</th>
+                            <th style="text-align: center;">Employee Relative</th>
+                            <th style="text-align: center;">Delete</th>
+                 
+          
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for user in temp1 %}
+                            <tr>
+                                <td >{{ user[1] }}</td>
+                                <td>{{ user[2] }}</td>
+                                <td style="text-align: center;">
+                                  <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Privateinsurance"
+                                   style="color:red">
+                                   <i class="fas fa-trash-alt"></i>
+                                </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+              
+              <hr>
+              <div style="background-color: aliceblue; color: black;" >
+                <div class="ml-4 mr-4">
+                  <div class="row ">
+                    <div class="col">
+                      <p class="mb-0" style="color:red">Additional Private Insurance</p>
+                         
+                    </div>
+                </div>
+                <br>
+                  
+                  
+                  <!-- Display existing records -->
+                  <form method="post">
+                    <div class="row  mb-2">
+                      <div class="col-sm-3">
+                          <label for="Employeerelative" >Employee Relatives</label>
+                      </div>
+                      <div class="d-flex align-items-center">
+                        <select id="Employeerelative2" name="Employeerelative2" class="form-select mr-2 align-self-stretch form-select-sm">
+                            {% for person in Employeerelative %}
+                            <option value="{{ person[0] }}">{{ person[1] }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" onclick="updateValue()" name="Additionalprivateinsurance" value="Additionalprivateinsurance" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                    </div>
+    
+                  </div>
+                  </form>
+    
+                  <table class="table">
+                      <thead >
+                          <tr >
+                              <th hidden>ID</th>
+                              <th style="text-align: center;">FullName</th>
+                              <th style="text-align: center;">Employee Relative</th>
+                              <th style="text-align: center;">Delete</th>
+                   
+            
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {% for user in temp2 %}
+                              <tr>
+                                  <td >{{ user[1] }}</td>
+                                  <td>{{ user[2] }}</td>
+                                  <td style="text-align: center;">
+                                    <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Additionalprivateinsurance"
+                                     style="color:red">
+                                     <i class="fas fa-trash-alt"></i>
+                                  </a>
+                                  </td>
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+                </div>
+              </div>
+            
+            
+              <hr>
+              <div style="background-color: aliceblue; color: black;" >
+                <div class="ml-4 mr-4">
+                  <div class="row ">
+                    <div class="col">
+                      <p class="mb-0" style="color:red">Dependant</p>
+                         
+                    </div>
+                </div>
+                <br>
+                  
+                  
+                  <!-- Display existing records -->
+                  <form method="post">
+                    <div class="row  mb-2">
+                      <div class="col-sm-3">
+                          <label for="Employeerelative" >Employee Relatives</label>
+                      </div>
+                      <div class="d-flex align-items-center">
+                        <select id="Employeerelative3" name="Employeerelative3" class="form-select mr-2 align-self-stretch form-select-sm">
+                            {% for person in Employeerelative %}
+                            <option value="{{ person[0] }}">{{ person[1] }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" onclick="updateValue()" name="Dependant" value="Dependant" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                    </div>
+    
+                  </div>
+                  </form>
+    
+                  <table class="table">
+                      <thead >
+                          <tr >
+                              <th hidden>ID</th>
+                              <th style="text-align: center;">FullName</th>
+                              <th style="text-align: center;">Employee Relative</th>
+                              <th style="text-align: center;">Delete</th>
+                   
+            
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {% for user in temp3 %}
+                              <tr>
+                                  <td >{{ user[1] }}</td>
+                                  <td>{{ user[2] }}</td>
+                                  <td style="text-align: center;">
+                                    <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Dependant"
+                                     style="color:red">
+                                     <i class="fas fa-trash-alt"></i>
+                                  </a>
+                                  </td>
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+                </div>
+              </div>
+            
+            <hr>
+            <div style="background-color: aliceblue; color: black;" >
+              <div class="ml-4 mr-4">
+                <div class="row ">
+                  <div class="col">
+                    <p class="mb-0" style="color:red">Emergency Contact</p>
+                       
+                  </div>
+              </div>
+              <br>
+                
+                
+                <!-- Display existing records -->
+                <form method="post">
+                  <div class="row  mb-2">
+                    <div class="col-sm-3">
+                        <label for="Employeerelative" >Employee Relatives</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <select id="Employeerelative4" name="Employeerelative4" class="form-select mr-2 align-self-stretch form-select-sm">
+                          {% for person in Employeerelative %}
+                          <option value="{{ person[0] }}">{{ person[1] }}</option>
+                          {% endfor %}
+                      </select>
+                      <button type="submit" onclick="updateValue()" name="Emergencycontact" value="Emergencycontact" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                  </div>
+  
+                </div>
+                </form>
+  
+                <table class="table">
+                    <thead >
+                        <tr >
+                            <th hidden>ID</th>
+                            <th style="text-align: center;">FullName</th>
+                            <th style="text-align: center;">Employee Relative</th>
+                            <th style="text-align: center;">Delete</th>
+                 
+          
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for user in temp3 %}
+                            <tr>
+                                <td >{{ user[1] }}</td>
+                                <td>{{ user[2] }}</td>
+                                <td style="text-align: center;">
+                                  <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Emergencycontact"
+                                   style="color:red">
+                                   <i class="fas fa-trash-alt"></i>
+                                </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <hr>
+            <div style="background-color: aliceblue; color: black;" >
+              <div class="ml-4 mr-4">
+                <div class="row ">
+                  <div class="col">
+                    <p class="mb-0" style="color:red">Beneficiary Contact</p>
+                       
+                  </div>
+              </div>
+              <br>
+                
+                
+                <!-- Display existing records -->
+                <form method="post">
+                  <div class="row  mb-2">
+                    <div class="col-sm-3">
+                        <label for="Employeerelative" >Employee Relatives</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <select id="Employeerelative5" name="Employeerelative5" class="form-select mr-2 align-self-stretch form-select-sm">
+                          {% for person in Employeerelative %}
+                          <option value="{{ person[0] }}">{{ person[1] }}</option>
+                          {% endfor %}
+                      </select>
+                      <button type="submit" onclick="updateValue()" name="Beneficiarycontact" value="Beneficiarycontact" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                  </div>
+  
+                </div>
+                </form>
+  
+                <table class="table">
+                    <thead >
+                        <tr >
+                            <th hidden>ID</th>
+                            <th style="text-align: center;">FullName</th>
+                            <th style="text-align: center;">Employee Relative</th>
+                            <th style="text-align: center;">Delete</th>
+                 
+          
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for user in temp3 %}
+                            <tr>
+                                <td >{{ user[1] }}</td>
+                                <td>{{ user[2] }}</td>
+                                <td style="text-align: center;">
+                                  <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Beneficiarycontact"
+                                   style="color:red">
+                                   <i class="fas fa-trash-alt"></i>
+                                </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+            </div>
+          </div>
+          </div>
+          </div>
+          </div>
+         
       </div>
       
-      <hr>
-    <div class="row">
-      <div class="col-sm-3">
-          <p class="mb-0" style="color:red">Private Insurance</p>
-            
-      </div>
-    </div>
-    <br>
-    <form method="post">
-      <div class="row">
-        <div class="col-sm-3">
-            <label for="Employeerelative" class="mb-0">Employee Relatives</label>
-        </div>
-        <div class="col-sm-9">
-            <div class="row">
-                <div class="col-md-6">
-                    <select class="form-select" id="Employeerelative1" name="Employeerelative1" style="width: 200px;">
-                      {% for person in Employeerelative %}
-                      <option value="{{ person[0] }}">{{ person[1] }}</option>
-                      {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <button type="submit" name="Privateinsurance" value="Privateinsurance" class="btn btn-primary">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    </form>
-    
-  
-  <!-- Display existing records -->
-
-  <table class="table">
-      <thead>
-          <tr>
-              <th>Full Name</th>
-              <th>Employee Relative</th>
-              <th>Delete</th>
-
-          </tr>
-      </thead>
-      <tbody>
-        {% for user in temp1 %}
-              <tr>
-                  <td>{{user[1]}}</td>
-                  <td>{{user[2]}}</td>
-                  <td>
-                    
-                    <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Privateinsurance"
-                     class="btn btn-danger btn-sm">
-                      <i class="fas fa-trash-alt"></i> 
-                  </a>
-                  </td>
-
-              </tr>
-          {% endfor %}
-      </tbody>
-  </table>
-
-  
-  <hr>
-      <div class="row">
-        <div class="col-sm-3">
-            <p class="mb-0" style="color:red">Additional Private Insurance</p>
-             
-        </div>
-    </div>
-    <br>
-    <form method="post">
-      <div class="row">
-        <div class="col-sm-3">
-            <label for="Employeerelative" class="mb-0">Employee Relatives</label>
-        </div>
-        <div class="col-sm-9">
-            <div class="row">
-                <div class="col-md-6">
-                    <select class="form-select" id="Employeerelative2" name="Employeerelative2" style="width: 200px;">{% for person in Employeerelative %}<option value="{{ person[0] }}">{{ person[1] }}</option>{% endfor %}</select>
-                </div>
-                <div class="col-md-6" style="margin-left: 125px;">
-                    <button type="submit" name="Additionalprivateinsurance" value="Additionalprivateinsurance" class="btn btn-primary">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    </form>
-  
-  <!-- Display existing records -->
-
-  <table class="table">
-      <thead>
-          <tr>
-              <th>Full Name</th>
-              <th>Employee Relative</th>
-              <th>Delete</th>
-
-          </tr>
-      </thead>
-      <tbody>
-        {% for user in temp2 %}
-              <tr>
-                  <td>{{user[1]}}</td>
-                  <td>{{user[2]}}</td>
-                  <td>
-
-                    <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Additionalprivateinsurance"
-                     class="btn btn-danger btn-sm">
-                      <i class="fas fa-trash-alt"></i> 
-                  </a>
-                  </td>
-
-              </tr>
-          {% endfor %}
-      </tbody>
-  </table>
-
-
-  <hr>
-  <div class="row">
-    <div class="col-sm-3">
-        <p class="mb-0" style="color:red">Dependant</p>
-         
-    </div>
+  </div>
 </div>
-<br>
-<form method="post">
-  <div class="row">
-    <div class="col-sm-3">
-        <label for="Employeerelative" class="mb-0">Employee Relatives</label>
-    </div>
-    <div class="col-sm-9">
-        <div class="row">
-            <div class="col-md-6">
-                <select class="form-select" id="Employeerelative3" name="Employeerelative3"
-                  style="width: 200px;">
-                  {% for person in Employeerelative %}
-                  <option value="{{ person[0] }}">{{ person[1] }}</option>
-                  {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-6" style="margin-left: 125px;">
-                <button type="submit" name="Dependant" value="Dependant" class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-    </div>
-</div>
-</form>
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+  </a>
+  </section>
 
-<!-- Display existing records -->
+  <script src="{{url_for('static',path='js/informationJob.js')}}"></script>
+  <script>
+    function updateValue()
+    {
+      localStorage.setItem('sectionName', 'Insurance'); 
+    }
 
-<table class="table">
-  <thead>
-      <tr>
-          <th>Full Name</th>
-          <th>Employee Relative</th>
-          <th>Delete</th>
-
-      </tr>
-  </thead>
-  <tbody>
-    {% for user in temp3 %}
-          <tr>
-              <td>{{user[1]}}</td>
-              <td>{{user[2]}}</td>
-              <td>
-                
-                <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Dependant"
-                 class="btn btn-danger btn-sm">
-                  <i class="fas fa-trash-alt"></i> 
-              </a>
-              </td>
-
-          </tr>
-      {% endfor %}
-  </tbody>
-</table>
-
-<hr>
-  <div class="row">
-    <div class="col-sm-3">
-        <p class="mb-0" style="color:red">Emergency Contact</p>
-         
-    </div>
-</div>
-<br>
-<form method="post">
-  <div class="row">
-    <div class="col-sm-3">
-        <label for="Employeerelative" class="mb-0">Employee Relatives</label>
-    </div>
-    <div class="col-sm-9">
-        <div class="row">
-            <div class="col-md-6">
-                <select class="form-select" id="Employeerelative4" name="Employeerelative4"
-                  style="width: 200px;">
-                  {% for person in Employeerelative %}
-                  <option value="{{ person[0] }}">{{ person[1] }}</option>
-                  {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-6" style="margin-left: 125px;">
-                <button type="submit" name="Emergencycontact" value="Emergencycontact" class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-    </div>
-</div>
-</form>
-
-<!-- Display existing records -->
-
-<table class="table">
-  <thead>
-      <tr>
-          <th>Full Name</th>
-          <th>Employee Relative</th>
-          <th>Delete</th>
-
-      </tr>
-  </thead>
-  <tbody>
-    {% for user in temp4 %}
-          <tr>
-              <td>{{user[1]}}</td>
-              <td>{{user[2]}}</td>
-              <td>
-                
-                <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Emergencycontact"
-                 class="btn btn-danger btn-sm">
-                  <i class="fas fa-trash-alt"></i> 
-              </a>
-              </td>
-
-          </tr>
-      {% endfor %}
-  </tbody>
-</table>
-
-<hr>
-  <div class="row">
-    <div class="col-sm-3">
-        <p class="mb-0" style="color:red">Beneficiary Contact</p>
-         
-    </div>
-</div>
-<br>
-<form method="post">
-  <div class="row">
-    <div class="col-sm-3">
-        <label for="Employeerelative" class="mb-0">Employee Relatives</label>
-    </div>
-    <div class="col-sm-9">
-        <div class="row">
-            <div class="col-md-6">
-                <select class="form-select" id="Employeerelative5" name="Employeerelative5"
-                  style="width: 200px;">
-                  {% for person in Employeerelative %}
-                  <option value="{{ person[0] }}">{{ person[1] }}</option>
-                  {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-6" style="margin-left: 125px;">
-                <button type="submit" name="Beneficiarycontact" value="Beneficiarycontact" class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-    </div>
-</div>
-</form>
-
-<!-- Display existing records -->
-
-<table class="table">
-  <thead>
-      <tr>
-          <th>Full Name</th>
-          <th>Employee Relative</th>
-          <th>Delete</th>
-
-      </tr>
-  </thead>
-  <tbody>
-    {% for user in temp5 %}
-          <tr>
-              <td>{{user[1]}}</td>
-              <td>{{user[2]}}</td>
-              <td>
-                
-                <a href="/employeepage/informationuserjob/deleterelative/{{informationuserid}}/{{user[4]}}/Beneficiarycontact"
-                 class="btn btn-danger btn-sm">
-                  <i class="fas fa-trash-alt"></i> 
-              </a>
-              </td>
-
-          </tr>
-      {% endfor %}
-  </tbody>
-</table>
-
-        </div>
-      </div>
-      {% endif %}
-      {% if readrights==3 or readrights==4 or readrights is none %}
-      <button onclick="location.href='/employeepage/informationuserjob/laborcontract/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'"> Contract</button>
-      <button onclick="location.href='/employeepage/informationuserjob/forexsalary/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'"> Forex Salary</button>
-      {% endif %}
-    </div>
-    <script>
-      // get img tag from avatr image to send pass for navigation.html
-      localStorage.setItem('avatarSrc', "/static/source/{{image_path}}");
-
-
-      function enableEdit(col,placeholderValue) {
-    // Set edit_mode to true to switch to input mode
-    document.getElementById('edit_mode_' + col).value = 'true';
-    
-    // Create an input element
-    var inputElement = document.createElement('input');
-    inputElement.type = 'text';
-    inputElement.id = col;
-    inputElement.name = col;
-    inputElement.className = 'form-control';
-    inputElement.value = placeholderValue;  // Set the placeholder dynamically
-
-    // Create a "Save" button
-    var saveButton = document.createElement('button');
-    saveButton.type = 'submit';
-    saveButton.className = 'btn btn-primary edit_icon';
-    saveButton.textContent = 'Save';
-
-    // Create a container div
-    var containerDiv = document.getElementById(col + '-container');
-    containerDiv.innerHTML = '';  // Clear the container first
-
-    // Append the input and button to the container
-    containerDiv.appendChild(inputElement);
-    containerDiv.appendChild(saveButton);
-}
-    </script>
+</script>
 {% endif %}
-{% endblock %}
+{%endblock %}
+

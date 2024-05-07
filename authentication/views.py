@@ -305,11 +305,12 @@ async def login(request: Request):
             if not user.is_active:
                 messages=[("info","account is not active")]
                 return RedirectResponse(url="/logout")
-            response= RedirectResponse(url=VERIFY_2FA_URL)
+            response= RedirectResponse(url=HOME_URL)
+            # response= RedirectResponse(url=VERIFY_2FA_URL)
             resgister_for_access_token(response=response, user=user)
             if not user.is_two_authentication_enabled:
                 messages=[("info","You have not enabled 2-Factor Authentication. Please enable first to login.")]
-                return RedirectResponse(url=SETUP_2FA_URL)
+                return RedirectResponse(url=VERIFY_2FA_URL)
             return response
         # elif not user:
         #     flash("You are not registered. Please register.", "danger")

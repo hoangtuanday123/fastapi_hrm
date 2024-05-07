@@ -1,28 +1,29 @@
 {% extends "_base.html" %}
 
 {% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card custom-card">
+        <div class="card-body">
+          <h1 class="h3 mb-3 fw-normal text-center">Assign Group</h1>
+          <form method="post" action="" class="needs-validation" novalidate>
+            <div class="form-group">
+              <label >Select Group</label>
+              <select class="form-control" id="group" name="group">
+                {% for group in groups %}
+                <option value="{{ group[0] }}">{{ group[1] }}</option>>
+                {% endfor %}
+              </select>
+            </div>
 
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-    <main class="form-signin w-100 m-auto">
-      <form method="post" action="">
-        
-        <h1 class="h3 mb-3 fw-normal text-center">assign group</h1>
-        <div class="col-md-6">
-          <label for="roletype" class="mb-0"> Select group</label>
-            <select class="form-select" id="group" name="group" style="width: 200px;">
-              {% for group in groups %}
-              <option value="{{ group[0] }}">{{ group[1] }}</option>
-              {% endfor %}
-            </select>
+              <div class="invalid-feedback">Please select a group.</div>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Assign</button>
+          </form>
         </div>
-          
-        <button class="w-100 btn btn-lg btn-primary" type="submit">assign</button>
-      </form>
-    </main>
+      </div>
+    </div>
   </div>
-  <div class="col-md-4"></div>
 </div>
-
 {% endblock %}

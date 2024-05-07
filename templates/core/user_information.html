@@ -8,34 +8,42 @@
 <div class="col-lg-8">
     <div class="card mb-4">
       <div class="card-body">
-        <form action="/edit_userInformation/Fullname/{{informationuserid}}" role="form" method="POST">
-          <div id = "" class="row">
-            <div class="col-sm-3">
-              <label for="fullname" class="mb-0">Full Name</label>
-            </div>
-            <div class="col-sm-9" id="Fullname-container">
-              <input type="hidden" id="edit_mode_Fullname" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-                <div class="input-group">
-                  <input type="text" id="Fullname" name="Fullname" class="form-control" placeholder="{{ form.Fullname }}" style="margin-right: 5px;">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Save</button>
+
+        <form action="/edit_userInformation/Fullname/{{informationuserid}}/{{form.Fullname}}" role="form" method="POST">
+          <div class="row">
+              <div class="col-sm-3">
+                  <label for="fullname" class="mb-0">Full Name</label>
+              </div>
+              <div class="col-sm-9" id="Fullname-container">
+                    <div id="edit_mode_Fullname_edit" style="display: none;" >
+                      <div class="row">
+                        <div class="col">
+                            <input type="text" id="Fullname" name="Fullname" class="form-control" placeholder="{{form.Fullname}}">
+                        </div>
+                        <div class="col-auto ml-auto"> 
+                            <div class="d-flex">
+                                <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                <button type="button" onclick="cancelEdit('Fullname')" class="btn btn-danger">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    </div>
+
+                    <div id="edit_mode_Fullname_show">
+                      <p class="col text-muted mb-0">
+                          {{form.Fullname}}
+                          {% if readrights == 4 or readrights == None %}
+                              <span class="float-right">
+                                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Fullname','{{form.Fullname}}')"></i>
+                              </span>
+                          {% endif %}
+                      </p>
                   </div>
+
                 </div>
-              {% else %}
-                
-                <p class="text-muted mb-0">
-                  {{ form.Fullname }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Fullname','{{ form.Fullname }}')"></i>
-                  {% endif  %}
-                </p>
-                
-              {% endif %}
-            </div>
           </div>
-        </form>
+      </form>
         
         <hr>
         <form action="/edit_userInformation/Nickname/{{informationuserid}}/{{form.Nickname}}" role="form" method="POST">
@@ -44,256 +52,353 @@
               <label for="Nickname" class="mb-0">Nickname</label>
             </div>
             <div class="col-sm-9" id="Nickname-container">
-              <input type="hidden" id="edit_mode_Nickname" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Nickname" name="Nickname" class="form-control" value="{{form.Nickname}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+
+              <div id="edit_mode_Nickname_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Nickname" name="Nickname" class="form-control" placeholder="{{form.Nickname}}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Nickname')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Nickname }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Nickname','{{form.Nickname}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Nickname_show">
+                <p class="col text-muted mb-0">
+                    {{form.Nickname}}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Nickname','{{form.Nickname}}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+              
             </div>
           </div>
         </form>
 
         <hr>
 
-        <form action="/edit_userInformation/Email/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Email/{{informationuserid}}/{{form.Email}}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="email" class="mb-0">Email</label>
             </div>
             <div class="col-sm-9" id="Email-container">
-              <input type="hidden" id="edit_mode_Email" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="fullname" name="fullname" class="form-control" placeholder="{{form.Email}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-
-                </div>
+              <div id="edit_mode_Email_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Email" name="Email" class="form-control" placeholder="{{form.Email}}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Email')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Email }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Email','{{form.Email}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Email_show">
+                <p class="col text-muted mb-0">
+                    {{form.Email}}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Email','{{form.Email}}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+              
             </div>
           </div>
         </form>
 
         <hr>
-        <form action="/edit_userInformation/Contactaddress/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Contactaddress/{{informationuserid}}/{{ form.Contactaddress }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="Contactaddress" class="mb-0">Contact Address</label>
             </div>
             <div class="col-sm-9" id="Contactaddress-container">
-              <input type="hidden" id="edit_mode_Contactaddress" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Contactaddress" name="Contactaddress" class="form-control" placeholder="{{form.Contactaddress}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+              <div id="edit_mode_Contactaddress_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Contactaddress" name="Contactaddress" class="form-control" placeholder="{{ form.Contactaddress }}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Contactaddress')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Contactaddress }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Contactaddress','{{form.Contactaddress}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Contactaddress_show">
+                <p class="col text-muted mb-0">
+                    {{ form.Contactaddress }}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Contactaddress','{{ form.Contactaddress }}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
             </div>
           </div>
         </form>
 
         <hr>
 
-        <form action="/edit_userInformation/Phone/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Phone/{{informationuserid}}/{{ form.Phone }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="Phone" class="mb-0">Phone Number</label>
             </div>
             <div class="col-sm-9" id="Phone-container">
-              <input type="hidden" id="edit_mode_Phone" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Phone" name="Phone" class="form-control" placeholder="{{form.Phone}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+              <div id="edit_mode_Phone_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Phone" name="Phone" class="form-control" placeholder="{{ form.Phone }}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Phone')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Phone }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Phone','{{form.Phone}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Phone_show">
+                <p class="col text-muted mb-0">
+                    {{ form.Phone }}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Phone','{{ form.Phone }}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+              
             </div>
           </div>
         </form>
 
         <hr>
 
-        <form action="/edit_userInformation/LinkedIn/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/LinkedIn/{{informationuserid}}/{{ form.LinkedIn }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="LinkedIn" class="mb-0">Linked In</label>
             </div>
             <div class="col-sm-9" id="LinkedIn-container">
-              <input type="hidden" id="edit_mode_LinkedIn" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="LinkedIn" name="LinkedIn" class="form-control" placeholder="{{form.LinkedIn}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+              <div id="edit_mode_LinkedIn_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="LinkedIn" name="LinkedIn" class="form-control" placeholder="{{ form.LinkedIn}}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('LinkedIn')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.LinkedIn }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('LinkedIn','{{form.LinkedIn}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_LinkedIn_show">
+                <p class="col text-muted mb-0">
+                    {{ form.LinkedIn }}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('LinkedIn','{{ form.LinkedIn}}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+              
             </div>
           </div>
         </form>
 
         <hr>
 
-        <form action="/edit_userInformation/Years/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Years/{{informationuserid}}/{{ form.Years }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="Years" class="mb-0">Year of Experience</label>
             </div>
             <div class="col-sm-9" id="Years-container">
-              <input type="hidden" id="edit_mode_Years" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Years" name="Years" class="form-control" placeholder="{{form.Years}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+              <div id="edit_mode_Years_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Years" name="Years" class="form-control" placeholder="{{ form.Years }}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Years')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Years }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Years','{{form.Years}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Years_show">
+                <p class="col text-muted mb-0">
+                    {{ form.Years}}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Years','{{ form.Years }}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+             
             </div>
           </div>
         </form>
 
         <hr>
 
-        <form action="/edit_userInformation/Location/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Location/{{informationuserid}}/{{ form.Location }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="Location" class="mb-0">Location</label>
             </div>
             <div class="col-sm-9" id="Location-container">
-              <input type="hidden" id="edit_mode_Location" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Location" name="Location" class="form-control" placeholder="{{form.Location}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+              <div id="edit_mode_Location_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Location" name="Location" class="form-control" placeholder="{{ form.Location}}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Location')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Location }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Location','{{form.Location}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Location_show">
+                <p class="col text-muted mb-0">
+                    {{ form.Location}}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Location','{{ form.Location }}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+             
             </div>
           </div>
         </form>
 
         <hr>
 
-        <form action="/edit_userInformation/Maritalstatus/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Maritalstatus/{{informationuserid}}/{{ form.Maritalstatus }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="Maritalstatus" class="mb-0">Marital Status</label>
             </div>
             <div class="col-sm-9" id="Maritalstatus-container">
-              <input type="hidden" id="edit_mode_Maritalstatus" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Maritalstatus" name="Maritalstatus" class="form-control" placeholder="{{form.Maritalstatus}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+              <div id="edit_mode_Maritalstatus_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Maritalstatus" name="Maritalstatus" class="form-control" placeholder="{{ form.Maritalstatus }}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Maritalstatus')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Maritalstatus }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Maritalstatus','{{form.Maritalstatus}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Maritalstatus_show">
+                <p class="col text-muted mb-0">
+                    {{ form.Maritalstatus }}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Maritalstatus','{{ form.Maritalstatus }}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+              
             </div>
           </div>
         </form>
         
         <hr>
 
-        <form action="/edit_userInformation/Ethnicgroup/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Ethnicgroup/{{informationuserid}}/{{ form.Ethnicgroup }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="Ethnicgroup" class="mb-0">Ethnic Group</label>
             </div>
             <div class="col-sm-9" id="Ethnicgroup-container">
-              <input type="hidden" id="edit_mode_Ethnicgroup" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Ethnicgroup" name="Ethnicgroup" class="form-control" placeholder="{{form.Ethnicgroup}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  
-                  <button type="submit" class="btn btn-primary"> Save</button>
-                </div>
+              <div id="edit_mode_Ethnicgroup_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Ethnicgroup" name="Ethnicgroup" class="form-control" placeholder="{{ form.Ethnicgroup}}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Ethnicgroup')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Ethnicgroup }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Ethnicgroup','{{form.Ethnicgroup}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Ethnicgroup_show">
+                <p class="col text-muted mb-0">
+                    {{ form.Ethnicgroup}}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Ethnicgroup','{{ form.Ethnicgroup }}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+              
             </div>
           </div>
         </form>
@@ -301,29 +406,40 @@
         
         <hr>
 
-        <form action="/edit_userInformation/Religion/{{informationuserid}}" role="form" method="POST">
+        <form action="/edit_userInformation/Religion/{{informationuserid}}/{{ form.Religion }}" role="form" method="POST">
           <div class="row">
             <div class="col-sm-3">
               <label for="Religion" class="mb-0">Religion</label>
             </div>
             <div class="col-sm-9" id="Religion-container">
-              <input type="hidden" id="edit_mode_Religion" name="edit_mode" value="{{ edit_mode }}">
-              
-              {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Religion" name="Religion" class="form-control" placeholder="{{form.Religion}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
+              <div id="edit_mode_Religion_edit" style="display: none;" >
+                <div class="row">
+                  <div class="col">
+                      <input type="text" id="Religion" name="Religion" class="form-control" placeholder="{{ form.Religion}}">
+                  </div>
+                  <div class="col-auto ml-auto"> 
+                      <div class="d-flex">
+                          <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                          <button type="button" onclick="cancelEdit('Religion')" class="btn btn-danger">Cancel</button>
+                      </div>
+                  </div>
               </div>
-              {% else %}
-                <p class="text-muted mb-0">
-                  {{ form.Religion }}
-                  {% if readrights==4 or readrights ==None  %}
-                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Religion','{{form.Religion}}')"></i>
-                  {% endif  %}
+              
+              </div>
+
+              <div id="edit_mode_Religion_show">
+                <p class="col text-muted mb-0">
+                    {{ form.Religion }}
+                    {% if readrights == 4 or readrights == None %}
+                        <span class="float-right">
+                            <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Religion','{{ form.Religion }}')"></i>
+                        </span>
+                    {% endif %}
                 </p>
-              {% endif %}
+            </div>
+
+              
+              
             </div>
           </div>
       </div>
