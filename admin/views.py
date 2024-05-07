@@ -778,7 +778,7 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
             conn=db.connection()
             cursor=conn.cursor()
             sql="update user_account set role_id=? where id=?"
-            values=(a,idaccount)
+            values=(a,decode_id(idaccount))
             cursor.execute(sql,values)
             conn.commit()
             conn.close()
