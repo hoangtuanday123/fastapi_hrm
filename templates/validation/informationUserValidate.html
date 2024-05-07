@@ -3,49 +3,39 @@
 {% block content %}
 
 <body class="body_login">
-    <div class="row">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-            <main class="form-signin w-100 m-auto">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <main class="form-signin">
                 <form role="form" method="post" action="">
                     {{ form.csrf_token }}
-                    <h1 class="h3 mb-3 fw-normal text-center">USER INFORMATION </h1>
-                    <div class="form-floating" style="border-radius: 20px;">
-                        <label>Fullname</label>
-                        <input class="form-control mb-2" type="text" name="Fullname" value="{{ form.Fullname }}">
+                    <h1 class="h3 mb-3 fw-normal text-center">USER INFORMATION</h1>
+                    <div class="form-floating mb-3">
+                        <label for="fullname">Fullname</label>
+                        <input type="text" class="form-control" id="fullname" name="Fullname" placeholder="Enter Your Fullname" >
                     </div>
-                    <div class="form-floating" style="border-radius: 20px;">
-                        <label>Nickname</label>
-                        <input class="form-control mb-2" type="text" name="Nickname" value="{{ form.Nickname }}">
-                        
+                    
+                    <div class="form-floating mb-3">
+                        <label for="nickname">Nickname</label>
+                        <input type="text" class="form-control" id="nickname" name="Nickname" placeholder="Enter Your Nickname" >
                     </div>
+                    
                     {% if current_user.authenticated_by != "google" %}
-                        <div class="form-floating" style="border-radius: 20px;">
-                            <label>Email</label>
-                            <input class="form-control mb-2" type="text" name="Email" value="{{ form.Email }}">
-
-                        </div>
-                    {% endif %}
-                    <!-- <div class="form-floating" style="border-radius: 20px;">
-                        <label>Contactaddress</label>
-                        <input class="form-control mb-2" type="text" name="Contactaddress" value="{{ form.Contactaddress }}">
-
+                    <div class="form-floating mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="Email" placeholder="Enter Your Email" >
                     </div>
-                    <div class="form-floating" style="border-radius: 20px;">
-                        <label>phone</label>
-                        <input class="form-control mb-2" type="text" name="phone" value="{{ form.phone }}">
-
-                    </div> -->
-                    <button class="button login__submit" type="submit" style="background-color:rgb(181, 181, 244);">
-                        <span class="button__text">SIGN IN</span>
-                        <i class="button__icon fas fa-chevron-right" style="color:rgb(224, 18, 52)"></i>
-                    </button>
+                    
+                    {% endif %}
+                    <div class="form-floating mb-3">
+                        <label for="contactaddress">Contact Address</label>
+                        <input type="text" class="form-control" id="contactaddress" name="Contactaddress" placeholder="Enter Your Contact Address" >
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" type="submit">REGISTER</button>
                 </form>
             </main>
         </div>
-        <div class="col-md-4"></div>
     </div>
-
 </body>
 
 {% endblock %}

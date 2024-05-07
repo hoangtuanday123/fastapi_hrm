@@ -12,16 +12,16 @@
 
       <!-- Display existing records -->
       <table class="table">
-          <thead>
-              <tr>
+          <thead >
+              <tr >
                   <th hidden>ID</th>
-                  <th>FullName</th>
-                  <th>Relationship</th>
+                  <th style="text-align: center;">FullName</th>
+                  <th style="text-align: center;">Relationship</th>
                   {% if readrights==3 or readrights==4 or readrights is none %}
-                  <th>Detail</th>
+                  <th style="text-align: center;">Detail</th>
                   {% endif %}
                   {% if readrights==4 or readrights is none %}
-                  <th>Delete</th>
+                  <th style="text-align: center;">Delete</th>
                   {% endif %}
 
               </tr>
@@ -30,10 +30,10 @@
             {% for user in employeerelativelist %}
                   <tr>
                       <td hidden>{{ user[0] }}</td>
-                      <td>{{ user[1] }}</td>
+                      <td >{{ user[1] }}</td>
                       <td>{{ user[2] }}</td>
                       {% if readrights==3 or readrights==4 or readrights is none %}
-                      <td>
+                      <td style="text-align: center;">
                         
                         <label class="mb-0 tab_hover " for="userinformation1">View </label>
                         <button id="userinformation1" hidden onclick="location.href='/employeepage/informationuserjob/employeerelative/{{employeerelativelist[0][0]}}/{{informationuserid}}/{{idaccount}}'" ></button>
@@ -41,10 +41,10 @@
                       </td>
                       {% endif %}
                       {% if readrights==4 or readrights is none %} 
-                      <td>
+                      <td style="text-align: center;">
                         <a href="/employeepage/informationuserjob/employeerelativelist/delete/{{user[0]}}/{{informationuserid}}/{{totp}}"
-                         class="btn btn-danger btn-sm">
-                          <i class="fas fa-trash-alt"></i> 
+                         style="color:red">
+                         <i class="fas fa-trash-alt"></i>
                       </a>
                       </td>
                       {% endif %}

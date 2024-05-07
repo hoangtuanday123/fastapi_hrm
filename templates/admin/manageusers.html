@@ -1,259 +1,427 @@
 {% extends "_base.html" %}
 
 {% block content %}
-<style>
-  table {
-            border-collapse: collapse;
-            width: 100%;
-  }
-  th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: left;
-  }
-  th {
-      background-color: #f2f2f2;
-  }
-</style>
-<div >
-    
 
+<body>
     <div >
-      <main >
-        <div class="container py-5">
-          <div class="row">
-              <div class="col-sm-3">
-                  <h3 class="mb-0" style="color:red">List Of Accounts</h3>
-      
-              </div>
-            </div>
-            <!-- Display existing records -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        
-                        <th style="text-align: center;">Email</th>
-                        <th style="text-align: center;">Role</th>
-                        <th style="text-align: center;">Is Active</th>
-                        <th style="text-align: center;">Detail</th>
-                        <th style="text-align: center;">Update</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  {% for user in usersrole %}
-                        <tr>
-                            <td >{{ user[1] }}</td>
-                            <td style="text-align: center;">{{ user[2] }}</td>
-                            <td style="text-align: center;">{{ user[3] }}</td>
-                            <td style="text-align: center;">
-                          
-                              
-                              <button onclick="location.href='/adminpage/usersmanager/lookinformationuser/{{user[0]}}'" >view</button>
-                            </td>
-                            <td style="text-align: center;">
-                              
-                              <button onclick="location.href='/adminpage/usersmanager/assignrole/{{user[0]}}/{{user[2]}}'"><i class="fas fa-edit"></i></button>
-                                
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>   
-      
-          <hr>
-          <div class="col-sm-3">
-            <h3 class="mb-0" style="color:rgb(58, 29, 223)">List Of Blocked Users 
-      </div>
-      <!-- Display existing records -->
-      <table class="table">
-          <thead>
-              <tr>
-                  <th style="text-align: center;">Email</th>
-                  <th style="text-align: center;">Role</th>
-                  <th style="text-align: center;">Is Active</th>
-                  <th style="text-align: center;">Detail</th>
-                  <th style="text-align: center;">Unblock</th>
-              </tr>
-          </thead>
-          <tbody>
-            {% for user in usersblock %}
-                  <tr>
-                      <td>{{ user[1] }}</td>
-                      <td style="text-align: center;">{{ user[2] }}</td>
-                      <td style="text-align: center;">{{ user[3] }}</td>
-                      <td style="text-align: center;">
-                       
-                        <button onclick="location.href='/adminpage/usersmanager/lookinformationuser/{{user[0]}}'" >view</button>
-                      </td>
-                      <td style="text-align: center;">
-                      
-                        <button onclick="location.href='/adminpage/usersmanager/openblock/{{user[0]}}'"><i class="fas fa-lock-open"></i></button>
-                         
-                      </td>
-                  </tr>
-              {% endfor %}
-          </tbody>
-      </table>
-      
-      <hr>
-          <div>
-            <div class="col-sm-3">
-              <h3  class="mb-0" style="color:rgb(21, 223, 14)">List Of Users
-            </div>
-            <div>
-              <form method="post">
-                <div class="row">
-                  <div class="col-sm-9">
-                    <label for="roletype" class="mb-0"> Select Role Type</label>
-                </div>
-                  <select id="roletype" name="roletype" class="form-select">
-                      {% for type in roletype %}
-                          <option value="{{ type }}">{{ type }}</option>
-                      {% endfor %}
-                  </select>
-                </div>
-                  <br>
-                  <div class="col-md-6" >
-                    <input type="submit" name="fillter" value="fillter" class="btn btn-primary">
-                  </div>
-                </div>
-              </form>
-            </div>
-            <!-- <button onclick="location.href='/adminpage/usersmanager/exportfileexcel/{{table}}'">export all users file excel</button>
-            <button onclick="location.href='/adminpage/usersmanager/exportfilepdf/all'">export all users file pdf</button> -->
-          </div>
-          <div >
-            <table class="table">
-              <thead>
-                <tr>
-                    <th><input type="checkbox" id="selectAll"></th>
-                    <th hidden> id</th>
-                    <th  style="padding: 20px;">fullname</th>
-                    <th style="padding: 20px;">Nickname</th>
-                    <th style="padding: 20px;">email</th>
-                    <th style="padding: 20px;">contactaddress</th>
-                    <th style="padding: 20px;">phone</th>
-                    <th style="padding: 20px;">linkedln</th>
-                    <th style="padding: 20px;">years</th>
-                    <th style="padding: 20px;">location</th>
-                    <th style="padding: 20px;">maritalstatus</th>
-                    <th style="padding: 20px;">ethnicgroup</th>
-                    <th style="padding: 20px;">religion</th>
-                    <th style="padding: 20px;">role name</th>
-                    
-                    
-                    
-                </tr>
-              </thead>
-              <tbody> 
-                <form method="post">
-                  {% for user in Alluser %}
-                    
-                    <tr>
-                      
-                        <td><input type="checkbox" name="checkbox" value="{{user[0]}}"></td>
-                      <td hidden><div hidden>{{user[0]}}</div></td>
-                      <td  >
-                        <div >
-                        {{user[1]}}
-                
-                      
-                        </div>
-                      </td>
-                      <td >
-                
-                        <div >
-                          {{user[2]}}
-                  
-                        
-                          </div>
-                      
-                        
-                      </td>
-                      <td >
-                        <div >
-                          {{user[3]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[4]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[5]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[6]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[7]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[8]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[9]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[10]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[11]}}
-                          </div> 
-                      </td>
-                      <td style="text-align: center;">
-                
-                        <div >
-                          {{user[12]}}
-                  
-                        
-                          </div>
-                      
-                        
-                      </td>
-                      <td style="text-align: center;">
-                        <div >
-                          {{user[13]}}
-                          </div> 
-                      </td>
         
-                    </tr>
-                
-                  {% endfor %}
-                  <button type="submit" name="exportexcel" value="exportexcel" class="btn btn-success"><i class="fas fa-file-excel"></i> export file excel</button>
-                  <button type="submit" name="exportpdf" value="exportpdf" class="btn btn-warning"><i class="fa-solid fa-file-pdf"></i> export file pdf</button>
-                    
-                </form>
-              </tbody>
-            </table>
-            <script>
-                const selectAllCheckbox = document.getElementById("selectAll");
-                const checkboxes = document.querySelectorAll("table input[type='checkbox']");
-        
-                selectAllCheckbox.addEventListener("change", () => {
-                    checkboxes.forEach((checkbox) => {
-                        checkbox.checked = selectAllCheckbox.checked;
-                    });
-                });
-            </script>
-          </div>
-      </main>
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+        <!-- DataTales Example -->
+        <!-- <div class=" card-header py-1 row ml-auto mr-auto ">
+            <button  type="button" class=" table-button btn btn-secondary mr-1" data-table="user" onclick="updateValue()">Users</button>
+            <button  type="button" class=" table-button btn btn-secondary mr-1" data-table="blockedUser" onclick="updateValue()">Blocked users</button>
+            <button  type="button" class=" table-button btn btn-secondary" data-table="account" onclick="updateValue()">Accounts</button>
+        </div> -->
+        <nav class="card-header py-1 ml-0 mr-0 ">
+            <form class="form-inline">
+              <button class="btn btn-sm btn-outline-secondary mr-1" data-table="user" onclick="updateValue()">Users</button>
+              <button class="btn btn-sm btn-outline-secondary mr-1" data-table="blockedUser" onclick="updateValue()">Blocked users</button>
+              <button class="btn btn-sm btn-outline-secondary mr-1" data-table="account" onclick="updateValue()">Accounts</button>
+             
+            </form>
+          </nav>
+
     </div>
-    <div class="col-md-4"></div>
+    
+        
+        <!-- section of account table -->
+        <div id="accountTable"  style="display: none;">
+                  <!-- HTML -->
+                  <div class="card-body py-2 row">
+                    <div class="mr-auto d-flex align-items-center ml-4">
+                        <label for="entries" class="mr-2">Show</label>
+                        <select id="entriesaccount" onchange="changeEntries()" class="mr-2 custom-select">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <label for="entriesaccount" class="mr-4">Entries</label>
+                        <button class="mr-1 btn btn-primary" onclick="window.location.href='/adminpage/createnewrole'">Update</button>
+                        <button class="btn btn-danger">Block</button>
+                    </div>
+                    <div class="search-container ml-auto mr-4">
+                        <input class="rounded-input form-control" id="myInputaccount" onkeyup="search('all')" placeholder=" Searching........">
+                    </div>
+                </div>
+    
+        
+        <div class="card-body" >
+            <div class="text-center" >
+                <table id="myTable"  width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllaccount"></th>
+                            <th>Email 
+                                <br> <input  id="columnSearchaccount" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Search Email On Column">
+                            </th>
+                            <th>Role
+                                <br> <input  id="columnSearchaccount" data-index="2" onkeyup="columnSearch(2)" class="search-input text-center" type="text" placeholder="Search Role On Column">
+                            </th>
+                                
+                            <th>Is Active</th>
+                            <th>Detail</th>
+                            <th>Update</th>
+                            <th>Block</th>
+                            
+                        </tr>
+                    </thead>
+                    
+
+                    
+                    <tbody >
+                    {% for user in usersrole %}
+                        <tr>
+                            <td class="text-center"><input type="checkbox"></td>
+                            <td>{{ user[1] }}</td>
+                            <td>{{ user[2] }}</td>
+                            <td class="text-center">{{ user[3] }}</td>
+                            <td class="text-center" >
+                                <a href="/userinformation/{{user[0]}}" style="color:#858796" >
+                                    View
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/adminpage/usersmanager/assignrole/{{user[0]}}/{{user[2]}}" style="color:#858796" >
+                                <i class="fas fa-edit"></i> 
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/adminpage/usersmanager/blockuser/{{user[0]}}" style="color:#858796">
+                                    <i class="fas fa-times-circle" ></i>
+                                </a>
+                            </td>
+                            
+                        </tr>
+                    {% endfor %}    
+                    </tbody>
+                </table>
+                <div class="row" >
+                    <p class="mr-auto ml-3" >
+                        Showing <span id="startEntryaccount"></span> to <span id="endEntryaccount"></span> of <span id="totalEntriesaccount"></span> entries
+
+                    </p>
+                    <p class="ml-auto">
+                        <div class="pagination mr-3">
+                            <!-- Button with double chevron left -->
+                            <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                            <!-- Button with single chevron left -->
+                            <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                            <!-- Pagination container for page numbers -->
+                            <div id="paginationContaineraccount" class="pagination-container">
+                                <!-- Page numbers will be dynamically added here -->
+                            </div>
+                            <!-- Button with single chevron right -->
+                            <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                            <!-- Button with double chevron right -->
+                            <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+                        </div>
+                        <!-- Hidden div for displaying current page and total pages -->
+                        <div style="display: none;">
+                            Current Page: <span id="currentPageaccount"></span> / <span id="totalPagesaccount"></span>
+                        </div>
+                    </p>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+
+<!-- section of blocked user table -->
+<div id="blockedUserTable" style="display: none;">
+      <!-- HTML -->
+      <div class="card-body py-2 row">
+        <div class="mr-auto d-flex align-items-center ml-4">
+            <label for="entriesblockedUser" class="mr-2">Show</label>
+            <select id="entriesblockedUser" onchange="changeEntries()" class="mr-2 custom-select">
+                <option value="2">2</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <label for="entriesblockedUser" class="mr-4">Entries</label>
+            <button class="mr-1 btn btn-primary" >Unblock</button>
+
+        </div>
+        <div class="search-container ml-auto mr-4">
+            <input class="rounded-input form-control" id="myInputblockedUser" onkeyup="search('all')" placeholder=" Searching........">
+        </div>
+    </div>
+
+
+<div class="card-body" >
+<div class="text-center" >
+    <table id="myTable"  width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAllblockedUser"></th>
+                <th>Email 
+                    <br> <input  id="columnSearchblockedUser" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Search Email On Column">
+                </th>
+                <th>Role
+                    <br> <input  id="columnSearchblockedUser" data-index="2" onkeyup="columnSearch(2)" class="search-input text-center" type="text" placeholder="Search Role On Column">
+                </th>
+                    
+                <th>Is Active</th>
+                <th>Detail</th>
+                <th>Unblock</th>
+                
+            </tr>
+        </thead>
+        
+
+        
+        <tbody >
+        {% for user in usersblock %}
+            <tr>
+                <td class="text-center"><input type="checkbox"></td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td class="text-center">{{ user[3] }}</td>
+                <td class="text-center" >
+                    <a href="/userinformation/{{user[0]}}" style="color:#858796" >
+                        View
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a href="/adminpage/usersmanager/openblock/{{user[0]}}" style="color:#858796">
+                        <i class="fas fa-times-circle" ></i>
+                    </a>
+                </td>
+                
+            </tr>
+        {% endfor %}    
+        </tbody>
+    </table>
+    <div class="row" >
+        <p class="mr-auto ml-3" >
+            Showing <span id="startEntryblockedUser"></span> to <span id="endEntryblockedUser"></span> of <span id="totalEntriesblockedUser"></span> entries
+
+        </p>
+        <p class="ml-auto">
+            <div class="pagination mr-3">
+                <!-- Button with double chevron left -->
+                <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                <!-- Button with single chevron left -->
+                <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                <!-- Pagination container for page numbers -->
+                <div id="paginationContainerblockedUser" class="pagination-container">
+                    <!-- Page numbers will be dynamically added here -->
+                </div>
+                <!-- Button with single chevron right -->
+                <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                <!-- Button with double chevron right -->
+                <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+            </div>
+            <!-- Hidden div for displaying current page and total pages -->
+            <div style="display: none;">
+                Current Page: <span id="currentPageblockedUser"></span> / <span id="totalPagesblockedUser"></span>
+            </div>
+        </p>
+        
+    </div>
+    
+</div>
+</div>
+</div>
+
+</div>
+<!-- /.container-fluid -->
+
+</div>
+    </div>        
+
+</div>
+
+<!-- section of user  -->
+<div id="userTable" style="display: none;">
+    <!-- HTML -->
+    <div class="card-body py-2 row">
+
+            <div class="d-flex align-items-center">
+                <label for="entriesuser" class="ml-4 mr-2">Show</label>
+                <select id="entriesuser" onchange="changeEntries()" class="mr-2 custom-select">
+                    <option value="2">2</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <label for="entriesuser" class="mr-4">Entries</label>
+            </div>
+            <form method="post">
+                <div  class="d-flex align-items-center">
+                    <select id="roletype" name="roletype" class="custom-select mr-2">
+                        {% for type in roletype %}
+                            <option value="{{ type }}">{{ type }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" name="fillter" value="Filter" class="btn btn-primary    mr-2"> Filter</button>
+                </div>
+                
+            </form>
+            
+            <label  for="exportexcel"   class="btn btn-success mr-2"><i class="fas fa-file-excel" ></i> Export to Excel</label>
+            <label for="exportpdf"    class="btn btn-warning"><i class="fa-solid fa-file-pdf" ></i> Export to PDF</label>
+                
+         
+        <div class="search-container ml-auto mr-4">
+            <input class="rounded-input form-control" id="myInputuser" onkeyup="search('all')" placeholder="Search...">
+        </div>
+            
+    </div>
+        
+
+<div class="card-body" >
+<div class="text-center" >
+  <table id="myTable"  width="100%" cellspacing="0">
+      <thead>
+          <tr>
+              <th><input type="checkbox" id="selectAlluser"></th>
+              <th>Full Name
+               
+              </th>
+              <th>Nick Name
+                
+              </th>
+              <th>Email </th>
+              
+              <th>Contact Address
+                 
+              </th>
+                  
+              <th>Phone Number
+                
+              </th>
+              <th>LinkedIn</th>
+              <th>Location</th>
+              <th>Years
+               
+              </th>
+              <th>Marital Status</th>
+              <th>Ethnic Group</th>
+              <th>Religion</th>
+              <th>Role Name
+              
+              </th>
+          </tr>
+      </thead>
+      
+
+      
+      <tbody >
+        <form method="post">
+            {% for user in Alluser %}
+            <tr>
+                <td class="text-center"><input type="checkbox"></td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td >{{ user[3] }}</td>
+                <td >{{ user[4] }}</td>
+                <td >{{ user[5] }}</td>
+                <td >{{ user[6] }}</td>
+                <td >{{ user[7] }}</td>
+                <td >{{ user[8] }}</td>
+                <td >{{ user[9] }}</td>
+                <td >{{ user[10] }}</td>
+                <td >{{ user[11] }}</td>
+                <td >{{ user[12] }}</td>
+                <td >{{ user[13] }}</td>
+            </tr>
+        {% endfor %}  
+        <div class="d-flex align-items-center hidden">
+            <button id="exportexcel" type="submit" name="exportexcel" value="exportexcel" class="btn btn-success mr-2" hidden>
+                <i class="fas fa-file-excel"></i>Export to Excel
+            </button>
+            <button id="exportpdf" type="submit" name="exportpdf" value="exportpdf" class="btn btn-warning" hidden>
+                <i class="fa-solid fa-file-pdf"></i>Export to PDF
+            </button>
+        </div>
+        
+        </form>
+     
+      </tbody>
+  </table>
+  <div class="row" >
+      <p class="mr-auto ml-3" >
+          Showing <span id="startEntryuser"></span> to <span id="endEntryuser"></span> of <span id="totalEntriesuser"></span> entries
+
+      </p>
+      <p class="ml-auto">
+          <div class="pagination mr-3">
+              <!-- Button with double chevron left -->
+              <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+              <!-- Button with single chevron left -->
+              <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+              <!-- Pagination container for page numbers -->
+              <div id="paginationContaineruser" class="pagination-container">
+                  <!-- Page numbers will be dynamically added here -->
+              </div>
+              <!-- Button with single chevron right -->
+              <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+              <!-- Button with double chevron right -->
+              <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+          </div>
+          <!-- Hidden div for displaying current page and total pages -->
+          <div style="display: none;">
+              Current Page: <span id="currentPageuser"></span> / <span id="totalPagesuser"></span>
+          </div>
+      </p>
+      
   </div>
   
-  {% endblock %}
+</div>
+</div>
+</div>
+
+</div>
+<!-- /.container-fluid -->
+
+</div>
+  </div>        
+
+</div>
+<!-- End of Main Content -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+<i class="fas fa-angle-up"></i>
+</a>
+    </div>
+</body>
+{% block JavaScript%}
+<script src="{{url_for('static',path='js/table.js')}}"></script>
+<script>
+    
+
+// Định nghĩa một hàm trung gian để xử lý sự kiện click
+function handleClick(event) {
+    // Ngăn chặn hành động mặc định của liên kết
+    event.preventDefault();
+    console.log("Clicked on link");
+    // Thực thi hàm updateValue()
+    updateValue();
+    console.log("Updated value");
+    // Lấy href của liên kết
+    var href = this.getAttribute('href');
+    // Chuyển hướng đến URL chỉ định
+    window.location.href = href;
+}
+
+// Lấy tất cả các phần tử a (liên kết) trong bảng
+var tableLinks = document.querySelectorAll('#myTable a');
+
+// Lặp qua từng liên kết và thêm sự kiện "click"
+tableLinks.forEach(function(link) {
+    link.addEventListener('click', handleClick);
+});
+
+</script>
+{%endblock%}
+{% endblock %}

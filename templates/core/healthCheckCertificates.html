@@ -47,7 +47,6 @@
       <table class="table">
           <thead>
               <tr>
-                  <th>Document No</th>
                   <th>Document Name</th>
                   <th>Notarized</th>
                   <th>Dowload</th>
@@ -58,11 +57,10 @@
           <tbody>
               {% for record in temp %}
                   <tr>
-                      <td>{{ record[0] }}</td>
+                      <td>{{ record[1] }}</td>
                       <td>{{ record[2] }}</td>
-                      <td>{{ record[3] }}</td>
                       <td>
-                        <a href="{{ record[4] }}" target="_blank">Dowload</a>
+                        <a href="{{ record[3] }}" target="_blank">Dowload</a>
                       </td>
                       <td>
                         <a href=""

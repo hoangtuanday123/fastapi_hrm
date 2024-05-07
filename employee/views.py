@@ -7,7 +7,7 @@ from authentication.models import get_current_user_from_cookie,get_current_user_
 from authentication.models import User
 from ultils import file_path_default,encode_id,decode_id
 from globalvariable import readrights,idaccountadminmanager,rolegroup,roleadmin,fullname_adminsession,image_path_adminsession,roleuser
-from core.forms import informationUserJob,laborContract,forexsalary,EmployeeRelativeForm
+from core.forms import informationUserJob,laborContract,forexsalary,EmployeeRelativeForm,EditForm
 from core.models import employeeRelative
 from .forms import Employeeinformation
 templates = Jinja2Templates(directory="templates")
@@ -23,6 +23,7 @@ _fullname_admin = ""
 
 @employee.get("/employeepage/{image_path}/{fullname}",tags=['employee'], response_class=HTMLResponse)
 def employeepage(request:Request,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
+    global _informationuserjobid, _image_path_admin,_fullname_admin,_fullname,_roleuser,_image_path
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from informationUser where id_useraccount=?  "
@@ -33,11 +34,12 @@ def employeepage(request:Request,image_path,fullname,current_user: User = Depend
     conn.close()
     _image_path = image_path
     _fullname = fullname
+    print("fullname is: " + str(_fullname))
     context={
         "request":request,
         "roleuser":"employee",
         "image_path":image_path,
-        "fullname":fullname,
+        "fullname":_fullname,
         "current_user":current_user,
         "idinformationuser":encode_id(user[0]),
         "informationuserid":encode_id(user[0]),
@@ -104,7 +106,9 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
     else:
         userjob=informationUserJob(EmployeeNo=None,Companysitecode=None,Department=None,Directmanager=None,Workforcetype=None,Workingphone=None,Workingemail=None,
             Bankaccount=None,Bankname=None,Taxcode=None,Socialinsurancecode=None,Healthinsurancecardcode=None,Registeredhospitalname=None,Registeredhospitalcode=None)
-    print("id information user before redirect:" + str(informationuserid))   
+    print("id information user before redirect:" + str(informationuserid)) 
+    print( "role user is : " + str(roleuser.value)) 
+    print("fullname is: " + str(_fullname))
     idaccount=current_user.id
     if roleadmin.value=="admin" :
         idaccount=idaccountadminmanager.value 
@@ -112,7 +116,7 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -216,7 +220,7 @@ async def informationuserjob(request:Request,informationuserid,current_user: Use
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -281,7 +285,7 @@ def laborcontract(request:Request,informationuserjobid,informationuserid,current
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -318,7 +322,7 @@ def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,c
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -508,4 +512,69 @@ def deleterelative(informationuserid,employeerelativeid,type,current_user: User 
     conn.commit()
     conn.close()
     return RedirectResponse(url=f"/informationuserjob/{informationuserid}",status_code=status.HTTP_302_FOUND)
+
+@employee.post('/edit_employeeinformation/{col}/{informationuserid}',tags=['user'], response_class=HTMLResponse)
+async def edit_employeeinformation(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUser where id_useraccount=?"
+    cursor.execute(sql,decode_id(current_user.id))
+    verify_user=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    form = EditForm(request,col)
+    await form.load_data(col)
+    if str(decode_id(informationuserid))==str(verify_user[0]):
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        new_value = getattr(form, col)
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+    elif readrights.value==1:
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        new_value = getattr(form, col)
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+
+        idaccount= idaccountadminmanager.value
+        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+    
+@employee.post('/edit_employeeinformation/{col}/{informationuserid}',tags=['user'], response_class=HTMLResponse)
+async def edit_employeeinformation(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUser where id_useraccount=?"
+    cursor.execute(sql,decode_id(current_user.id))
+    verify_user=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    form = EditForm(request,col)
+    await form.load_data(col)
+    if str(decode_id(informationuserid))==str(verify_user[0]):
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        new_value = getattr(form, col)
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+    elif readrights.value==1:
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        new_value = getattr(form, col)
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+
+        idaccount= idaccountadminmanager.value
+        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+
     

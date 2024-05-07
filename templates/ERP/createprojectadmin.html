@@ -3,36 +3,37 @@
 {% block content %}
 
 <div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-    <main class="form-signin w-100 m-auto">
-      <form role="form" method="post" action="">
-        {{ form.csrf_token }}
-        <h1 class="h3 mb-3 fw-normal text-center">create project</h1>
-        <div class="col-md-6">
-          <label for="roletype" class="mb-0"> Select project type</label>
-            <select class="form-select" id="projecttype" name="projecttype" style="width: 200px;">
+	<div class="col-md-6 offset-md-3">
+		<div class="card card-outline-secondary">
+			<div class="card-header">
+				<h3 class="mb-0">Create New Project</h3>
+			</div>
+			<div class="card-body">
+				<form role="form" method="post" action="" class = "form">
+					{{ form.csrf_token }}
+					<div class="form-group">
+						<label >Project Type</label>
+						<select class="form-control" id="projecttype" name="projecttype">
               {% for project in projecttype %}
               <option value="{{ project[0] }}">{{ project[1] }}</option>
               {% endfor %}
             </select>
-        </div>
-        <div class="form-floating">
-            <label>project</label>
-            <input class="login__input" type="text" name="project" value="{{ form.project }}">
-          
-        </div>
-        <div class="form-floating">
-            <label>enddate</label>
-            <input class="login__input" type="date" name="enddate" value="{{ form.enddate }}">
-           
-        </div>
-          
-        <button class="w-100 btn btn-lg btn-primary" type="submit">next</button>
-      </form>
-    </main>
-  </div>
-  <div class="col-md-4"></div>
+					</div>
+					<div class="form-group">
+						<label >Project</label>
+						<input type="text" class="form-control" id="project" name="project" required="" placeholder="Enter Your Project Name">
+					</div>
+					<div class="form-group">
+						<label for="enddate">End Date</label>
+						<input type="date" class="form-control" id="enddate" name="enddate" required="">
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-success btn-lg float-right">Next</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
 
 {% endblock %}

@@ -74,28 +74,38 @@
       <div class="row">
         <div class="col-lg-4">
           <div class="card mb-4">
-              <div class="card-body text-center">
-                  <img id="avatarImage" src="/static/source/{{image_path}}" alt="avatar"
-                  style="border-radius: 50%; width: 90px; height: 90px;">
-                <h5 class="my-3">{{fullname}}</h5>
-
-                
-                <label class="custom-file-label" for="customFile">Choose File <i class="fas fa-plus"></i></label>
-                <div class="d-flex justify-content-center mb-2">
-                  <form  role="form" method="POST" action="/update_avatar/{{informationuserid}}/{{idaccount}}" enctype="multipart/form-data">  
-                    <input type="file" class="btn"  id="customFile" name="avatar" aria-describedby="inputGroupFileAddon" hidden>          
-                    <input  type = "submit" class="btn btn-success-soft btn-block"  value="Update"></input>
-                </form>
-
-                <div style="margin-left: 10px;"></div> 
-                <form role="form" method="POST" action="/remove_avatar/{{informationuserid}}/{{idaccount}}" >
-                    <input type="submit" class="btn btn-danger-soft" value = "Remove"></input>
-                </form>
+              <div class="card-body text-center d-flex flex-column justify-content-center">
+                <div>
+                  <img id="avatarImage" src="{{ url_for('static', path='source/' + image_path) }}" alt="avatar"
+                    style="border-radius: 50%; width: 90px; height: 90px;">
+                  <h5 class="my-2">{{fullname}}</h5>
                 </div>
-              </div>
+                <form role="form" method="POST" action="/update_avatar/{{informationuserid}}/{{idaccount}}" enctype="multipart/form-data" hidden>
+                    <div >
+                        <div class="custom-file">
+                          <input type="file"  id="customFile" name="avatar" hidden>
+                        </div>
+                    </div>
+                    <input type="submit" id="update"  hidden>                       
+                </form>
+
+                <form role="form" method="POST" action="/remove_avatar/{{informationuserid}}">
+                    <input type="submit"  id="remove" hidden>
+                </form>
+                
+                <div >
+                    <label class="" for="customFile">Choose File <i class="fas fa-plus"></i></label>
+                </div>
+
+                <div class="d-flex justify-content-center mb-2">
+                  <label  for="update" class="btn btn-success mr-1">Update</label>
+                  <label  for="remove" class="btn btn-danger">Remove</label>
+                </div>
+              
             </div>
-            <div class="card mb-4 mb-lg-0">
-              <div class="card-body p-0">
+          </div>
+            <div class="card mb-4 mb-lg-0 " >
+              <div class="card-body p-0" >
                 
                 <ul class="list-group list-group-flush rounded-3">
                   
@@ -152,16 +162,27 @@
 
                 {% if roleuser == "employee"  %}
 
-                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3 dropdown">
                   <div class="dropdown">
                       <i class="fas fa-address-card"></i>
-                      <label for="dropdownMenuLink" class="mb-0 tab_hover" id="dropdownLabel">Employee Information</label>
-                      <input type="checkbox" id="dropdownMenuLink" class="dropdown-checkbox">
-                      <i class="fa-solid fa-angle-down"></i>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <li><a class="dropdown-item" href="/informationuserjob/{{informationuserid}}">Employee Information Job</a></li>
-                          <li><a class="dropdown-item mb-0" href="/employeepage/informationuserjob/employeerelativelist/{{informationuserid}}">Employee Relationship</a></li>
+                      <label class="mb-0 tab_hover dropdown-toggle" onclick="updateValueSection()" id="dropdownMenuButton" data-toggle="dropdown" >Employee Information</label>
+                      <!-- <i class="fa-solid fa-angle-down"></i> -->
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="/informationuserjob/{{informationuserid}}">Employee Information Job</a></li>
+                        <li><a class="dropdown-item mb-0" href="/employeepage/informationuserjob/employeerelativelist/{{informationuserid}}">Employee Relationship</a></li>
+                        {% if readrights==3 or readrights==4 or readrights is none %}
+                        <li>
+                          <a class="dropdown-item" href="/employeepage/informationuserjob/laborcontract/{{informationuserjobid}}/{informationuserid}">Contract</a>
+
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="/employeepage/informationuserjob/forexsalary/{{informationuserjobid}}/{{informationuserid}}">Forex Salary</a>
+
+                        </li>
+      
+                        {% endif %}
                       </ul>
+                      
                   </div>
               </li>
                 {%endif%}
@@ -178,36 +199,31 @@
     </div>
     <script>
       // get img tag from avatr image to send pass for navigation.html
-      localStorage.setItem('avatarSrc', "/static/source/{image_path}");
+// function cancelEdit(col) {
+//     // Hide the edit mode elements
+//     document.getElementById('edit_mode_Fullname_div').style.display = 'none';
 
-
-      function enableEdit(col,placeholderValue) {
-    // Set edit_mode to true to switch to input mode
-    document.getElementById('edit_mode_' + col).value = 'true';
-    
-    // Create an input element
-    var inputElement = document.createElement('input');
-    inputElement.type = 'text';
-    inputElement.id = col;
-    inputElement.name = col;
-    inputElement.className = 'form-control';
-    inputElement.value = placeholderValue;  // Set the placeholder dynamically
-
-    // Create a "Save" button
-    var saveButton = document.createElement('button');
-    saveButton.type = 'submit';
-    saveButton.className = 'btn btn-primary edit_icon';
-    saveButton.textContent = 'Save';
-
-    // Create a container div
-    var containerDiv = document.getElementById(col + '-container');
-    containerDiv.innerHTML = '';  // Clear the container first
-
-    // Append the input and button to the container
-    containerDiv.appendChild(inputElement);
-    containerDiv.appendChild(saveButton);
+//     // Set edit_mode to false
+//     var editModeElement = document.getElementById('edit_mode_Fullname');
+//     editModeElement.value = 'false';
+// }
+function updateValueSection(){
+    localStorage.setItem('isReloadedSection', 'true'); 
+  }
+function enableEdit(col, placeholderValue) {
+  var columnEdit = "edit_mode_" + col +"_edit";
+  var columnShow = "edit_mode_" + col + "_show";
+  document.getElementById(columnEdit).style.display = '';
+  document.getElementById(columnShow).style.display = 'none';
 }
 
+function cancelEdit(col)
+{
+  var columnEdit = "edit_mode_" + col +"_edit";
+  var columnShow = "edit_mode_" + col + "_show";
+  document.getElementById(columnEdit).style.display = 'none';
+  document.getElementById(columnShow).style.display = '';
+}
   // droplist employee
    // JavaScript for hiding dropdown menu when clicking outside
    document.addEventListener('DOMContentLoaded', function() {

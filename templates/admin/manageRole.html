@@ -1,71 +1,142 @@
-{% extends"admin/adminpage.html" %}
+{% extends "_base.html" %}
 
 {% block content %}
 
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-    <main class="form-signin w-100 m-auto">
-        <h1 class="h3 mb-3 fw-normal text-center" style="color:red">List Role</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Role</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in data %}
-                <tr>
-                    <td>
-                        <div hidden>{{item[0]}}</div>
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ item[1] }}
-                        </div>
-                    </td>
-                    <td>
-            
-                      <a href="/adminpage/roles/updatepage/{{item[0]}}" class="btn btn-warning">
-                          <i class="fas fa-edit"></i> 
-                      </a>
-                  </td>
-                  
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div id="createRoleForm" style="display: none;">
-          <form role="form" method="post" action="">
-            {{ form.csrf_token }}
-            <h2 class="h3 mb-3 fw-normal text-center">Create Role</h2>
-            <div class="form-floating">
-                <label>role</label>
-                <input class="login__input" type="text" name="role" value="{{ form.role }}">
-              
-            </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Create</button>
-          </form>
-        </div>
-        <button id="toggleCreateRoleForm" class="btn btn-success w-100 mb-3">
-          <i class="fas fa-plus"></i> Create Role
-        </button>
-    </main>
-  </div>
-  <div class="col-md-4"></div>
-</div>
+<body>
+    <div >
+        
+             <!-- Begin Page Content -->
+    <div class="container-fluid" >
+        <!-- Page Heading -->
+        <!-- <h1 class="h3 mb-2 text-gray-800">Role List</h1> -->
 
+        <!-- DataTales Example -->
+            <div class="card-header py-3 row">
+                <h6 class="m-0 font-weight-bold text-primary">Role List</h6>
+            </div>
+            <!-- HTML -->
+                <div class="card-body py-2 row">
+                        <div class="mr-auto d-flex align-items-center ml-4">
+                            <label for="entries" class="mr-2">Show</label>
+                            <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label for="entries" class="mr-4">Entries</label>
+                            
+                            <button class="btn btn-danger">Remove</button>
+                        </div>
+                        <div class="search-container ml-auto mr-4">
+                            <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
+                        </div>
+                    </div>
+            
+            <div class="card-body"  >
+                <div class="text-center" >
+                    <table id="myTable"  width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                <th>Role 
+                                    <br> <input  id="columnSearch" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Search On Role Column">
+                                </th>
+                                <th>Privileges
+                                    
+                                <th>Update</th>
+                                <th>Delete</th>
+                                <th>Log</th>
+                                
+                            </tr>
+                        </thead>
+                        
+
+                        
+                        <tbody >
+                        {% for item in data %}
+                            <tr>
+                                <td class="text-center"><input type="checkbox"></td>
+                                <td>{{ item[1] }}</td>
+                                <td class="text-center">View</td>
+                                <td class="text-center">
+                                    <a href="/adminpage/roles/updatepage/{{item[0]}}" style="color:#858796" >
+                                    <i class="fas fa-edit"></i> 
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/adminpage/deleterole/{{ item[0] }}" style="color:#858796" >
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">log</td>
+                            </tr>
+                        {% endfor %}    
+                        </tbody>
+                    </table>
+                    <div class="row" >
+                        <p class="mr-auto ml-3" >
+                            Showing <span id="startEntry"></span> to <span id="endEntry"></span> of <span id="totalEntries"></span> entries
+
+                        </p>
+                        <p class="ml-auto">
+                            <div class="pagination mr-3">
+                                <!-- Button with double chevron left -->
+                                <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                                <!-- Button with single chevron left -->
+                                <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                                <!-- Pagination container for page numbers -->
+                                <div id="paginationContainer" class="pagination-container">
+                                    <!-- Page numbers will be dynamically added here -->
+                                </div>
+                                <!-- Button with single chevron right -->
+                                <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                                <!-- Button with double chevron right -->
+                                <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+                            </div>
+                            <!-- Hidden div for displaying current page and total pages -->
+                            <div style="display: none;">
+                                Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+                            </div>
+                        </p>
+                        
+                    </div>
+                    
+                </div>
+                      </div>
+        </div>
+
+    </div>
+    <!-- /.container-fluid -->
+
+</div>
+<!-- End of Main Content -->
+
+
+
+
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+<i class="fas fa-angle-up"></i>
+</a>
+    </div>
+</body>
+{% block JavaScript%}
+<script src="{{url_for('static',path='js/table_role.js')}}"></script>
 <script>
-  document.getElementById("toggleCreateRoleForm").addEventListener("click", function() {
-    var createRoleForm = document.getElementById("createRoleForm");
-    var toggleCreateRoleBtn = document.getElementById("toggleCreateRoleForm");
-    if (createRoleForm.style.display === "none") {
-      createRoleForm.style.display = "block";
-      toggleCreateRoleBtn.style.display = "none";
-    } else {
-      createRoleForm.style.display = "none";
-      toggleCreateRoleBtn.style.display = "block";
-    }
-  });
+    // Function to handle the click event of the "Select All" checkbox
+    document.getElementById("selectAllCheckbox").addEventListener("click", function() {
+        // Get all checkboxes in the table body
+        var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+
+        // Loop through each checkbox and set its checked state to match the "Select All" checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = document.getElementById("selectAllCheckbox").checked;
+        });
+    });
 </script>
 
+{%endblock%}
 {% endblock %}

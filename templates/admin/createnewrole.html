@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <main class="form-signin">
+        <h1 class="h3 mb-3 fw-normal text-center">Create New Role</h1>
+        <form role="form" method="post" action="">
+            {{ form.csrf_token }}
+            <div class="mb-3">
+                <input type="text" name="role" placeholder="Enter Role Name" class="form-control">
+            </div>            
+            <button type="submit" class="btn btn-primary btn-block">Create</button>
+        </form>
+    </main>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+
+{% endblock %}

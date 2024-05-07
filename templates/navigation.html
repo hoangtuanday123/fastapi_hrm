@@ -1,132 +1,637 @@
-<div class="w3-top">
-    <!-- navigation when user login successfully -->
-    
-    {%if current_user.is_authenticated and roleadmin == "admin" %}
-    <div class="w3-bar w3-white w3-card" id="myNavbar" style="line-height: 2.8;font-family: Verdana,sans-serif">
-        <a href="/home" class="w3-bar-item w3-button w3-wide">CONNEXUS</a>
-        <div class="w3-right w3-hide-small" style="display: flex; align-items: center;">
-            <!-- Chỗ này chỉ hiển thị khi người dùng chưa đăng nhập -->
-            <a href="/adminpage/roles" onclick="w3_close()" class="w3-bar-item w3-button">ROLE MANAGEMENT</a>
-            <a href="/adminpage/usersmanager" class="w3-bar-item w3-button">USER MANAGEMENT</a>
-            <a href="/adminpage/groupuserpage" class="w3-bar-item w3-button">GROUP USER</a>
-            <div class="profile-dropdown" >
-                <div onclick="toggle()" id="profile-dropdown-btn" class="btn">
-                    <img id="avatarImage" src="/static/source/{{image_path_admin}}" alt="avatar" style="border-radius: 10%; width: 40px; height: 40px;">
-                    <span>{{fullname_admin }}<i class="fa-solid fa-angle-down"></i></span>
-                </div> 
-            </div>
-        </div>
-    </div>
-    <div class="w3-right w3-hide-small">
-        <ul class="profile-dropdown-list">
-        </p>
-                <p class="profile-dropdown-list-item" >
-                    <a href="\userinformation\{{current_user.id}}">
-                        <i class="fa-regular fa-user"></i>
-                        Profile 
-                    </a>
-            </p>
-            <p class="profile-dropdown-list-item">
-                <a href="">
-                    <i class="fa-regular fa-envelope"></i>
-                    Setting
-                </a>
-            </p>
-            <p class="profile-dropdown-list-item">
-                <a href="\getcodechangepassword">
-                    <i class="fa-solid fa-key"></i>
-                    Change Password
-                </a>
-            </p>
-            <hr />
-            <p class="profile-dropdown-list-item">
-                <a href="/logout">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    Log out
-                </a>
-            </p>
-        </ul>
-    </div>
-</div>
-{% elif current_user.is_authenticated %}
-    <div>
-        <div class="w3-bar w3-white w3-card" id="myNavbar" style="line-height: 2.8;font-family: Verdana,sans-serif">
-            <a href="/home" class="w3-bar-item w3-button w3-wide">CONNEXUS</a>
-            <div class="w3-right w3-hide-small">
-                <!-- Chỗ này chỉ hiển thị khi người dùng đã đăng nhập -->
-            {%if image_path %}
-                <div class="profile-dropdown" >
-                    <div onclick="toggle()" class="profile-dropdown-btn">
-                        <img id="avatarImage" src="/static/source/{{image_path}}" alt="avatar" style="border-radius: 50%; width: 40px; height: 40px;">
-                        <span>{{fullname }} {{current_user.getdate}}<i class="fa-solid fa-angle-down"></i></span>
-                        <!-- <span>{{current_user.getdate}}</span> -->
-                    </div> 
+ <!-- Content Wrapper -->
+ <div id="content-wrapper" class="d-flex flex-column ">
+
+    <!-- Main Content -->
+    <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-black bg-white topbar mb-4 static-top shadow ">
+
+            <!-- Sidebar Toggle (Topbar) -->
+            <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button> -->
+
+            <!-- Topbar Search -->
+            <!-- <form
+                class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                        aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </div >
-        <div class="w3-right w3-hide-small">
-            <ul class="profile-dropdown-list">
-                </p>
-                    <p class="profile-dropdown-list-item" >
-                        <a href="\userinformation\{{current_user.id}}">
-                            <i class="fa-regular fa-user"></i>
-                            Profile 
+            </form> -->
+            <img class="img" style="object-fit: contain; max-width: 100%;height: 90%;" src="{{ url_for('static', path='source/logo_company.png') }}">
+
+            <!-- Topbar Navbar -->
+            {%if current_user.is_authenticated and roleadmin == "admin" %}
+            {%if fullname_admin %}
+            <ul class="navbar-nav  mr-auto">
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                        
+                    </a>
+                </li>
+                 <!-- Nav Item - User Management -->
+                 <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="combinationFunction('Users Management', 1)"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Users Management 
+                    </a>
+                    <!-- Dropdown - User Management -->
+                    <div class="dropdown-menu shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/adminpage/usersmanager" onclick="updatePath('Users', 2)">
+                            
+                            Users
                         </a>
-                </p>
-                <p class="profile-dropdown-list-item">
-                    <a href="/extractCCCD">
-                        <i class="fa-regular fa-envelope"></i>
-                        Inbox
+
+                        <a class="dropdown-item" href="/adminpage/roles" onclick="updatePath('Role', 2)">
+                            
+                            Role
+                        </a>
+
+                        <a class="dropdown-item" href="/adminpage/groupuserpage" onclick="updatePath('Group User', 2)">
+                            
+                            Groups User
+                        </a>
+
+                    </div>
+                </li>
+
+                 <!-- Nav Item -ERP Management -->
+                 <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('ERP Management', 1)"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        ERP Management
                     </a>
-                </p>
-                <p class="profile-dropdown-list-item">
-                    <a href="/getcodechangepassword">
-                        <i class="fa-solid fa-key"></i>
-                        Change Password
+                    <!-- Dropdown - ERP Management -->
+                    <div class="dropdown-menu shadow animated--grow-in" onclick="updatePath('Project', 2)"
+                        aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/ERP/projectlist">
+                            
+                            Projects
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            
+                            Role
+                        </a>
+
+                    </div>
+                </li>
+
+                 <!-- Nav Item - Annual Leave Management -->
+                 <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Annual Leave Management
                     </a>
-                </p>
-                <p class="profile-dropdown-list-item">
-                    <a href="#">
-                        <i class="fa-regular fa-circle-question"></i>
-                        Help & Support
+                    <!-- Dropdown - Annual Leave Management -->
+                    <div class="dropdown-menu shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">
+                            
+                            Users
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            
+                            Role
+                        </a>
+
+                    </div>
+                </li>
+
+                 <!-- Nav Item - Annual Leave Management -->
+                 <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Timesheet Management
                     </a>
-                </p>
-                <hr />
-                <p class="profile-dropdown-list-item">
-                    <a href="/logout">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Log out
+                    <!-- Dropdown - Annual Leave Management -->
+                    <div class="dropdown-menu shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">
+                            
+                            Weekly Timesheet
+                        </a>
+                        <a class="dropdown-item" href="/WeeklyTimesheet">
+                            
+                            Role
+                        </a>
+
+                    </div>
+                </li>
+                </ul>
+
+                 <!-- avatar -->
+
+                <ul class="navbar-nav ml-auto">
+                    <!-- Nav Item - User Information -->
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('My Profile', 1)"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            
+                            <img class="img-profile rounded-circle mr-3"
+                                src="{{ url_for('static', path='source/' + image_path_admin) }}">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{fullname_admin }}</span>
+                            
+                        </a>
+                        <!-- Dropdown - User Information -->
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                            aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="\userinformation\{{current_user.id}}\None" onclick="updatePath('Profile', 2)">
+                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Profile
+                            </a>
+                            <a class="dropdown-item" href="\getcodechangepassword">
+                                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Change Password
+                            </a>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Activity Log
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <p class="dropdown-item">
+                                <a  href="/logout" onclick="resetLocalStorage()">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </p>
+                </div>
+                    </li>
+                </ul>
+                {% else %}
+                <!-- <ul class="navbar-nav  mr-auto">
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="/startPage" role="button"
+                            aria-haspopup="true" aria-expanded="false">
+        
+                            <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                            
+                        </a>
+                    </li>
+                </ul> -->
+               
+                <ul class="navbar-nav ml-auto">
+                    <!-- Nav Item - User Information -->
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="/startPage" role="button"
+                            aria-haspopup="true" aria-expanded="false">
+        
+                            <span class="mr-2 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                            
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            aria-haspopup="true" aria-expanded="false">
+    
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">ABOUT</span>
+                            
+                        </a>
+                    </li>
+    
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="/signin" role="button"
+                             aria-haspopup="true" aria-expanded="false">
+    
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">SIGN IN</span>
+                            
+                        </a>
+                    </li>
+    
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="/register" role="button"
+                             aria-haspopup="true" aria-expanded="false">
+    
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">REGISTER</span>
+                            
+                        </a>
+                    </li>
+    
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                             aria-haspopup="true" aria-expanded="false">
+    
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">CONTACT</span>
+                            
+                        </a>
+                    </li>
+                </ul>
+            {%endif %}
+    
+            {% elif current_user.is_authenticated and roleuser == "employee" %}
+            {%if fullname %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                        
                     </a>
-                </p>
+                </li>
+                <!-- Nav Item - User Management -->
+                <li class="nav-item dropdown no-arrow">
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       Users
+                   </a>
+                   <!-- Dropdown - User Management -->
+                   <div class="dropdown-menu shadow animated--grow-in"
+                       aria-labelledby="userDropdown">
+                       <a class="dropdown-item" href="">
+                           
+                           Users
+                       </a>
+
+                       <a class="dropdown-item" href="">
+                           
+                           Role
+                       </a>
+
+                       <a class="dropdown-item" href="">
+                           
+                           Groups User
+                       </a>
+
+                   </div>
+               </li>
+
+                <!-- Nav Item -ERP Management -->
+                <li class="nav-item dropdown no-arrow">
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       ERP
+                   </a>
+                   <!-- Dropdown - ERP Management -->
+                   <div class="dropdown-menu shadow animated--grow-in"
+                       aria-labelledby="userDropdown">
+                       <a class="dropdown-item" href="/WeeklyTimesheet/{{iduser}}">
+                           
+                           Weekly Timesheet
+                       </a>
+                       <a class="dropdown-item" href="#">
+                           
+                           Role
+                       </a>
+
+                   </div>
+               </li>
+
+                <!-- Nav Item - Annual Leave Management -->
+                <li class="nav-item dropdown no-arrow">
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       Annual Leave
+                   </a>
+                   <!-- Dropdown - Annual Leave Management -->
+                   <div class="dropdown-menu shadow animated--grow-in"
+                       aria-labelledby="userDropdown">
+                       <a class="dropdown-item" href="#">
+                           
+                           Users
+                       </a>
+                       <a class="dropdown-item" href="#">
+                           
+                           Role
+                       </a>
+
+                   </div>
+               </li>
+               </ul>
+
+               <!-- avatar -->
+
+               <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('My Profile', 1)"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        
+                        <img class="img-profile rounded-circle"
+                            src="{{ url_for('static', path='source/' + image_path) }}">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{fullname }}</span>
+                        
+                    </a>
+                    <!-- Dropdown - User Information -->
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="\userinformation\{{current_user.id}}" onclick="updatePath('Profile', 2)">
+                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Profile
+                        </a>
+                        <a class="dropdown-item" href="\getcodechangepassword">
+                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Change Password
+                        </a>
+                        <a class="dropdown-item" href="\logout">
+                            <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Activity Log
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <p class="dropdown-item">
+                            <a  href="\logout" onclick="resetLocalStorage()">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Logout
+                            </a>
+                        </p>
+                        
+                    </div>
+                </li>
+
             </ul>
             {%endif%}
-        </div>
-    </div>
+            {% elif current_user.is_authenticated%}
+            {%if fullname %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                        
+                    </a>
+                </li>
+                <!-- Nav Item - User Management -->
+                <li class="nav-item dropdown no-arrow">
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       Users
+                   </a>
+                   <!-- Dropdown - User Management -->
+                   <div class="dropdown-menu shadow animated--grow-in"
+                       aria-labelledby="userDropdown">
+                       <a class="dropdown-item" href="">
+                           
+                           Users
+                       </a>
+
+                       <a class="dropdown-item" href="">
+                           
+                           Role
+                       </a>
+
+                       <a class="dropdown-item" href="">
+                           
+                           Groups User
+                       </a>
+
+                   </div>
+               </li>
+
+                <!-- Nav Item -ERP Management -->
+                <li class="nav-item dropdown no-arrow">
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       ERP
+                   </a>
+                   <!-- Dropdown - ERP Management -->
+                   <div class="dropdown-menu shadow animated--grow-in"
+                       aria-labelledby="userDropdown">
+                       <a class="dropdown-item" href="#">
+                           
+                           Users
+                       </a>
+                       <a class="dropdown-item" href="#">
+                           
+                           Role
+                       </a>
+
+                   </div>
+               </li>
+
+                <!-- Nav Item - Annual Leave Management -->
+                <li class="nav-item dropdown no-arrow">
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       Annual Leave
+                   </a>
+                   <!-- Dropdown - Annual Leave Management -->
+                   <div class="dropdown-menu shadow animated--grow-in"
+                       aria-labelledby="userDropdown">
+                       <a class="dropdown-item" href="#">
+                           
+                           Users
+                       </a>
+                       <a class="dropdown-item" href="#">
+                           
+                           Role
+                       </a>
+
+                   </div>
+               </li>
+               </ul>
+
+               <!-- avatar -->
+
+               <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('My Profile', 1)"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        
+                        <img class="img-profile rounded-circle"
+                            src="{{ url_for('static', path='source/' + image_path) }}">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{fullname }}</span>
+                        
+                    </a>
+                    <!-- Dropdown - User Information -->
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="\userinformation\{{current_user.id}}" onclick="updatePath('Profile', 2)">
+                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Profile
+                        </a>
+                        <a class="dropdown-item" href="\getcodechangepassword">
+                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Change Password
+                        </a>
+                        <a class="dropdown-item" href="\logout">
+                            <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Activity Log
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <p class="dropdown-item">
+                            <a  href="\logout" onclick="resetLocalStorage()">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Logout
+                            </a>
+                        </p>
+                        
+                    </div>
+                </li>
+
+            </ul>
+            {% else %}
+
+           
+            <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="/startPage" role="button"
+                        aria-haspopup="true" aria-expanded="false">
     
-    {% else %}
-        <!-- navigation when user does not log in -->
-        <div class="w3-bar w3-white w3-card" id="myNavbar" style="line-height: 2.8;font-family: Verdana,sans-serif">
-            <a href="/startPage" class="w3-bar-item w3-button w3-wide">CONNEXUS</a>
-            <div class="w3-right w3-hide-small">
-                <!-- Chỗ này chỉ hiển thị khi người dùng chưa đăng nhập -->
-                <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">ABOUT</a>
-                <a href="/signin" class="w3-bar-item w3-button">SIGN IN</a>
-                <a href="/register" class="w3-bar-item w3-button">REGISTER</a>
-                <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button">CONTACT</a>
-            </div>
+                        <span class="mr-2 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                        
+                    </a>
+                </li>
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                        aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">ABOUT</span>
+                        
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="/signin" role="button"
+                         aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">SIGN IN</span>
+                        
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="/register" role="button"
+                         aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">REGISTER</span>
+                        
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                         aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">CONTACT</span>
+                        
+                    </a>
+                </li>
+            </ul>
+            {%endif%}
+            {% else %}
+            <!-- <ul class="navbar-nav  mr-auto">
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="/startPage" role="button"
+                        aria-haspopup="true" aria-expanded="false">
+    
+                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                        
+                    </a>
+                </li>
+            </ul> -->
+           
+            <ul class="navbar-nav ml-auto">
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="/startPage" role="button"
+                        aria-haspopup="true" aria-expanded="false">
+    
+                        <span class="mr-2 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                        
+                    </a>
+                </li>
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                        aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">ABOUT</span>
+                        
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="/signin" role="button"
+                         aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">SIGN IN</span>
+                        
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="/register" role="button"
+                         aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">REGISTER</span>
+                        
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                         aria-haspopup="true" aria-expanded="false">
+
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">CONTACT</span>
+                        
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+
+        </nav>
+        <!-- Page Wrapper -->
+        <!-- display path -->
+        {% if current_user.is_authenticated and (fullname or fullname_admin) %}
+        <div class="card-header row py-1 ml-auto mr-auto text-dark">
+            <p class=" ml-3 mb-0  " id="pathDisplay"></p>
         </div>
-    {% endif %}
-</div>
-<script>
-    let profileDropdownList = document.querySelector(".profile-dropdown-list");
-    let btn = document.querySelector(".profile-dropdown-btn");
+        <script>
+            let path = JSON.parse(localStorage.getItem('path')) || ["Home"];
+            let lastLevelClicked = JSON.parse(localStorage.getItem('lastLevelClicked')) || 1;
+            
+            function updatePath(subPath, level) {
+                if (subPath === "Home") {
+                    path = ["Home"];
+                    lastLevelClicked = 1;   
+                } else {
+                    if (level <= lastLevelClicked) {
+                        path = ["Home"];
+                        lastLevelClicked = level;
+                    }
+        
+                    if (path[path.length - 1] === subPath) return;
+        
+                    let index = path.indexOf(subPath);
+                    if (index !== -1) path.splice(index + 1);
+                    else path.push(subPath);
+                    lastLevelClicked = level;
+                }
+                localStorage.setItem('path', JSON.stringify(path));
+                localStorage.setItem('lastLevelClicked', JSON.stringify(lastLevelClicked));
+                localStorage.setItem('isReloaded', 'true'); 
+            }
+            document.getElementById('pathDisplay').textContent = path.join(" / ");
+        </script>
+        {% endif %}
+        
+        <script>
+            function resetLocalStorage() {
+    // Xóa toàn bộ dữ liệu trong localStorage
+                localStorage.clear();
+}
+function combinationFunction(subPath, level) {
+    updatePath(subPath, level);        
+    localStorage.setItem('tableName', "");
+    localStorage.setItem('tailUpdate', "");
 
-    let classList = profileDropdownList.classList;
+    // Lấy giá trị tableName và tailUpdate từ localStorage
+    var tableName = localStorage.getItem('tableName');
+    var tailUpdate = localStorage.getItem('tailUpdate');
 
-    const toggle = () => classList.toggle("active");
+    // Hiển thị giá trị trong console
+    console.log("Table Name:", tableName);
+    console.log("Tail Update:", tailUpdate);
+}
 
-    window.addEventListener("click", function (e) {
-        if (!btn.contains(e.target)) classList.remove("active");
-    });
-
-</script>
+        </script>
+        
