@@ -319,8 +319,8 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
     }
     return templates.TemplateResponse("core/user_information.html",context)
 # edit information user profile
-@core_bp.post('/edit_userInformation/{col}/{informationuserid}/{data_col}',tags=['user'], response_class=HTMLResponse)
-async def edit_userInformation(request:Request,col,informationuserid,data_col,current_user: User = Depends(get_current_user_from_token)):
+@core_bp.post('/edit_userInformation/{col}/{informationuserid}',tags=['user'], response_class=HTMLResponse)
+async def edit_userInformation(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
@@ -948,8 +948,8 @@ def display_image(request:Request,filename,current_user: User = Depends(get_curr
     static_url = f'/static/source/{filename}'
     return RedirectResponse(url=static_url, status_code=301)
 
-@core_bp.post('/edit_latestEmployment/{col}/{informationuserid}/{data_col}', response_class=HTMLResponse)
-async def edit_latestEmployment(request:Request,col,informationuserid,data_col,current_user: User = Depends(get_current_user_from_token)):
+@core_bp.post('/edit_latestEmployment/{col}/{informationuserid}', response_class=HTMLResponse)
+async def edit_latestEmployment(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
@@ -983,8 +983,8 @@ async def edit_latestEmployment(request:Request,col,informationuserid,data_col,c
         idaccount= idaccountadminmanager.value
         return RedirectResponse(f'/latestEmployment/{informationuserid}')
     
-@core_bp.post('/edit_informationcccd/{col}/{informationuserid}/{data_col}', response_class=HTMLResponse)
-async def edit_informationcccd(request:Request,col,informationuserid,data_col,current_user: User = Depends(get_current_user_from_token)):
+@core_bp.post('/edit_informationcccd/{col}/{informationuserid}', response_class=HTMLResponse)
+async def edit_informationcccd(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
