@@ -373,7 +373,7 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
         "request":request,
         "current_user":current_user,
         "groups":groups,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":_roleuser,
         "form":form,
         "fullname":_fullname
@@ -381,7 +381,8 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
 @core_bp.get('/latestEmployment/{informationuserid}',tags=['user'], response_class=HTMLResponse)
-def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):     
+def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+        global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin  
         form = latestEmploymentForm(request)
         conn=db.connection()
         cursor=conn.cursor()
@@ -407,7 +408,7 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "form":form,
         "fullname":_fullname,
@@ -451,7 +452,7 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "form":form,
         "fullname":_fullname,
@@ -511,7 +512,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "form":form,
         "fullname":_fullname,
@@ -570,7 +571,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "form":form,
         "fullname":_fullname,
@@ -609,7 +610,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -644,7 +645,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -678,7 +679,7 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -711,7 +712,7 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -744,7 +745,7 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
@@ -777,7 +778,7 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":_image_path,
         "roleuser":roleuser.value,
         "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
