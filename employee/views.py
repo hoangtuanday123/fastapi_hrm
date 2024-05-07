@@ -22,7 +22,6 @@ _image_path_admin = ""
 _fullname_admin = ""
 
 @employee.get("/employeepage/{image_path}/{fullname}",tags=['employee'], response_class=HTMLResponse)
-
 def employeepage(request:Request,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -41,7 +40,8 @@ def employeepage(request:Request,image_path,fullname,current_user: User = Depend
         "fullname":fullname,
         "current_user":current_user,
         "idinformationuser":encode_id(user[0]),
-        "informationuserid":encode_id(user[0])
+        "informationuserid":encode_id(user[0]),
+        "iduser":str(current_user.id)
     }
     return templates.TemplateResponse("employee/employeepage.html",context)
 
