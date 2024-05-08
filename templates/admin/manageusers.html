@@ -79,7 +79,7 @@
                             <td>{{ user[2] }}</td>
                             <td class="text-center">{{ user[3] }}</td>
                             <td class="text-center" >
-                                <a href="/userinformation/{{user[0]}}" style="color:#858796" >
+                                <a href="/adminpage/usersmanager/lookinformationuser/{{user[0]}}" style="color:#858796" >
                                     View
                                 </a>
                             </td>
@@ -263,7 +263,8 @@
                             <option value="{{ type }}">{{ type }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit" name="fillter" value="Filter" class="btn btn-primary    mr-2"> Filter</button>
+                    <!-- <label  for="fillter"   class="btn btn-primary btn-sm   mr-2">Filter</label> -->
+                    <button type="submit" name="fillter" value="fillter" class="btn btn-primary  btn-sm  mr-2"> Filter</button>
                 </div>
                 
             </form>
@@ -284,7 +285,7 @@
   <table id="myTable"  width="100%" cellspacing="0">
       <thead>
           <tr>
-              <th><input type="checkbox" id="selectAlluser"></th>
+            <th><input type="checkbox" id="selectAll"></th>
               <th>Full Name
                
               </th>
@@ -320,7 +321,7 @@
         <form method="post">
             {% for user in Alluser %}
             <tr>
-                <td class="text-center"><input type="checkbox"></td>
+                <td class="text-center"><input type="checkbox" name="checkbox" value="{{user[0]}}"></td>
                 <td>{{ user[1] }}</td>
                 <td>{{ user[2] }}</td>
                 <td >{{ user[3] }}</td>
@@ -335,16 +336,17 @@
                 <td >{{ user[12] }}</td>
                 <td >{{ user[13] }}</td>
             </tr>
-        {% endfor %}  
-        <div class="d-flex align-items-center hidden">
-            <button id="exportexcel" type="submit" name="exportexcel" value="exportexcel" class="btn btn-success mr-2" hidden>
-                <i class="fas fa-file-excel"></i>Export to Excel
-            </button>
-            <button id="exportpdf" type="submit" name="exportpdf" value="exportpdf" class="btn btn-warning" hidden>
-                <i class="fa-solid fa-file-pdf"></i>Export to PDF
-            </button>
-        </div>
-        
+            {% endfor %}  
+            
+                <button id="exportexcel" type="submit" name="exportexcel" value="exportexcel" class="btn btn-success mr-2" >
+                    <i class="fas fa-file-excel"></i>Export to Excel
+                </button>
+                <button id="exportpdf" type="submit" name="exportpdf" value="exportpdf" class="btn btn-warning">
+                    <i class="fa-solid fa-file-pdf"></i>Export to PDF
+                </button>
+                <!-- <button type="submit" name="fillter" value="Filter" class="btn btn-primary btn-sm  mr-2" hidden> Filter</button> -->
+                  
+            
         </form>
      
       </tbody>
@@ -422,6 +424,16 @@ tableLinks.forEach(function(link) {
     link.addEventListener('click', handleClick);
 });
 
+</script>
+<script>
+    const selectAllCheckbox = document.getElementById("selectAll");
+    const checkboxes = document.querySelectorAll("table input[type='checkbox']");
+
+    selectAllCheckbox.addEventListener("change", () => {
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    });
 </script>
 {%endblock%}
 {% endblock %}

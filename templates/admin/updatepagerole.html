@@ -1,25 +1,28 @@
-
 {% extends "_base.html" %}
 
 {% block content %}
 
 <div class="row">
-  <div class="col-md-3"></div>
-  <div class="col-md-6">
-    <main class="form-signin">
-        <h1 class="h3 mb-3 fw-normal text-center">Update Role</h1>
-        <form method="post">
-            <div class="input-group mb-3">
-                <input type="text" id="user_role" name="user_role" value="{{ rolename }}" class="form-control" placeholder="Role Name" aria-label="Role Name" aria-describedby="basic-addon2" required>
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary ml-2 mr-2"><i class="fas fa-edit"></i> Update</button>
-                    <button onclick="location.href='/adminpage/deleterole/{{ idrole }}'" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-                </div>
-            </div>
-        </form>
-    </main>
-  </div>
-  <div class="col-md-3"></div>
+	<div class="col-md-6 offset-md-3">
+		<div class="card card-outline-secondary">
+			<div class="card-header">
+				<h3 class="mb-0">Update Role</h3>
+			</div>
+			<div class="card-body">
+				<form method="post">
+					<div class="form-group">
+						<label >New Role Name</label>
+						<input type="text" class="form-control" id="user_role" name="user_role" required="" placeholder="{{ rolename }}">
+					</div>
+            
+						<button type="submit" class="btn btn-success btn-lg float-right btn-sm">Update</button>
+            <a href="{{ url_for('deleterole', idrole=idrole) }}" class="btn btn-danger btn-lg float-right mr-2 btn-sm"> Delete</a>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
 
 {% endblock %}

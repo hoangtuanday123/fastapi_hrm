@@ -57,13 +57,13 @@
           <tbody>
               {% for record in temp %}
                   <tr>
-                      <td>{{ record[1] }}</td>
-                      <td style="text-align: center;">{{ record[2] }}</td>
+                      <td>{{ record[2] }}</td>
+                      <td style="text-align: center;">{{ record[3] }}</td>
                       <td style="text-align: center;">
-                        <a href="{{ record[3] }}" target="_blank">Dowload</a>
+                        <a href="{{ record[4] }}" target="_blank">Dowload</a>
                       </td>
                       <td style="text-align: center;">
-                        <a href=""
+                        <a href="/deleteHCC/{{informationuserid}}/{{ record[0] }}"
                           style="color:#f04d3b">
                          <i class="fas fa-times-circle" ></i> 
                       </a>

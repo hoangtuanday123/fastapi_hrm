@@ -663,7 +663,7 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
     conn.commit()
     conn.close()
     projects=[(project[0],project[1])for project in project_temp]
-    
+   
     conn=db.connection()
     cursor=conn.cursor()
     sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=? and p.status=1"
@@ -784,3 +784,95 @@ async def get_tasks_and_components(request:Request):
     conn.close()
     components_options =[(component[0],component[1])for component in components_temp]
     return JSONResponse(content={'tasks':tasks_options,'components':components_options})
+
+@ERP.post("/ERP/weeklytimesheetview",response_class=HTMLResponse)
+async def weeklytimesheetview(request:Request,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select projectid,projectname from project where status=1"
+    cursor.execute(sql)
+    projects_temp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    projects=[(project[0],project[1])for project in projects_temp]
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
+ from weeklytimesheet w join project p on w.projectid=p.projectid join
+ projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
+ taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' """
+    cursor.execute(sql)
+    weeklytimesheet=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    weeklytimesheetvalues=[(project[0],project[1],project[2],project[3],project[4],project[5],
+                            project[6],project[7],project[8],project[9],project[10],project[11],
+                            project[12],project[13],project[14],project[15],project[16])for project in weeklytimesheet]
+    form_method=await request.form()
+    if  form_method.get('searchproject')=='searchproject':
+        
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
+    from weeklytimesheet w join project p on w.projectid=p.projectid join
+    projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
+    taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' and w.projectid=? """
+        cursor.execute(sql,form_method['project'])
+        weeklytimesheet=cursor.fetchall()
+        conn.commit()
+        conn.close()
+        weeklytimesheetvalues=[(project[0],project[1],project[2],project[3],project[4],project[5],
+                                project[6],project[7],project[8],project[9],project[10],project[11],
+                                project[12],project[13],project[14],project[15],project[16])for project in weeklytimesheet]
+
+    context={
+        "request":request,
+        "current_user":current_user,
+        "roleadmin" : _roleadmin,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value,
+        "projects":projects,
+        "weeklytimesheetvalues":weeklytimesheetvalues,
+        "projects":projects
+    }
+    return templates.TemplateResponse("ERP/weeklytimesheetviewadmin.html",context)
+    
+
+@ERP.get("/ERP/weeklytimesheetview",response_class=HTMLResponse)
+async def weeklytimesheetview_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select projectid,projectname from project where status=1"
+    cursor.execute(sql)
+    projects_temp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    projects=[(project[0],project[1])for project in projects_temp]
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
+ from weeklytimesheet w join project p on w.projectid=p.projectid join
+ projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
+ taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' """
+    cursor.execute(sql)
+    weeklytimesheet=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    weeklytimesheetvalues=[(project[0],project[1],project[2],project[3],project[4],project[5],
+                            project[6],project[7],project[8],project[9],project[10],project[11],
+                            project[12],project[13],project[14],project[15],project[16])for project in weeklytimesheet]
+    
+    context={
+        "request":request,
+        "current_user":current_user,
+        "roleadmin" : _roleadmin,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value,
+        "projects":projects,
+        "weeklytimesheetvalues":weeklytimesheetvalues,
+        "projects":projects
+    }
+    return templates.TemplateResponse("ERP/weeklytimesheetviewadmin.html",context)
+    

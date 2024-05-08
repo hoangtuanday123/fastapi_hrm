@@ -98,7 +98,7 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
         fullname_adminsession.value = fullname_session.value
         #session['writerights']=1
         writerights.value=1
-
+        readrights.value=4
         image_path_admin=image_path_adminsession.value
         fullname_admin = fullname_adminsession.value
         return RedirectResponse(url=f'/adminpage/{image_path_admin}/{fullname_admin}')
@@ -247,10 +247,10 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
             image_path_session.value = found_avatar[2]
         else:
             image_path_session.value = file_path_default
-
         if roleadmin.value == "admin" and roleuser.value != "admin":
             roleuser.value = user_temp[13]
             idaccountadminmanager.value = idaccount
+            
     context={
         "request":request,
         "current_user":current_user,
@@ -346,7 +346,7 @@ async def edit_userInformation(request:Request,col,informationuserid,current_use
         idaccount= str(current_user.id)
         return RedirectResponse(f'/userinformation/{idaccount}')
         
-    elif readrights.value==1:
+    elif readrights.value==4:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"UPDATE informationUser SET {col} = ? WHERE id= ?"
@@ -356,7 +356,7 @@ async def edit_userInformation(request:Request,col,informationuserid,current_use
         cursor.close()
         idaccount= idaccountadminmanager.value
         return RedirectResponse(f'/userinformation/{idaccount}')
-        
+    #return "hello"
 @core_bp.get('/groupuserpage/{idinformationuser}',tags=['user'], response_class=HTMLResponse)
 def groupuserpage(request: Request,idinformationuser,current_user: User = Depends(get_current_user_from_token)):
     #return idinformationuser
@@ -383,7 +383,7 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
 @core_bp.get('/latestEmployment/{informationuserid}',tags=['user'], response_class=HTMLResponse)
-def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+def latestEmployment_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
         
         form = latestEmploymentForm(request)
         conn=db.connection()
@@ -953,7 +953,7 @@ async def edit_latestEmployment(request:Request,col,informationuserid,current_us
         cursor.commit()
         cursor.close()
         return RedirectResponse(f'/latestEmployment/{informationuserid}',status_code=status.HTTP_302_FOUND)
-    elif readrights.value==1:
+    elif readrights.value==4:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"UPDATE latestEmployment SET {col} = ? WHERE idinformationuser= ?"
@@ -983,6 +983,18 @@ async def edit_informationcccd(request:Request,col,informationuserid,current_use
         cursor = conn.cursor()
         sql = f"UPDATE information_cccd SET {col} = ? WHERE IdInformationUser = ?"
         
+        new_value = getattr(form, col)
+        print("col value: "+ col)
+        print("idinformationuser: "+ str(informationuserid) )
+        print("new valueeee:" + new_value)
+        cursor.execute(sql,new_value,informationuserid)
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/usercccd/{encode_id(informationuserid)}',status_code=status.HTTP_302_FOUND)
+    elif readrights.value==4:
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"UPDATE information_cccd SET {col} = ? WHERE IdInformationUser = ?"
         new_value = getattr(form, col)
         print("col value: "+ col)
         print("idinformationuser: "+ str(informationuserid) )
@@ -1478,3 +1490,90 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
         # flash(' Only Allowed media types are docx,pdf, please try again!!!')
        return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
+@core_bp.get('/deleteHCC/{informationuserid}/{idhcc}',tags=['user'], response_class=HTMLResponse)
+def deleteHCC_get(request:Request,informationuserid,idhcc,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUser where id_useraccount=?"
+    cursor.execute(sql,decode_id(current_user.id))
+    verify_user=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    if str(decode_id(informationuserid))==str(verify_user[0]):
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"delete healthCheckCertificates WHERE id= ? and idinformationuser = ?"
+        new_value = idhcc
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
+        
+    elif readrights.value==1:
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"delete healthCheckCertificates WHERE id= ? and idinformationuser = ?"
+        new_value = idhcc
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
+    
+@core_bp.get('/deleteEducation/{informationuserid}/{ideducation}',tags=['user'], response_class=HTMLResponse)
+def deleteEducation(request:Request,informationuserid,ideducation,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUser where id_useraccount=?"
+    cursor.execute(sql,decode_id(current_user.id))
+    verify_user=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    if str(decode_id(informationuserid))==str(verify_user[0]):
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"delete educationbackground WHERE id= ? and idinformationuser = ?"
+        new_value = ideducation
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
+        
+    elif readrights.value==1:
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"delete educationbackground WHERE id= ? and idinformationuser = ?"
+        new_value = ideducation
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
+    
+
+@core_bp.get('/deleteQualification/{informationuserid}/{idqualification}',tags=['user'], response_class=HTMLResponse)
+def deleteQualification(request:Request,informationuserid,idqualification,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUser where id_useraccount=?"
+    cursor.execute(sql,decode_id(current_user.id))
+    verify_user=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    if str(decode_id(informationuserid))==str(verify_user[0]):
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"delete qualification WHERE id= ? and idinformationuser = ?"
+        new_value = idqualification
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
+        
+    elif readrights.value==1:
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"delete qualification WHERE id= ? and idinformationuser = ?"
+        new_value = idqualification
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)

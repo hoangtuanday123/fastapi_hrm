@@ -129,6 +129,7 @@ def confirm_token(token, expiration=3600):
 @validate.post("/confirm/{token}",response_class=HTMLResponse)
 async def confirm_email(token,request: Request,current_user: User = Depends(get_current_user_from_token)):
     messages=[]
+    
     if current_user.is_information_validate:
         conn=db.connection()
         cursor=conn.cursor()
@@ -181,6 +182,7 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
 @validate.get("/confirm/{token}",response_class=HTMLResponse)
 async def confirm_email_get(token,request: Request,current_user: User = Depends(get_current_user_from_token)):
     messages=[]
+
     if current_user.is_information_validate:
         conn=db.connection()
         cursor=conn.cursor()
@@ -237,17 +239,23 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
         return RedirectResponse(url="/logout")
     return RedirectResponse(url="/home")
 
-# @validate.route("/resend")
-# @login_required
-# def resend_confirmation():
-#     if current_user.is_information_validate:
-#         flash("Your account has already been confirmed.", "success")
-#         return redirect(url_for("core.home"))
-#     token = generate_token(current_user.email)
-#     confirm_url = url_for("validation.confirm_email", token=token, _external=True)
-#     html = render_template("validation/confirm_email.html", confirm_url=confirm_url)
-#     subject = "Please confirm your email"
-#     send_email(current_user.email, subject, html)
-#     flash("A new confirmation email has been sent.", "success")
-#     return redirect(url_for("validation.inactive"))
-
+@validate.get("/resend",response_class=HTMLResponse)
+def resend_confirmation(request: Request,current_user: User = Depends(get_current_user_from_token)):
+    if current_user.is_information_validate:
+        #flash("Your account has already been confirmed.", "success")
+        messages=[("success","Your account has already been confirmed")]
+        return RedirectResponse(url="/home")
+        #return redirect(url_for("core.home"))
+    
+    token = generate_token(current_user.email)
+    confirm_url=f"http://localhost:8000/confirm/{token}"
+    confirm_url_temp={
+            "confirm_url":confirm_url,
+            "request":request
+        }
+    template = env.get_template('validation/confirm_email.html',confirm_url_temp)
+    html=template.render(confirm_url_temp)
+    subject = "Please confirm your email"
+    send_mail(current_user.email, subject, html,1)
+    messages=[("success","A confirmation email has been sent via email.")]
+    return RedirectResponse(url="/inactiveEmail")

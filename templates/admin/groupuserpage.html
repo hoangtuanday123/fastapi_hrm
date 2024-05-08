@@ -18,7 +18,7 @@
                 <div class="card-body py-2 row">
                         <div class="mr-auto d-flex align-items-center ml-4">
                             <label for="entries" class="mr-2">Show</label>
-                            <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
+                            <select id="entries" onchange="changeEntries()" class="mr-2 custom-select sm">
                                 <option value="5">5</option>
                                 <option value="10" selected>10</option>
                                 <option value="25">25</option>
@@ -27,18 +27,46 @@
                             </select>
                             <label for="entries" class="mr-4">Entries</label>
                             
-                            <button class="btn btn-danger mr-2">Remove</button>
                             {% if roleuser=="admin" %}
                             <div id="createRoleForm" >
+                                <form role="form" method="post" action="">
+                                  {{ form.csrf_token }}
+                            <button type="button" class="btn btn-primary btn-sm" style="width: 100px;" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">New</button>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="exampleModalLabel">Add new Group User</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      
+                                        <div class="form-group">
+                                          <label for="group" class="col-form-label">Enter New Group Name</label>
+                                          <input class="form-control mb-2" type="text" name="group" >
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="submit" class="btn btn-primary">Next</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              </form>
+                              </div>
+                            <!-- <div id="createRoleForm" >
                               <form role="form" method="post" action="">
                                 {{ form.csrf_token }}
-                                <!-- <h2 class="h3 mb-3 fw-normal text-center">Create group user</h2>
+                                <h2 class="h3 mb-3 fw-normal text-center">Create group user</h2>
                                 <div class="form-floating">
                                   <input class="form-control mb-2" type="text" name="group" value="{{ form.group }}">
-                                </div> -->
+                                </div>
                                 <button class="btn btn-success" type="submit">New</button>
                               </form>
-                            </div>
+                            </div> -->
                             {% endif %}
                         </div>
                         <div class="search-container ml-auto mr-4">
@@ -57,7 +85,6 @@
                                 <th>Created Date</th>
                                     
                                 <th>Update</th>
-                                <th>Delete</th>
                                 <th>Log</th>
                                 
                             </tr>
@@ -74,11 +101,6 @@
                                 <td class="text-center">
                                     <a href="/adminpage/groupuserpage/updategroupuser/{{ group[0] }}/{{group[3]}}" style="color:#858796" >
                                     <i class="fas fa-edit"></i> 
-                                    </a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="" style="color:#858796" >
-                                        <i class="fas fa-trash-alt"></i>
                                     </a>
                                 </td>
                                 <td class="text-center">log</td>
@@ -151,3 +173,4 @@
 
 {%endblock%}
 {% endblock %}
+
