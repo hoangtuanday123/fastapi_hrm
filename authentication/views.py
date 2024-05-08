@@ -18,13 +18,18 @@ from fastapi.security import OAuth2, OAuth2PasswordRequestForm
 from ultils import settings,get_b64encoded_qr_image,file_path_default,send_mail,encode_id,decode_id
 from authentication.models import get_current_user_from_cookie,get_current_user_from_token
 import os
+import config
+from dotenv import load_dotenv
+
 from fastapi.responses import JSONResponse
-from globalvariable import is_admin,verify_password,messages,id_useraccount
+from globalvariable import is_admin,verify_password,messages,id_useraccount,roleuser,image_path_session,fullname_session
 auth = APIRouter()
+load_dotenv()
 HOME_URL = "/home"
 SETUP_2FA_URL = "/setup-2fa"
 VERIFY_2FA_URL = "/verify-2fa"
 templates = Jinja2Templates(directory="templates")
+
 
 
 @auth.get("/register", response_class=HTMLResponse,tags=["authentication"])
@@ -201,6 +206,7 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
         "current_user":current_user
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
+
 
 
 @auth.get("/signin",tags=["authentication"], response_class=HTMLResponse)
@@ -406,7 +412,10 @@ async def verifypassword_get(request:Request):
         "request":request,
         "form":form,
         "messages":messages.message_array(),
-        "current_user":current_user
+        "current_user":current_user,
+        "image_path":image_path_session.value,
+        "fullname":fullname_session.value,
+        "roleuser":roleuser.value,
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
 @auth.post("/verifypassword",tags=["authentication"], response_class=HTMLResponse)
@@ -450,7 +459,10 @@ async def verifypassword(request:Request):
         "request":request,
         "form":form,
         "messages":messages.message_array(),
-        "current_user":current_user
+        "current_user":current_user,
+        "image_path":image_path_session.value,
+        "fullname":fullname_session.value,
+        "roleuser":roleuser.value,
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
     #return render_template("authentication/verify-2fa.html", form=form)

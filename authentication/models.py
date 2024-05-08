@@ -160,8 +160,8 @@ def get_user(id:str) -> User:
     conn.close()
     
     if user_temp is not None:
-        user=User(id=encode_id(user_temp[0]),email=user_temp[2],password=user_temp[3],created_date=user_temp[4],
-                    authenticated_by=user_temp[5],secret_token=user_temp[6],is_two_authentication_enabled=user_temp[7],
+        user=User(id=encode_id(user_temp[0]),email=user_temp[2],password=str(user_temp[3]),created_date=user_temp[4],
+                    authenticated_by=user_temp[5],secret_token=str(user_temp[6]),is_two_authentication_enabled=user_temp[7],
                     is_information_validate=user_temp[8],is_validate_email=user_temp[9],role_user=str(user_temp[10]),
                     is_active=user_temp[11],idinformationuser=None,is_admin=None,getdate=str(datetime.now()),is_authenticated=True)
         if user.is_information_validate==True:
