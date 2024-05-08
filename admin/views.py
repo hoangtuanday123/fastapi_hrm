@@ -9,7 +9,7 @@ from ultils import file_path_default,encode_id,decode_id,send_mail
 from .forms import roleForm,groupuserForm
 from employee.forms import Employeeinformation
 from core.forms import informationUserJob,laborcontractForm,forexsalaryForm
-from globalvariable import roleuser,is_admin,rolegroup,selectionItem,tablesession,messages,writerights,readrights,image_path_adminsession,fullname_adminsession,idaccountadminmanager,roleadmin
+from globalvariable import roleuser,is_admin,rolegroup,selectionItem,tablesession,messages,writerights,readrights,image_path_adminsession,fullname_adminsession,idaccountadminmanager,roleadmin,image_path_session
 import pyotp
 import pandas as pd
 import pdfkit
@@ -19,40 +19,38 @@ templates = Jinja2Templates(directory="templates")
 
 admin=APIRouter()
 
-_role_user = ""
-_roleadmin = "admin"
-_image_path_admin = ""
-_fullname_admin = ""
 @admin.get('/adminpage/{image_path_admin}/{fullname_admin}',tags=['user managerment'], response_class=HTMLResponse)
 def adminpage_get(request: Request,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
-    _image_path_admin=image_path_admin
-    _fullname_admin = fullname_admin
     image_path_adminsession.value=image_path_admin
     fullname_adminsession.value=fullname_admin
-    print("admin fullname is " + _fullname_admin)
+
+    roleuser.value = "admin"
+    roleadmin.value = "admin"
+    print("admin fullname is " + fullname_adminsession.value)
     context={
         "request":request,
-        "image_path_admin":_image_path_admin,
-        "roleuser":_role_user,
-        "roleadmin":_roleadmin,
-        "fullname_admin":fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleuser":roleuser.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "current_user":current_user
     }
     return templates.TemplateResponse("admin/adminpage.html",context)
 
 @admin.post('/adminpage/{image_path_admin}/{fullname_admin}',tags=['user managerment'], response_class=HTMLResponse)
 def adminpage(request: Request,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
-    _image_path_admin=image_path_admin
-    _fullname_admin = fullname_admin
-    print("admin fullname is " + _fullname_admin)
+    image_path_adminsession.value=image_path_admin
+    fullname_adminsession.value=fullname_admin
+
+    roleuser.value = "admin"
+    roleadmin.value = "admin"
+    print("admin fullname is " + fullname_adminsession.value)
     context={
         "request":request,
-        "image_path_admin":_image_path_admin,
-        "roleuser":_role_user,
-        "roleadmin":_roleadmin,
-        "fullname_admin":fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleuser":roleuser.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "current_user":current_user
     }
     return templates.TemplateResponse("admin/adminpage.html",context)
@@ -60,7 +58,6 @@ def adminpage(request: Request,image_path_admin, fullname_admin,current_user: Us
 
 @admin.get('/adminpage/roles',tags=['user managerment'], response_class=HTMLResponse)
 async def displayRoles_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from role_user"
@@ -74,9 +71,9 @@ async def displayRoles_get(request:Request,current_user: User = Depends(get_curr
         "request":request,
         "data":role_names,
         "form":form,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "roleuser":roleuser.value,
         "current_user":current_user
     }
@@ -84,7 +81,7 @@ async def displayRoles_get(request:Request,current_user: User = Depends(get_curr
 
 @admin.post('/adminpage/roles',tags=['user managerment'], response_class=HTMLResponse)
 async def displayRoles(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+   
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from role_user"
@@ -108,9 +105,9 @@ async def displayRoles(request:Request,current_user: User = Depends(get_current_
         "request":request,
         "data":role_names,
         "form":form,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "roleuser":roleuser.value,
         "current_user":current_user
     }
@@ -118,7 +115,7 @@ async def displayRoles(request:Request,current_user: User = Depends(get_current_
 
 @admin.get("/adminpage/roles/updatepage/{idrole}",tags=['user managerment'], response_class=HTMLResponse)
 def rolepage_get(request:Request,idrole,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="select role_name from role_user where id=?"
@@ -132,9 +129,9 @@ def rolepage_get(request:Request,idrole,current_user: User = Depends(get_current
         "current_user":current_user,
         "rolename":rolename[0],
         "idrole":idrole,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "roleuser":roleuser.value
     }
     
@@ -142,7 +139,7 @@ def rolepage_get(request:Request,idrole,current_user: User = Depends(get_current
 
 @admin.post("/adminpage/roles/updatepage/{idrole}",tags=['user managerment'], response_class=HTMLResponse)
 async def rolepage(request:Request,idrole,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="select role_name from role_user where id=?"
@@ -167,14 +164,14 @@ async def rolepage(request:Request,idrole,current_user: User = Depends(get_curre
         "current_user":current_user,
         "rolename":rolename[0],
         "idrole":idrole,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "roleuser":roleuser.value
     }
     return templates.TemplateResponse("admin/updatepagerole.html",context)
     
-@admin.post("/adminpage/roles/deleterole/{idrole}",tags=['user managerment'])
+@admin.get("/adminpage/roles/deleterole/{idrole}",tags=['user managerment'])
 def deleterole(idrole):
     conn=db.connection()
     cursor=conn.cursor()
@@ -184,18 +181,18 @@ def deleterole(idrole):
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
-    return RedirectResponse(url="/adminpage/roles")
+    return RedirectResponse(url="/adminpage/roles",status_code=status.HTTP_302_FOUND)
 
 @admin.get("/adminpage/usersmanager",tags=['user managerment'], response_class=HTMLResponse)
 def displayusers_get(request:Request,current_user: User = Depends(get_current_user_from_token)):  
-    global _image_path_admin,_fullname_admin
+
     totp=pyotp.TOTP('adminroles')
     totp=totp.now()
     #session['is_admin']=str(totp)
     #session['rolegroup']='admin'
     is_admin.value=str(totp)
     rolegroup.value='admin'
-    _roleadmin = "admin"
+    roleadmin.value = "admin"
     conn=db.connection()
     cursor=conn.cursor()
     sql="select u.id, i.email,r.role_name ,u.is_active,i.id from informationUser i join user_account u on i.id_useraccount=u.id join role_user r on r.id= u.role_id where u.role_id is not null"
@@ -250,23 +247,22 @@ def displayusers_get(request:Request,current_user: User = Depends(get_current_us
         "roletype":roles,
         "table":table,
         "selecttionitem":selecttionitem,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "roleuser":roleuser.value
     }
     return templates.TemplateResponse("admin/manageusers.html",context)
 @admin.post("/adminpage/usersmanager",tags=['user managerment'], response_class=HTMLResponse)
 async def displayusers(request:Request,current_user: User = Depends(get_current_user_from_token)):  
     #list account
-    global _image_path_admin,_fullname_admin
     totp=pyotp.TOTP('adminroles')
     totp=totp.now()
     #session['is_admin']=str(totp)
     #session['rolegroup']='admin'
     is_admin.value=str(totp)
     rolegroup.value='admin'
-    _roleadmin = "admin"
+    roleadmin.value = "admin"
     conn=db.connection()
     cursor=conn.cursor()
     sql="select u.id, i.email,r.role_name ,u.is_active,i.id from informationUser i join user_account u on i.id_useraccount=u.id join role_user r on r.id= u.role_id where u.role_id is not null"
@@ -314,7 +310,7 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
     selectionItem.value=selecttionitem
     form = await request.form()
     
-    if request.method=='POST' and 'fillter' in form and form["fillter"]=='fillter':
+    if 'fillter' in form and form["fillter"]=='fillter':
         table=form['roletype']
         if table=='candidate':
             #session['table']='candidate'
@@ -358,6 +354,7 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
     elif 'exportexcel' in form and form['exportexcel']=='exportexcel':
         selecttionitem=form.getlist('checkbox')
         selectionItem.value=selecttionitem
+        
         #table=session.get('table')
         table=tablesession.value
         if(table==None or table=='ALL'):
@@ -377,7 +374,7 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
         #     selectionItem.value=[]
         #     typerole=table
         #     return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
-    elif form['exportpdf']=='exportpdf':
+    elif 'exportpdf' in form and form['exportpdf']=='exportpdf':
         selecttionitem=form.getlist('checkbox')
         selectionItem.value=selecttionitem
         Selecttionitem=[]
@@ -433,7 +430,6 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
 
             return response
         #return redirect(url_for("admin.exportfilepdf"))
-
     context={
         "request":request,
         "current_user":current_user,
@@ -443,14 +439,14 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
         "roletype":roles,
         "table":table,
         "selecttionitem":selecttionitem,
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value,
         "roleuser":roleuser.value
-    }
+        }
     return templates.TemplateResponse("admin/manageusers.html",context)
     # return render_template("admin/manageusers.html",Alluser=Alluser,usersrole=usersrole,usersblock=usersblock,
-    #                        roletype=roles,table=table,selecttionitem=selecttionitem,image_path_admin=_image_path_admin,roleadmin=_roleadmin,fullname_admin =  _fullname_admin
+    #                        roletype=roles,table=table,selecttionitem=selecttionitem,image_path_admin=image_path_session.value_admin,roleadmin=roleadmin.value,fullname_admin =  fullname_adminsession.value
     #                        ,totp=totp,roleuser=session.get('roleuser'))
 
 def is_all_null(array):
@@ -678,7 +674,7 @@ def exportfilepdf(request:Request,idinformationuser,type):
     
 @admin.get("/adminpage/usersmanager/assignrole/{idaccount}/{userrole}",tags=['user managerment'], response_class=HTMLResponse)
 def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
@@ -717,15 +713,15 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
         "roleuser":roleuser.value,
         "userrole":userrole,
         "informationuserid":encode_id(idinformationuser),
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value
     }
     return templates.TemplateResponse("admin/updatepageuserrole.html",context)
 
 @admin.post("/adminpage/usersmanager/assignrole/{idaccount}/{userrole}",tags=['user managerment'], response_class=HTMLResponse)
 async def assignrole(request:Request,idaccount,userrole,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
@@ -793,9 +789,9 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
         "roleuser":roleuser.value,
         "userrole":userrole,
         "informationuserid":encode_id(idinformationuser),
-        "image_path_admin":_image_path_admin,
-        "roleadmin":_roleadmin,
-        "fullname_admin":_fullname_admin
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value
     }
     return templates.TemplateResponse("admin/updatepageuserrole.html",context)
 
@@ -856,7 +852,7 @@ def readrights_func(rolegroup):
 
 @admin.get('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
 async def groupuserpage_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    _roleadmin = "admin"
+    roleadmin.value = "admin"
     rolegroup.value='admin'
     conn=db.connection()
     cursor=conn.cursor()
@@ -871,18 +867,18 @@ async def groupuserpage_get(request:Request,current_user: User = Depends(get_cur
         "request":request,
         "current_user":current_user,
         "groups":groups,
-        "image_path":file_path_default,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
         "form":form,
         "rolegroup":'admin',
-        "roleadmin":_roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin":_fullname_admin
+        "roleadmin":roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin":fullname_adminsession.value
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 @admin.post('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
 async def groupuserpage(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    _roleadmin = "admin"
+    roleadmin.value = "admin"
     rolegroup.value='admin'
     conn=db.connection()
     cursor=conn.cursor()
@@ -918,9 +914,9 @@ async def groupuserpage(request:Request,current_user: User = Depends(get_current
         "roleuser":roleuser.value,
         "form":form,
         "rolegroup":'admin',
-        "roleadmin":_roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin":_fullname_admin
+        "roleadmin":roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin":fullname_adminsession.value
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
@@ -930,9 +926,9 @@ async def updategropuser_get(request:Request,idgroup,rolegroupvalue,current_user
     rolegroup.value=rolegroupvalue
     
     if str(rolegroup.value) !='admin':
-        _roleadmin=""
+        roleadmin.value=""
     else:
-        _roleadmin = "admin"
+        roleadmin.value = "admin"
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -995,9 +991,9 @@ async def updategropuser_get(request:Request,idgroup,rolegroupvalue,current_user
         "rolegroup":rolegroupvalue,
         #totp=str(totp),
         "form":form,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin" : _fullname_admin
+        "roleadmin" : roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value
     }
     return templates.TemplateResponse("admin/updategroupuser.html",context)
 
@@ -1006,9 +1002,9 @@ async def updategropuser(request:Request,idgroup,rolegroupvalue,current_user: Us
     readrights_func(rolegroupvalue)
     rolegroup.value=rolegroupvalue
     if str(rolegroup.value) !='admin':
-        _roleadmin=""
+        roleadmin.value=""
     else:
-        _roleadmin = "admin"
+        roleadmin.value = "admin"
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -1158,9 +1154,9 @@ async def updategropuser(request:Request,idgroup,rolegroupvalue,current_user: Us
         "rolegroup":rolegroupvalue,
         #totp=str(totp),
         "form":form,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin" : _fullname_admin
+        "roleadmin" : roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value
     }
     return templates.TemplateResponse("admin/updategroupuser.html",context)
     
@@ -1207,9 +1203,10 @@ def deletegroupuser(idgroup,current_user: User = Depends(get_current_user_from_t
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
+            update project set projectteamid=null where projectteamid=?
             delete groupuserdetail where idgroupuser=?
             delete groupuser where id=?"""
-    value=(idgroup,idgroup)
+    value=(idgroup,idgroup,idgroup)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -1280,9 +1277,9 @@ async def createemployeeinfor_get(request:Request,idinformation,current_user: Us
         "current_user":current_user,
         "image_path":file_path_default,
         "roleuser":roleuser.value,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin" : _fullname_admin,
+        "roleadmin" : roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value,
         "informationuserid":idinformation,
         "userjob":userjob,
         "form":form,
@@ -1375,9 +1372,9 @@ async def createlaborcontract_get(request:Request,idinformation,current_user: Us
         "current_user":current_user,
         "image_path":file_path_default,
         "roleuser":roleuser.value,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin" : _fullname_admin,
+        "roleadmin" : roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value,
         "informationuserid":idinformation,
         "form":form,
        
@@ -1410,9 +1407,9 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
         "current_user":current_user,
         "image_path":file_path_default,
         "roleuser":roleuser.value,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin" : _fullname_admin,
+        "roleadmin" : roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value,
         "informationuserid":idinformation,
         "form":form
         
@@ -1436,9 +1433,9 @@ async def createforexsalary_get(request:Request,idinformation,current_user: User
         "current_user":current_user,
         "image_path":file_path_default,
         "roleuser":roleuser.value,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin" : _fullname_admin,
+        "roleadmin" : roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value,
         "informationuserid":idinformation,
         "form":form
         
@@ -1492,9 +1489,9 @@ async def createforexsalary(request:Request,idinformation,current_user: User = D
         "current_user":current_user,
         "image_path":file_path_default,
         "roleuser":roleuser.value,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":_image_path_admin,
-        "fullname_admin" : _fullname_admin,
+        "roleadmin" : roleadmin.value,
+        "image_path_admin":image_path_adminsession.value,
+        "fullname_admin" : fullname_adminsession.value,
         "informationuserid":idinformation,
         "form":form,
         
