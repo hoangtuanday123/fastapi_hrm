@@ -71,3 +71,23 @@ class role_admindata:
     def __init__(self): 
         self.value=None
 roleadmin=role_admindata()
+
+
+class image_pathdata:
+    def __init__(self): 
+        self.value=None
+image_path_session =image_pathdata()
+
+class fullname_data:
+    def __init__(self): 
+        self.value=None
+fullname_session =fullname_data()
+
+class front_cccd_data:
+    def __init__(self): 
+        self.value=None
+front_cccd_session =front_cccd_data()
+class back_cccd_data:
+    def __init__(self): 
+        self.value=None
+back_cccd_session =back_cccd_data()

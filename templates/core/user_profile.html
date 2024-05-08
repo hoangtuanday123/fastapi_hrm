@@ -78,7 +78,9 @@
                 <div>
                   <img id="avatarImage" src="{{ url_for('static', path='source/' + image_path) }}" alt="avatar"
                     style="border-radius: 50%; width: 90px; height: 90px;">
-                  <h5 class="my-2">{{fullname}}</h5>
+                  <h5 class="my-2">
+                        {{fullname}}
+                  </h5>
                 </div>
                 <form role="form" method="POST" action="/update_avatar/{{informationuserid}}/{{idaccount}}" enctype="multipart/form-data" hidden>
                     <div >
@@ -89,7 +91,7 @@
                     <input type="submit" id="update"  hidden>                       
                 </form>
 
-                <form role="form" method="POST" action="/remove_avatar/{{informationuserid}}">
+                <form role="form" method="POST" action="/remove_avatar/{{informationuserid}}/{{idaccount}}">
                     <input type="submit"  id="remove" hidden>
                 </form>
                 

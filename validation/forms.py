@@ -75,7 +75,7 @@ class latestEmploymentForm:
         self.Employer = form.get(
             "Employer"
         )  # since outh works on username field we are considering email as username
-        self.JobTittle = form.get("Jobtittle")
+        self.JobTitle = form.get("JobTitle")
         self.AnnualSalary = form.get("AnnualSalary")
         self.AnnualBonus = form.get("AnnualBonus")
         self.RetentionBonus = form.get("RetentionBonus")

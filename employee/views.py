@@ -50,8 +50,6 @@ def employeepage(request:Request,image_path,fullname,current_user: User = Depend
 @employee.get("/informationuserjob/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 async def informationuserjob_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     global _informationuserjobid, _image_path_admin,_fullname_admin,_fullname,_roleuser,_image_path
-    
-    
     #session['readrights']=None
     #readrights.value=None
     form=Employeeinformation(request)
@@ -83,9 +81,9 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-        select i.*,iu.Email,iu.phone,u.id from informationUserJob i join informationUser 
+select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from informationUserJob i join informationUser 
         iu on i.idinformationuser=iu.id join user_account u on
-        u.id=iu.id_useraccount where i.idinformationuser=? and i.is_active=1"""
+        u.id=iu.id_useraccount join role_user r on r.id = u.role_id JOIN user_avatar ua on iu.id = ua.idinformationuser  where i.idinformationuser=? and i.is_active=1"""
     value=(decode_id(informationuserid))
     cursor.execute(sql,value)
     user=cursor.fetchone()
@@ -101,13 +99,13 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
         form.Registeredhospitalcode=str(user[12])
         form.Registeredhospitalname=str(user[11])
         userjob=informationUserJob(EmployeeNo=user[0],Companysitecode=user[1],Department=user[2],Directmanager=user[3],Workforcetype=user[4],Workingphone=user[15],Workingemail=user[14],
-            Bankaccount=user[5],Bankname=user[6],Taxcode=user[8],Socialinsurancecode=user[9],Healthinsurancecardcode=user[10],Registeredhospitalname=user[11],Registeredhospitalcode=user[12])
+            Bankaccount=user[5],Bankname=user[6],Taxcode=user[7],Socialinsurancecode=user[8],Healthinsurancecardcode=user[9],Registeredhospitalname=user[10],Registeredhospitalcode=user[11])
         _informationuserjobid = user[0]
     else:
         userjob=informationUserJob(EmployeeNo=None,Companysitecode=None,Department=None,Directmanager=None,Workforcetype=None,Workingphone=None,Workingemail=None,
             Bankaccount=None,Bankname=None,Taxcode=None,Socialinsurancecode=None,Healthinsurancecardcode=None,Registeredhospitalname=None,Registeredhospitalcode=None)
-    print("id information user before redirect:" + str(informationuserid)) 
-    print( "role user is : " + str(roleuser.value)) 
+    
+    print( "image path is : " + str(_image_path)) 
     print("fullname is: " + str(_fullname))
     idaccount=current_user.id
     if roleadmin.value=="admin" :
@@ -116,9 +114,9 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
-        "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "image_path":user[19],
+        "roleuser":user[17],
+        "fullname":user[18],
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -163,7 +161,7 @@ async def informationuserjob(request:Request,informationuserid,current_user: Use
         result=addlist(informationuserid,form_method['Employeerelative2'],'Additionalprivateinsurance')
 
     if request.method=='POST' and form_method.get('Dependant')=='Dependant':
-        result=addlist(informationuserid,request.form['Employeerelative3'],'Dependant')
+        result=addlist(informationuserid,form_method['Employeerelative3'],'Dependant')
 
     if request.method=='POST' and form_method.get('Emergencycontact')=='Emergencycontact':
         result=addlist(informationuserid,form_method['Employeerelative4'],'Emergencycontact')
@@ -190,9 +188,9 @@ async def informationuserjob(request:Request,informationuserid,current_user: Use
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-        select i.*,iu.Email,iu.phone,u.id from informationUserJob i join informationUser 
+select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from informationUserJob i join informationUser 
         iu on i.idinformationuser=iu.id join user_account u on
-        u.id=iu.id_useraccount where i.idinformationuser=? and i.is_active=1"""
+        u.id=iu.id_useraccount join role_user r on r.id = u.role_id JOIN user_avatar ua on iu.id = ua.idinformationuser  where i.idinformationuser=? and i.is_active=1"""
     value=(decode_id(informationuserid))
     cursor.execute(sql,value)
     user=cursor.fetchone()
@@ -208,7 +206,7 @@ async def informationuserjob(request:Request,informationuserid,current_user: Use
         form.Registeredhospitalcode=str(user[12])
         form.Registeredhospitalname=str(user[11])
         userjob=informationUserJob(EmployeeNo=user[0],Companysitecode=user[1],Department=user[2],Directmanager=user[3],Workforcetype=user[4],Workingphone=user[15],Workingemail=user[14],
-            Bankaccount=user[5],Bankname=user[6],Taxcode=user[8],Socialinsurancecode=user[9],Healthinsurancecardcode=user[10],Registeredhospitalname=user[11],Registeredhospitalcode=user[12])
+            Bankaccount=user[5],Bankname=user[6],Taxcode=user[7],Socialinsurancecode=user[8],Healthinsurancecardcode=user[9],Registeredhospitalname=user[10],Registeredhospitalcode=user[11])
         _informationuserjobid = user[0]
     else:
         userjob=informationUserJob(EmployeeNo=None,Companysitecode=None,Department=None,Directmanager=None,Workforcetype=None,Workingphone=None,Workingemail=None,
@@ -216,13 +214,16 @@ async def informationuserjob(request:Request,informationuserid,current_user: Use
     print("id information user before redirect:" + str(informationuserid))   
     idaccount=current_user.id
     if roleadmin.value=="admin" :
-        idaccount=idaccountadminmanager.value 
+        idaccount=idaccountadminmanager.value
+        _roleuser = user[17]
+    else:
+        _roleuser = roleuser.value
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
-        "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "image_path":user[19],
+        "roleuser":_roleuser,
+        "fullname":user[18],
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -513,8 +514,8 @@ def deleterelative(informationuserid,employeerelativeid,type,current_user: User 
     conn.close()
     return RedirectResponse(url=f"/informationuserjob/{informationuserid}",status_code=status.HTTP_302_FOUND)
 
-@employee.post('/edit_employeeinformation/{col}/{informationuserid}',tags=['user'], response_class=HTMLResponse)
-async def edit_employeeinformation(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+@employee.get('/edit_employeeinformation/{col}/{informationuserid}',tags=['user'], response_class=HTMLResponse)
+async def edit_employeeinformation_get(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
@@ -532,7 +533,7 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
         cursor.execute(sql,new_value,decode_id(informationuserid))
         cursor.commit()
         cursor.close()
-        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+        return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
     elif readrights.value==1:
         conn= db.connection()
         cursor = conn.cursor()
@@ -543,14 +544,17 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
         cursor.close()
 
         idaccount= idaccountadminmanager.value
-        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+        return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @employee.post('/edit_employeeinformation/{col}/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 async def edit_employeeinformation(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    idaccount=current_user.id
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
+        idaccount=idaccountadminmanager.value
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    cursor.execute(sql,decode_id(idaccount))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
@@ -561,10 +565,11 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
         cursor = conn.cursor()
         sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
         new_value = getattr(form, col)
+        print("new_value" + str(new_value))
         cursor.execute(sql,new_value,decode_id(informationuserid))
         cursor.commit()
         cursor.close()
-        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+        return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
     elif readrights.value==1:
         conn= db.connection()
         cursor = conn.cursor()
@@ -573,8 +578,8 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
         cursor.execute(sql,new_value,decode_id(informationuserid))
         cursor.commit()
         cursor.close()
-
-        idaccount= idaccountadminmanager.value
-        return RedirectResponse(f'/informationuserjob/{informationuserid}')
+        
+        return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
+    
 
     

@@ -18,39 +18,37 @@ import shutil
 from werkzeug.utils import secure_filename
 from .models import user_cccd,user_avatar,allowed_file,allowed_attachment_file
 from ultils import file_path_default
-from globalvariable import is_admin,roleuser,rolegroup,readrights,writerights,idaccountadminmanager
+from globalvariable import is_admin,roleuser,rolegroup,readrights,writerights,idaccountadminmanager,image_path_session,fullname_session
 from admin.forms import groupuserForm
 import pyotp
 from authentication.models import verifyPassword
-from globalvariable import verify_password,messages,fullname_adminsession,image_path_adminsession,roleadmin
+from globalvariable import verify_password,messages,fullname_adminsession,image_path_adminsession,roleadmin,front_cccd_session,back_cccd_session
 from .forms import CCCDForm,AvatarForm,HCCForm,EducationForm,QualificationForm,EditForm
 from validation.forms import informationUserForm,latestEmploymentForm,usercccdForm
 core_bp = APIRouter()
 templates = Jinja2Templates(directory="templates")
 # global variables
-_front_cccd= ''
-_back_cccd= ''
-_image_path = ""#avatar default
-_front_healthyInsurance = ""
-_back_healthyInsurance =""
-_driver_file_url = ""
-_attachedFileName = ""
-_fullname =""
-_roleuser = ""
-_roleadmin = ""
-_image_path_admin = ""
-_fullname_admin = ""
+# _front_cccd= ''
+# _back_cccd= ''
+# image_path_session.value = ""#avatar default
+# _front_healthyInsurance = ""
+# _back_healthyInsurance =""
+# _driver_file_url = ""
+# _attachedFileName = ""
+# _fullname =""
+# _roleuser = ""
+# _roleadmin = ""
+# image_path_session.value_admin = ""
+# fullname_adminsession.value = ""
 
 
 def authorizationUser(current_user: User = Depends(get_current_user_from_token)):
-    global _image_path,_fullname,_roleuser,_image_path_admin 
     conn=db.connection()
     cursor=conn.cursor()
     sql="select role_name from role_user where id=?"
     value=(current_user.role_user)
     cursor.execute(sql,value)
     user_role=cursor.fetchone()
-    #session['roleuser']=user_role[0]
     roleuser.value=user_role[0]
 
 
@@ -59,16 +57,16 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     value1=(decode_id(current_user.id))
     cursor1.execute(sql1,value1)
     user_temp=cursor1.fetchone()
-    _roleuser=user_role[0]
+    roleuser.value=user_role[0]
     
     #   set image path
     found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
     if found_avatar and found_avatar[2] != "":
-        _image_path = found_avatar[2]
+        image_path_session.value = found_avatar[2]
     else:
-        _image_path = file_path_default
+        image_path_session.value = file_path_default
   
-    _fullname = user_temp[1]
+    fullname_session.value = user_temp[1]
 
     #session['rolegroup']=""
     rolegroup.value=""
@@ -78,32 +76,31 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     writerights.value=None
 
     if user_role[0]=="candidate":
-        image_path = _image_path
-        fullname = _fullname
+        image_path = image_path_session.value
+        fullname = fullname_session.value
         return RedirectResponse(url=f"/candidate/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
-        #return redirect(url_for("candidate.candidatepage",image_path = _image_path,fullname = _fullname))
+        #return redirect(url_for("candidate.candidatepage",image_path = image_path_session.value,fullname = _fullname))
     elif user_role[0]=="employee":
-        image_path = _image_path
-        fullname = _fullname
+        image_path = image_path_session.value
+        fullname = fullname_session.value
         return RedirectResponse(url=f"/employeepage/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
 
     # elif user_role[0]=="employee_manager":
-    #     return redirect(url_for("employeemanager.employeemanagerpage",image_path = _image_path,fullname = _fullname))
+    #     return redirect(url_for("employeemanager.employeemanagerpage",image_path = image_path_session.value,fullname = _fullname))
     # elif user_role[0]=="client_manager":
-    #     return redirect(url_for("clientmanager.clientmanagerpage",image_path = _image_path,fullname = _fullname))
+    #     return redirect(url_for("clientmanager.clientmanagerpage",image_path = image_path_session.value,fullname = _fullname))
     # elif user_role[0]=="account_manager":
-    #     return redirect(url_for("accountmanager.accountmanagerpage",image_path = _image_path,fullname = _fullname))
+    #     return redirect(url_for("accountmanager.accountmanagerpage",image_path = image_path_session.value,fullname = _fullname))
     elif user_role[0]=="admin":
-        _roleadmin = "admin"
-        _roleuser = ""
-        _image_path_admin = file_path_default
-       
-        _fullname_admin = _fullname
+        roleadmin.value = "admin"
+        roleuser.value = ""
+        image_path_adminsession.value = image_path_session.value
+        fullname_adminsession.value = fullname_session.value
         #session['writerights']=1
         writerights.value=1
 
-        image_path_admin=_image_path_admin
-        fullname_admin = _fullname_admin
+        image_path_admin=image_path_adminsession.value
+        fullname_admin = fullname_adminsession.value
         return RedirectResponse(url=f'/adminpage/{image_path_admin}/{fullname_admin}')
     else:
         return "You have not been granted access to the resource"
@@ -219,13 +216,14 @@ def getcodechangepassword(request:Request,current_user: User = Depends(get_curre
 # user profile page
 @core_bp.get('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
 def userinformation_get(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
+  
     #readrights.value=None    
     #session['readrights']=None
     form = informationUserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from informationUser where id_useraccount=?"
+    sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
+    print("id is:" + str(idaccount))
     value=(decode_id(idaccount))
     cursor.execute(sql,value)
     user_temp=cursor.fetchone()
@@ -246,21 +244,23 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
         if found_avatar and found_avatar[2] != "":
-            _image_path = found_avatar[2]
+            image_path_session.value = found_avatar[2]
         else:
-            _image_path = file_path_default
-       
+            image_path_session.value = file_path_default
+
+        if roleadmin.value == "admin" and roleuser.value != "admin":
+            roleuser.value = user_temp[13]
+            idaccountadminmanager.value = idaccount
     context={
         "request":request,
         "current_user":current_user,
         "form":form,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "informationuserid":encode_id(str(user_temp[0])),
         "fullname":user_temp[1],
         "roleuser":roleuser.value,
         "idaccount":idaccount,
         "readrights":readrights.value,
-        "fullname":_fullname,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value
@@ -271,13 +271,13 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
 
 @core_bp.post('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
 def userinformation(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
+  
     #readrights.value=None    
     #session['readrights']=None
     form = informationUserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from informationUser where id_useraccount=?"
+    sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
     value=(decode_id(idaccount))
     cursor.execute(sql,value)
     user_temp=cursor.fetchone()
@@ -298,17 +298,22 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
         if found_avatar and found_avatar[2] != "":
-            _image_path = found_avatar[2]
+            image_path_session.value = found_avatar[2]
         else:
-            _image_path = file_path_default
+            image_path_session.value = file_path_default
+
+        if roleadmin.value == "admin" and roleuser.value != "admin":
+            roleuser.value = user_temp[13]
+            idaccountadminmanager.value = idaccount
+
+
     context={
         "request":request,
         "current_user":current_user,
         "form":form,
-        "image_path":_image_path,
-        
+        "image_path":image_path_session.value,
         "informationuserid":encode_id(str(user_temp[0])),
-        "fullname":_fullname,
+        "fullname":user_temp[1],
         "roleuser":roleuser.value,
         "idaccount":idaccount,
         "readrights":readrights.value,
@@ -349,9 +354,6 @@ async def edit_userInformation(request:Request,col,informationuserid,current_use
         cursor.execute(sql,new_value,decode_id(informationuserid))
         cursor.commit()
         cursor.close()
-
-
-        
         idaccount= idaccountadminmanager.value
         return RedirectResponse(f'/userinformation/{idaccount}')
         
@@ -373,60 +375,16 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
         "request":request,
         "current_user":current_user,
         "groups":groups,
-        "image_path":_image_path,
-        "roleuser":_roleuser,
+        "image_path":image_path_session.value,
+        "roleuser":roleuser.value,
         "form":form,
-        "fullname":_fullname
+        "fullname":fullname_session.value
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
 @core_bp.get('/latestEmployment/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-        global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin  
-        form = latestEmploymentForm(request)
-        conn=db.connection()
-        cursor=conn.cursor()
-        sql="select * from latestEmployment where idinformationuser=?"
-        cursor.execute(sql,decode_id(informationuserid))
-        user_temp=cursor.fetchone()
-        conn.commit()
-        conn.close()
-        if user_temp:
-            form.Employer=user_temp[1]
-            form.JobTittle=user_temp[2]
-            print("job Title is: " + str(user_temp[2]))
-            form.AnnualSalary=user_temp[3]
-            form.AnnualBonus=user_temp[4]
-            form.RetentionBonus=user_temp[5]
-            form.RetentionBonusExpiredDate=user_temp[6]
-            form.StockOption=user_temp[7]
-            form.StartDate = user_temp[8]
-            form.EndDate=user_temp[9]
-        idaccount=current_user.id
-        if roleadmin.value=="admin" :
-            idaccount=idaccountadminmanager.value
-        context={
-        "request":request,
-        "current_user":current_user,
-        "image_path":_image_path,
-        "roleuser":roleuser.value,
-        "form":form,
-        "fullname":_fullname,
-        "informationuserid":informationuserid,
-
-       
-       
-        "idaccount":idaccount,
-        "readrights":readrights.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
-        } 
-        return templates.TemplateResponse("core/latestEmployment.html",context)
-
-@core_bp.post('/latestEmployment/{informationuserid}',tags=['user'], response_class=HTMLResponse)
-
-def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):     
+        
         form = latestEmploymentForm(request)
         conn=db.connection()
         cursor=conn.cursor()
@@ -438,7 +396,7 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         if user_temp:
             form.Employer=user_temp[1]
             form.JobTitle=user_temp[2]
-            print("job Title is: " + str(user_temp[2]))
+            print("job Title get is: " + str(user_temp[2]))
             form.AnnualSalary=user_temp[3]
             form.AnnualBonus=user_temp[4]
             form.RetentionBonus=user_temp[5]
@@ -447,15 +405,61 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
             form.StartDate = user_temp[8]
             form.EndDate=user_temp[9]
         idaccount=current_user.id
-        if roleadmin.value=="admin" :
+        print("idaacount" + str(idaccount))
+        print("roleadmin value: "+ str(roleadmin.value))
+        if roleadmin.value=="admin" and roleuser.value != "admin" :
+            print("roleadmin value a1: "+ str(idaccountadminmanager.value))
+            idaccount=idaccountadminmanager.value
+        print("fullname is:"+ str(fullname_session.value))
+        
+        context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":image_path_session.value,
+        "roleuser":roleuser.value,
+        "form":form,
+        "fullname":fullname_session.value,
+        "informationuserid":informationuserid,
+        "idaccount":idaccount,
+        "readrights":readrights.value,
+        "image_path_admin":image_path_adminsession.value,
+        "roleadmin":roleadmin.value,
+        "fullname_admin":fullname_adminsession.value
+        } 
+        return templates.TemplateResponse("core/latestEmployment.html",context)
+
+@core_bp.post('/latestEmployment/{informationuserid}',tags=['user'], response_class=HTMLResponse)
+
+def latestEmployment(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+        
+        form = latestEmploymentForm(request)
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select * from latestEmployment where idinformationuser=?"
+        cursor.execute(sql,decode_id(informationuserid))
+        user_temp=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        if user_temp:
+            form.Employer=user_temp[1]
+            form.JobTittle=user_temp[2]
+            form.AnnualSalary=user_temp[3]
+            form.AnnualBonus=user_temp[4]
+            form.RetentionBonus=user_temp[5]
+            form.RetentionBonusExpiredDate=user_temp[6]
+            form.StockOption=user_temp[7]
+            form.StartDate = user_temp[8]
+            form.EndDate=user_temp[9]
+        idaccount=current_user.id
+        if roleadmin.value=="admin" and roleuser.value != "admin" :
             idaccount=idaccountadminmanager.value
         context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
         "form":form,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "informationuserid":informationuserid,
 
        
@@ -467,11 +471,10 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         "fullname_admin":fullname_adminsession.value
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
+
 @core_bp.get('/usercccd/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def usercccd(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path,_front_cccd,_fullname,_roleuser
     
-    # global _image_path,_front_cccd,_fullname,_roleuser
     form = usercccdForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -495,30 +498,28 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     found_cccd = user_cccd.find_picture_name_by_id(id)
 
     if found_cccd and found_cccd[2] != "":
-        _front_cccd = found_cccd[2]
+        front_cccd_session.value = found_cccd[2]
     else:
-        _front_cccd = ""
+        front_cccd_session.value = ""
 
     if found_cccd and found_cccd[3] != "":
-        _back_cccd = found_cccd[3]
+        back_cccd_session.value = found_cccd[3]
 
     else:
-        _back_cccd = ""
+        back_cccd_session.value_cccd = ""
     idaccount=current_user.id
     if roleadmin.value=="admin" :
             idaccount=idaccountadminmanager.value
-    print("front image is: "+ _front_cccd) 
-    print("back image is: "+ _front_cccd)
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
         "form":form,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "informationuserid":informationuserid,
-        "front_cccd":_front_cccd,
-        "back_cccd":_back_cccd,
+        "front_cccd":front_cccd_session.value,
+        "back_cccd":back_cccd_session.value,
         "idaccount":idaccount,
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
@@ -528,9 +529,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     return templates.TemplateResponse("core/user_cccd.html",context)
 @core_bp.post('/usercccd/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def usercccd(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path,_front_cccd,_fullname,_roleuser
     
-    # global _image_path,_front_cccd,_fullname,_roleuser
     form = usercccdForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -554,30 +553,28 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     found_cccd = user_cccd.find_picture_name_by_id(id)
 
     if found_cccd and found_cccd[2] != "":
-        _front_cccd = found_cccd[2]
+        front_cccd_session.value = found_cccd[2]
     else:
-        _front_cccd = ""
+        front_cccd_session.value = ""
 
     if found_cccd and found_cccd[3] != "":
-        _back_cccd = found_cccd[3]
+        back_cccd_session.value = found_cccd[3]
 
     else:
-        _back_cccd = ""
+        back_cccd_session.value_cccd = ""
     idaccount=current_user.id
     if roleadmin.value=="admin" :
             idaccount=idaccountadminmanager.value
-    print("front image is: "+ _front_cccd) 
-    print("back image is: "+ _front_cccd)
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
         "form":form,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "informationuserid":informationuserid,
-        "front_cccd":_front_cccd,
-        "back_cccd":_back_cccd,
+        "front_cccd":front_cccd_session.value,
+        "back_cccd":back_cccd_session.value,
         "idaccount":idaccount,
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
@@ -590,10 +587,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
 @core_bp.get('/healthCheckCertificates/{informationuserid}',tags=['user'],response_class=HTMLResponse)
 
 def healthCheckCertificates(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    
-    global _fullname
-    
-    # global _fullname
+
     conn = db.connection()
     cursor = conn.cursor()
     sql = "SELECT * from healthCheckCertificates where idinformationuser = ?"
@@ -610,9 +604,9 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -625,10 +619,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
 @core_bp.post('/healthCheckCertificates/{informationuserid}',tags=['user'],response_class=HTMLResponse)
 
 def healthCheckCertificates(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    
-    global _fullname
-    
-    # global _fullname
+
     conn = db.connection()
     cursor = conn.cursor()
     sql = "SELECT * from healthCheckCertificates where idinformationuser = ?"
@@ -645,9 +636,9 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -663,9 +654,7 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     idaccount=current_user.id
     if roleadmin.value=="admin" :
         idaccount=idaccountadminmanager.value
-    global _fullname
    
-    # global _fullname
     conn = db.connection()
     cursor = conn.cursor()
     sql = "SELECT * from educationbackground where idinformationuser = ?"
@@ -679,9 +668,9 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -696,9 +685,7 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     idaccount=current_user.id
     if roleadmin.value=="admin" :
         idaccount=idaccountadminmanager.value
-    global _fullname
    
-    # global _fullname
     conn = db.connection()
     cursor = conn.cursor()
     sql = "SELECT * from educationbackground where idinformationuser = ?"
@@ -712,9 +699,9 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -723,12 +710,10 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
         "idaccount":idaccount,
         "readrights":readrights.value
     }
-    return templates.TemplateResponse("core/educationbackground.html",context)            
+    return templates.TemplateResponse("core/educationbackground.html",context) 
 
 @core_bp.get('/qualification/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _fullname
-    # global _fullname
     conn = db.connection()
     cursor = conn.cursor()
     sql = "SELECT * from qualification where idinformationuser = ?"
@@ -745,9 +730,9 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -760,8 +745,6 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
 
 @core_bp.post('/qualification/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _fullname
-    # global _fullname
     conn = db.connection()
     cursor = conn.cursor()
     sql = "SELECT * from qualification where idinformationuser = ?"
@@ -778,9 +761,9 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
+        "image_path":image_path_session.value,
         "roleuser":roleuser.value,
-        "fullname":_fullname,
+        "fullname":fullname_session.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
@@ -794,7 +777,7 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
     
 @core_bp.post('/uploadCCCD/{informationuserid}', response_class=HTMLResponse)
 async def uploadCCCD(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_back_cccd,_image_path,_fullname_admin,_fullname,_image_path_admin,_roleadmin,_front_cccd
+    
     readrights.value=None
     form = CCCDForm(request)
     await form.load_data()
@@ -846,8 +829,8 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
             new_cccd = user_cccd(informationuserid = informationuserid, front_pic_name= file_front.filename,back_pic_name= file_back.filename)
             id_pic = new_cccd.save()
         
-        _front_cccd = file_front.filename
-        _back_cccd = file_back.filename
+        front_cccd_session.value = file_front.filename
+        back_cccd_session.value = file_back.filename
         return RedirectResponse(f'/usercccd/{informationuserid}')
       
     else:
@@ -857,13 +840,13 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
            "request":request,
             "current_user":current_user,
             "form":form,
-            "image_path":_image_path,
-            "image_path_admin":_image_path,
+            "image_path":image_path_session.value,
+            "image_path_admin":image_path_session.value,
             "informationuserid":encode_id(informationuserid),
-            "fullname":_fullname,
-            "roleuser":_roleuser,
+            "fullname":fullname_session.value,
+            "roleuser":roleuser.value,
              "idaccount":decode_id(current_user.id),
-            "fullname_admin":_fullname_admin,
+            "fullname_admin":fullname_adminsession.value,
             "readrights":readrights.value,
             "front_cccd": "",
             "back_cccd": "",
@@ -873,14 +856,15 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
 
 @core_bp.post('/update_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
 async def update_avatar(request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
+  
     readrights.value=None    
     form = AvatarForm(request)
     await form.load_data()
     informationuserid = decode_id(informationuserid)
     file = form.file
     # idaccount = decode_id(idaccount)
-    print("file.filename: " + str(file.filename))
+
+    
     if file.filename == '' and file.filename == '':
         return RedirectResponse(f'/userinformation/{idaccount}')
     if file and allowed_file(file.filename):
@@ -895,7 +879,7 @@ async def update_avatar(request:Request,informationuserid,idaccount,current_user
         found_avatar = user_avatar.find_picture_name_by_id(id)
         if found_avatar:
             user_avatar.update_pic_name(informationuserid,file.filename)
-            _image_path = filename
+            image_path_session.value = filename
             idaccount= (idaccount)
             return RedirectResponse(f'/userinformation/{idaccount}')
         else:
@@ -910,34 +894,33 @@ async def update_avatar(request:Request,informationuserid,idaccount,current_user
         "request":request,
             "current_user":current_user,
             "form":form,
-            "image_path":_image_path,
-            "image_path_admin":_image_path,
+            "image_path":image_path_session.value,
+            "image_path_admin":image_path_adminsession.value,
             "informationuserid":encode_id(informationuserid),
-            "fullname":_fullname,
-            "roleuser":_roleuser,
+            "fullname":fullname_session.value,
+            "roleuser":roleuser.value,
             "idaccount":idaccount,
-            "fullname_admin":_fullname_admin,
+            "fullname_admin":fullname_adminsession.value,
             "readrights":readrights.value,
             "front_cccd": "",
             "back_cccd": "",
             "messages":messages.message_array(),
         }
         return templates.TemplateResponse("core/user_information.html",context)
-@core_bp.get('/remove_avatar/{informationuserid}', response_class=HTMLResponse)
-async def remove_avatar(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
+@core_bp.get('/remove_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
+async def remove_avatar(request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
+   
     readrights.value=None
-    _image_path = file_path_default
+    image_path_session.value = file_path_default
     user_avatar.update_pic_name(decode_id(informationuserid),file_path_default)
-    return RedirectResponse(f'/userinformation/{current_user.id}')
+    return RedirectResponse(f'/userinformation/{idaccount}')
 
-@core_bp.post('/remove_avatar/{informationuserid}', response_class=HTMLResponse)
-async def remove_avatar(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_roleadmin,_image_path,_fullname_admin,_fullname,_image_path_admin
+@core_bp.post('/remove_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
+async def remove_avatar(request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
     readrights.value=None
-    _image_path = file_path_default
+    image_path_session.value = file_path_default
     user_avatar.update_pic_name(decode_id(informationuserid),file_path_default)
-    return RedirectResponse(f'/userinformation/{current_user.id}')
+    return RedirectResponse(f'/userinformation/{idaccount}')
 
 @core_bp.post('/display/{filename}', response_class=HTMLResponse)
 def display_image(request:Request,filename,current_user: User = Depends(get_current_user_from_token)):
@@ -965,13 +948,11 @@ async def edit_latestEmployment(request:Request,col,informationuserid,current_us
         cursor = conn.cursor()
         sql = f"UPDATE latestEmployment SET {col} = ? WHERE idinformationuser= ?"
         new_value = getattr(form, col)
-        print("col value: "+ col)
-        print("idinformationuser: "+ str(informationuserid) )
-        print("new valueeee:" + new_value)
+        print("job is:"+str(new_value))
         cursor.execute(sql,new_value,decode_id(informationuserid))
         cursor.commit()
         cursor.close()
-        return RedirectResponse(f'/latestEmployment/{informationuserid}')
+        return RedirectResponse(f'/latestEmployment/{informationuserid}',status_code=status.HTTP_302_FOUND)
     elif readrights.value==1:
         conn= db.connection()
         cursor = conn.cursor()
@@ -982,7 +963,7 @@ async def edit_latestEmployment(request:Request,col,informationuserid,current_us
         cursor.close()
 
         idaccount= idaccountadminmanager.value
-        return RedirectResponse(f'/latestEmployment/{informationuserid}')
+        return RedirectResponse(f'/latestEmployment/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @core_bp.post('/edit_informationcccd/{col}/{informationuserid}', response_class=HTMLResponse)
 async def edit_informationcccd(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
@@ -1009,18 +990,18 @@ async def edit_informationcccd(request:Request,col,informationuserid,current_use
         cursor.execute(sql,new_value,informationuserid)
         cursor.commit()
         cursor.close()
-        return RedirectResponse(f'/usercccd/{encode_id(informationuserid)}')
+        return RedirectResponse(f'/usercccd/{encode_id(informationuserid)}',status_code=status.HTTP_302_FOUND)
     
 @core_bp.post('/upload_HCC/{informationuserid}', response_class=HTMLResponse)
 async def upload_HCC(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_back_cccd,_image_path,_fullname_admin,_fullname,_image_path_admin,_roleadmin,_front_cccd,_driver_file_url,_attachedFileName
+    
     readrights.value=None
     form = HCCForm(request)
     await form.load_data()
     file = form.file
     driver = DriveAPI()
     if file.filename == '':
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
             # Check if the file has an allowed extension
     if file and allowed_attachment_file(file.filename) or file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1085,7 +1066,7 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
             cursor.commit() 
 
             conn.close()
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         elif count ==0:
             sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (?, ?, ?, ?)'
             cursor.execute(sql, filename, form.notarized, _driver_file_url, decode_id(informationuserid))
@@ -1093,25 +1074,25 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
 
             conn.close()
             print("HealthCheck 5")
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
             # flash("The maximum total number of documents is 3. Please try again.")
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
 
     else:
         # flash(' Only Allowed media types are docx,pdf, please try again!!!')
-        return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+        return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @core_bp.get('/upload_HCC/{informationuserid}', response_class=HTMLResponse)
 async def upload_HCC(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_back_cccd,_image_path,_fullname_admin,_fullname,_image_path_admin,_roleadmin,_front_cccd,_driver_file_url,_attachedFileName
+    
     readrights.value=None
     form = HCCForm(request)
     await form.load_data()
     file = form.file
     driver = DriveAPI()
     if file.filename == '':
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
             # Check if the file has an allowed extension
     if file and allowed_attachment_file(file.filename) or file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1176,7 +1157,7 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
             cursor.commit() 
 
             conn.close()
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         elif count ==0:
             sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (?, ?, ?, ?)'
             cursor.execute(sql, filename, form.notarized, _driver_file_url, decode_id(informationuserid))
@@ -1184,18 +1165,18 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
 
             conn.close()
             print("HealthCheck 5")
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
             # flash("The maximum total number of documents is 3. Please try again.")
-            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+            return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
 
     else:
         # flash(' Only Allowed media types are docx,pdf, please try again!!!')
-        return RedirectResponse(f'/healthCheckCertificates/{informationuserid}')
+        return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @core_bp.post('/upload_education/{informationuserid}', response_class=HTMLResponse)
 async def upload_education(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_back_cccd,_image_path,_fullname_admin,_fullname,_image_path_admin,_roleadmin,_front_cccd,_driver_file_url,_attachedFileName
+   
     readrights.value=None
     form = EducationForm(request)
     await form.load_data()
@@ -1203,7 +1184,7 @@ async def upload_education(request:Request,informationuserid,current_user: User 
     
     driver = DriveAPI()
     if file.filename == '':
-                return RedirectResponse(f'/educationbackground/{informationuserid}')
+                return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
             # Check if the file has an allowed extension
     if file and allowed_attachment_file(file.filename) or file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1263,17 +1244,17 @@ async def upload_education(request:Request,informationuserid,current_user: User 
             cursor.commit()
             conn.close()
             print("save successfully")
-            return RedirectResponse(f'/educationbackground/{informationuserid}')
+            return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
             # flash("The maximum total number of documents is 3. Please try again.")
-           return RedirectResponse(f'/educationbackground/{informationuserid}')
+           return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
     else:
         # flash(' Only Allowed media types are docx,pdf, please try again!!!')
-       return RedirectResponse(f'/educationbackground/{informationuserid}')
+       return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @core_bp.get('/upload_education/{informationuserid}', response_class=HTMLResponse)
 async def upload_education(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_back_cccd,_image_path,_fullname_admin,_fullname,_image_path_admin,_roleadmin,_front_cccd,_driver_file_url,_attachedFileName
+   
     readrights.value=None
     form = EducationForm(request)
     await form.load_data()
@@ -1281,7 +1262,7 @@ async def upload_education(request:Request,informationuserid,current_user: User 
     
     driver = DriveAPI()
     if file.filename == '':
-                return RedirectResponse(f'/educationbackground/{informationuserid}')
+                return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
             # Check if the file has an allowed extension
     if file and allowed_attachment_file(file.filename) or file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1341,17 +1322,17 @@ async def upload_education(request:Request,informationuserid,current_user: User 
             cursor.commit()
             conn.close()
             print("save successfully")
-            return RedirectResponse(f'/educationbackground/{informationuserid}')
+            return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
             # flash("The maximum total number of documents is 3. Please try again.")
-           return RedirectResponse(f'/educationbackground/{informationuserid}')
+           return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
     else:
         # flash(' Only Allowed media types are docx,pdf, please try again!!!')
-       return RedirectResponse(f'/educationbackground/{informationuserid}')
+       return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @core_bp.post('/upload_qualification/{informationuserid}', response_class=HTMLResponse)
 async def upload_qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_back_cccd,_image_path,_fullname_admin,_fullname,_image_path_admin,_roleadmin,_front_cccd,_driver_file_url,_attachedFileName
+   
     readrights.value=None
     form = QualificationForm(request)
     await form.load_data()
@@ -1359,7 +1340,7 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
     
     driver = DriveAPI()
     if file.filename == '':
-           return RedirectResponse(f'/qualification/{informationuserid}')
+           return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         # Check if the file has an allowed extension
     if file and allowed_attachment_file(file.filename) or file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1414,18 +1395,18 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
             cursor.execute(sql, form.type, filename, _driver_file_url, decode_id(informationuserid))
             cursor.commit()
             conn.close()
-            return RedirectResponse(f'/qualification/{informationuserid}')
+            return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
             # flash("The maximum total number of documents is 3. Please try again.")
-            return RedirectResponse(f'/qualification/{informationuserid}')
+            return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
 
     else:
         # flash(' Only Allowed media types are docx,pdf, please try again!!!')
-       return RedirectResponse(f'/qualification/{informationuserid}')
+       return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @core_bp.get('/upload_qualification/{informationuserid}', response_class=HTMLResponse)
 async def upload_qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _roleuser,_back_cccd,_image_path,_fullname_admin,_fullname,_image_path_admin,_roleadmin,_front_cccd,_driver_file_url,_attachedFileName
+   
     readrights.value=None
     form = EducationForm(request)
     await form.load_data()
@@ -1433,7 +1414,7 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
     
     driver = DriveAPI()
     if file.filename == '':
-           return RedirectResponse(f'/qualification/{informationuserid}')
+           return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         # Check if the file has an allowed extension
     if file and allowed_attachment_file(file.filename) or file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1488,12 +1469,12 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
             cursor.execute(sql, form.type, filename, _driver_file_url, decode_id(informationuserid))
             cursor.commit()
             conn.close()
-            return RedirectResponse(f'/qualification/{informationuserid}')
+            return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
             # flash("The maximum total number of documents is 3. Please try again.")
-            return RedirectResponse(f'/qualification/{informationuserid}')
+            return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
 
     else:
         # flash(' Only Allowed media types are docx,pdf, please try again!!!')
-       return RedirectResponse(f'/qualification/{informationuserid}')
+       return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
     

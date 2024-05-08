@@ -9,27 +9,27 @@
                 <div >
                     <div class="form-floating">
                         <label>Group</label>
-                        <input class="form-control mb-2" type="text" name="group" placeholder="Enter Your New Group Name">
+                        <input class="form-control mb-2" type="text" name="group" placeholder={{form.group}}>
                       
                     </div>
                     <div class="form-floating">
                         <label>Alias</label>
-                        <input class="form-control mb-2" type="text" name="alias" placeholder="Enter Your Alias">
+                        <input class="form-control mb-2" type="text" name="alias" placeholder={{form.alias}}>
                       
                     </div>
                     <div class="form-floating">
                         <label>Email</label>
-                        <input class="form-control mb-2" type="text" name="email" placeholder="Enter Your Email Address" >
+                        <input class="form-control mb-2" type="text" name="email" placeholder={{form.email}} >
                       
                     </div>
                     <label>URL</label>
                     <div class="form-floating">
-                        <input class="form-control mb-2" type="text" name="url" placeholder="Enter Your URL Address" >
+                    <input class="form-control mb-2" type="text" name="url" placeholder={{form.url}} >
                       
                     </div>
                     <div class="form-floating">
                         <label>Description</label>
-                        <input class="form-control mb-2" type="text" name="description" placeholder="Enter Your Description About New Group" >
+                        <input class="form-control mb-2" type="text" name="description" placeholder={{form.description}} >
                       
                     </div>
                     {% if rolegroup =="admin" or rolegroup =="manager" %}
