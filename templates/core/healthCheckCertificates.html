@@ -47,10 +47,10 @@
       <table class="table">
           <thead>
               <tr>
-                  <th>Document Name</th>
-                  <th>Notarized</th>
-                  <th>Dowload</th>
-                  <th>Delete</th>
+                    <th style="text-align: center;">Document Name</th>
+                    <th style="text-align: center;">Notarized</th>
+                    <th style="text-align: center;">Dowload</th>
+                    <th style="text-align: center;">Delete</th>
 
               </tr>
           </thead>
@@ -58,14 +58,14 @@
               {% for record in temp %}
                   <tr>
                       <td>{{ record[1] }}</td>
-                      <td>{{ record[2] }}</td>
-                      <td>
+                      <td style="text-align: center;">{{ record[2] }}</td>
+                      <td style="text-align: center;">
                         <a href="{{ record[3] }}" target="_blank">Dowload</a>
                       </td>
-                      <td>
+                      <td style="text-align: center;">
                         <a href=""
-                         class="btn btn-danger btn-sm">
-                          <i class="fas fa-trash-alt"></i> 
+                          style="color:#f04d3b">
+                         <i class="fas fa-times-circle" ></i> 
                       </a>
                       </td>
 
