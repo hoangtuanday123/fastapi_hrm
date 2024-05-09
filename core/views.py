@@ -263,7 +263,8 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "fullname_admin":fullname_adminsession.value,
+        "idinformationuser":encode_id(str(user_temp[0]))
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -319,7 +320,8 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "fullname_admin":fullname_adminsession.value,
+        "idinformationuser":encode_id(str(user_temp[0]))
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -378,7 +380,8 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
         "image_path":image_path_session.value,
         "roleuser":roleuser.value,
         "form":form,
-        "fullname":fullname_session.value
+        "fullname":fullname_session.value,
+        "idinformationuser":idinformationuser
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
@@ -424,7 +427,8 @@ def latestEmployment_get(request:Request,informationuserid,current_user: User = 
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "fullname_admin":fullname_adminsession.value,
+        "idinformationuser":informationuserid
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
@@ -468,7 +472,8 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "fullname_admin":fullname_adminsession.value,
+        "idinformationuser":informationuserid
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
@@ -524,7 +529,8 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "fullname_admin":fullname_adminsession.value,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/user_cccd.html",context)
 @core_bp.post('/usercccd/{informationuserid}',tags=['user'], response_class=HTMLResponse)
@@ -579,7 +585,8 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "fullname_admin":fullname_adminsession.value,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/user_cccd.html",context)
     
@@ -613,7 +620,8 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
     }    
     return templates.TemplateResponse("core/healthCheckCertificates.html",context)
 @core_bp.post('/healthCheckCertificates/{informationuserid}',tags=['user'],response_class=HTMLResponse)
@@ -645,7 +653,8 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
     }    
     return templates.TemplateResponse("core/healthCheckCertificates.html",context)
 
@@ -677,7 +686,8 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/educationbackground.html",context)  
 @core_bp.post('/educationbackground/{informationuserid}',tags=['user'], response_class=HTMLResponse)
@@ -708,7 +718,8 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/educationbackground.html",context) 
 
@@ -739,7 +750,8 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/qualification.html",context)       
 
@@ -770,7 +782,8 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/qualification.html",context)       
     
@@ -851,6 +864,7 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
             "front_cccd": "",
             "back_cccd": "",
             "messages":messages.message_array(),
+            "idinformationuser":informationuserid
         }
     return templates.TemplateResponse("core/user_cccd.html",context)
 
@@ -905,6 +919,7 @@ async def update_avatar(request:Request,informationuserid,idaccount,current_user
             "front_cccd": "",
             "back_cccd": "",
             "messages":messages.message_array(),
+            "idinformationuser":informationuserid
         }
         return templates.TemplateResponse("core/user_information.html",context)
 @core_bp.get('/remove_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
@@ -1509,7 +1524,7 @@ def deleteHCC_get(request:Request,informationuserid,idhcc,current_user: User = D
         cursor.close()
         return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         
-    elif readrights.value==1:
+    elif readrights.value==4:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"delete healthCheckCertificates WHERE id= ? and idinformationuser = ?"
@@ -1538,7 +1553,7 @@ def deleteEducation(request:Request,informationuserid,ideducation,current_user: 
         cursor.close()
         return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
         
-    elif readrights.value==1:
+    elif readrights.value==4:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"delete educationbackground WHERE id= ? and idinformationuser = ?"
@@ -1568,7 +1583,7 @@ def deleteQualification(request:Request,informationuserid,idqualification,curren
         cursor.close()
         return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         
-    elif readrights.value==1:
+    elif readrights.value==4:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"delete qualification WHERE id= ? and idinformationuser = ?"
@@ -1577,3 +1592,4 @@ def deleteQualification(request:Request,informationuserid,idqualification,curren
         cursor.commit()
         cursor.close()
         return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
+    return "hello"

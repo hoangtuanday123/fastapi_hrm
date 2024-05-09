@@ -55,10 +55,10 @@
                         <tr>
                             <th><input type="checkbox" id="selectAllaccount"></th>
                             <th>Email 
-                                <br> <input  id="columnSearchaccount" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Search Email On Column">
+                                <br> <input  id="columnSearchaccount" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Searching Email On Column">
                             </th>
                             <th>Role
-                                <br> <input  id="columnSearchaccount" data-index="2" onkeyup="columnSearch(2)" class="search-input text-center" type="text" placeholder="Search Role On Column">
+                                <br> <input  id="columnSearchaccount" data-index="2" onkeyup="columnSearch(2)" class="search-input text-center" type="text" placeholder="Searching Role On Column">
                             </th>
                                 
                             <th>Is Active</th>
@@ -163,10 +163,10 @@
             <tr>
                 <th><input type="checkbox" id="selectAllblockedUser"></th>
                 <th>Email 
-                    <br> <input  id="columnSearchblockedUser" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Search Email On Column">
+                    <br> <input  id="columnSearchblockedUser" data-index="1" onkeyup="columnSearch(1)" class="search-input text-center" type="text" placeholder="Searching Email On Column">
                 </th>
                 <th>Role
-                    <br> <input  id="columnSearchblockedUser" data-index="2" onkeyup="columnSearch(2)" class="search-input text-center" type="text" placeholder="Search Role On Column">
+                    <br> <input  id="columnSearchblockedUser" data-index="2" onkeyup="columnSearch(2)" class="search-input text-center" type="text" placeholder="Searching Role On Column">
                 </th>
                     
                 <th>Is Active</th>
@@ -264,7 +264,7 @@
                         {% endfor %}
                     </select>
                     <!-- <label  for="fillter"   class="btn btn-primary btn-sm   mr-2">Filter</label> -->
-                    <button type="submit" name="fillter" value="fillter" class="btn btn-primary  btn-sm  mr-2"> Filter</button>
+                    <button type="submit" name="fillter" value="fillter" class="btn btn-primary   mr-2"> Filter</button>
                 </div>
                 
             </form>
@@ -274,7 +274,7 @@
                 
          
         <div class="search-container ml-auto mr-4">
-            <input class="rounded-input form-control" id="myInputuser" onkeyup="search('all')" placeholder="Search...">
+            <input class="rounded-input form-control" id="myInputuser" onkeyup="search('all')" placeholder="Searching...">
         </div>
             
     </div>
@@ -285,7 +285,7 @@
   <table id="myTable"  width="100%" cellspacing="0">
       <thead>
           <tr>
-            <th><input type="checkbox" id="selectAll"></th>
+            <th><input type="checkbox" id="selectAlluser"></th>
               <th>Full Name
                
               </th>
@@ -321,7 +321,7 @@
         <form method="post">
             {% for user in Alluser %}
             <tr>
-                <td class="text-center"><input type="checkbox" name="checkbox" value="{{user[0]}}"></td>
+                <td class="text-center"><input type="checkbox"  name="checkbox" value="{{user[0]}}"></td>
                 <td>{{ user[1] }}</td>
                 <td>{{ user[2] }}</td>
                 <td >{{ user[3] }}</td>
@@ -338,10 +338,10 @@
             </tr>
             {% endfor %}  
             
-                <button id="exportexcel" type="submit" name="exportexcel" value="exportexcel" class="btn btn-success mr-2" >
+                <button id="exportexcel" type="submit" name="exportexcel" value="exportexcel" class="btn btn-success mr-2" hidden>
                     <i class="fas fa-file-excel"></i>Export to Excel
                 </button>
-                <button id="exportpdf" type="submit" name="exportpdf" value="exportpdf" class="btn btn-warning">
+                <button id="exportpdf" type="submit" name="exportpdf" value="exportpdf" class="btn btn-warning" hidden>
                     <i class="fa-solid fa-file-pdf"></i>Export to PDF
                 </button>
                 <!-- <button type="submit" name="fillter" value="Filter" class="btn btn-primary btn-sm  mr-2" hidden> Filter</button> -->
@@ -437,3 +437,4 @@ tableLinks.forEach(function(link) {
 </script>
 {%endblock%}
 {% endblock %}
+

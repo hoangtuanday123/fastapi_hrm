@@ -1,83 +1,147 @@
 {% extends "_base.html" %}
 
 {% block content %}
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-    <div class="row">
-        <div class="col-md-4"></div>
-        <div >
-            <main class="form-signin w-100 m-auto">
-                <div class="col-md-4" >
-                    <form method="post">
-                        <div class="col-md-6">
-                            <label for="searchproject" class="mb-0"> Select project</label>
-                            <select class="form-select" id="project" name="project" style="width: 200px;">
-                                
+
+<body>
+    <div >
+        
+             <!-- Begin Page Content -->
+    <div class="container-fluid" >
+        <!-- Page Heading -->
+        <!-- <h1 class="h3 mb-2 text-gray-800">Role List</h1> -->
+
+        <!-- DataTales Example -->
+            <div class="card-header py-3 row">
+                <h6 class="m-0 font-weight-bold text-primary">Role List</h6>
+            </div>
+            <!-- HTML -->
+                <div class="card-body py-2 row">
+                        <div class="mr-auto d-flex align-items-center ml-4">
+                            <label for="entries" class="mr-2">Show</label>
+                            <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label for="entries" class="mr-4">Entries</label>
+                            
+                        </div>
+                        <form method="post" class="d-flex align-items-center">
+                            <label for="project" class="mb-0 mr-1"> Select Project</label>
+                            <select id="project" name="project" class="custom-select mr-2">
                                 {% for project in projects %}
                                 <option value="{{ project[0] }}">{{ project[1] }}</option>
                                 {% endfor %}
                             </select>
+                            <button type="submit" name="searchproject" value="searchproject" class="btn btn-primary  btn-sm  mr-2"> Filter</button>
+                        </form>
+                        <div class="search-container ml-auto mr-4">
+                            <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
                         </div>
-                        <button  class="w-100 btn btn-lg btn-primary" type="submit" name="searchproject" value="searchproject" onclick="sendProjectName()"></button>
-                    </form>
+                    </div>
+            
+            <div class="card-body"  >
+                <div class="text-center" >
+                    <table id="myTable"  width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th class="text-center">Project Num</th>
+                                <th class="text-center">Project Type</th>
+                                <th class="text-center">Prọject</th>
+                                <th class="text-center">Component</th>
+                                <th class="text-center">Task</th>
+                                <th class="text-center">(Mon)</th>
+                                <th class="text-center">(Tue)</th>
+                                <th class="text-center">(Wed)</th>
+                                <th class="text-center">(Thu)</th>
+                                <th class="text-center">(Fri)</th>
+                                <th class="text-center">(Sat)</th>
+                                <th class="text-center">(Sun)</th>
+                                <th class="text-center">progress</th>
+                                <th class="text-center">date</th>
+                                <th class="text-center">Status timesheet</th>
+                                <th class="text-center">Notes</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody >
+                            {% for project in weeklytimesheetvalues%}
+                            <tr>
+                                <td class="text-center"><input type="checkbox" name="checkbox" value="{{project[14]}}"></td>
+                                <td>{{project[0]}}</td>
+                                <td>{{project[1]}}</td>
+                                <td>{{project[2]}}</td>
+                                <td>{{project[3]}}</td>
+                                <td>{{project[4]}}</td>
+                                <td>{{project[5]}}</td>
+                                <td>{{project[6]}}</td>
+                                <td>{{project[7]}}</td>
+                                <td>{{project[8]}}</td>
+                                <td>{{project[9]}}</td>
+                                <td>{{project[10]}}</td>
+                                <td>{{project[11]}}</td>
+                                <td>{{project[15]}}</td>
+                                <td>{{project[16]}}</td>
+                                <td>{{project[12]}}</td>
+                                <td>{{project[13]}}</td>
+                            </tr>
+                            {% endfor %}    
+                        </tbody>
+                    </table>
+                    <div class="row" >
+                        <p class="mr-auto ml-3" >
+                            Showing <span id="startEntry"></span> to <span id="endEntry"></span> of <span id="totalEntries"></span> entries
+                        </p>
+                        <p class="ml-auto">
+                            <div class="pagination mr-3">
+                                <!-- Button with double chevron left -->
+                                <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                                <!-- Button with single chevron left -->
+                                <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                                <!-- Pagination container for page numbers -->
+                                <div id="paginationContainer" class="pagination-container">
+                                    <!-- Page numbers will be dynamically added here -->
+                                </div>
+                                <!-- Button with single chevron right -->
+                                <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                                <!-- Button with double chevron right -->
+                                <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+                            </div>
+                            <!-- Hidden div for displaying current page and total pages -->
+                            <div style="display: none;">
+                                Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+                            </div>
+                        </p>
+                    </div>
                 </div>
-                <table>
-                    <tr>
-                        <th><input type="checkbox" id="selectAll"></th>
-                        <th>Project Num</th>
-                        <th>Project Type</th>
-                        <th>Prọject</th>
-                        <th>Component</th>
-                        <th>Task</th>
-                        <th>(Mon)</th>
-                        <th>(Tue)</th>
-                        <th>(Wed)</th>
-                        <th>(Thu)</th>
-                        <th>(Fri)</th>
-                        <th>(Sat)</th>
-                        <th>(Sun)</th>
-                        <th>progress</th>
-                        <th>date</th>
-                        <th>Status timesheet</th>
-                        <th>Notes</th>
-                    </tr>
-                    <form method="post">
-                        {% for project in weeklytimesheetvalues%}
-                        <tr>
-                            <td><input type="checkbox" name="checkbox" value="{{project[14]}}"></td>
-                            <td>{{project[0]}}</td>
-                            <td>{{project[1]}}</td>
-                            <td>{{project[2]}}</td>
-                            <td>{{project[3]}}</td>
-                            <td>{{project[4]}}</td>
-                            <td>{{project[5]}}</td>
-                            <td>{{project[6]}}</td>
-                            <td>{{project[7]}}</td>
-                            <td>{{project[8]}}</td>
-                            <td>{{project[9]}}</td>
-                            <td>{{project[10]}}</td>
-                            <td>{{project[11]}}</td>
-                            <td>{{project[15]}}</td>
-                            <td>{{project[16]}}</td>
-                            <td>{{project[12]}}</td>
-                            <td>{{project[13]}}</td>
-                        </tr>
-                        {% endfor %}
-                    </form>
-                </table>
-            </main>
+            </div>
         </div>
     </div>
-{% endblock %}
+    <!-- /.container-fluid -->
+</div>
+<!-- End of Main Content -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+</body>
+
+<script src="{{url_for('static',path='js/table_role.js')}}"></script>
+<script>
+    // Function to handle the click event of the "Select All" checkbox
+    document.getElementById("selectAllCheckbox").addEventListener("click", function() {
+        // Get all checkboxes in the table body
+        var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+
+        // Loop through each checkbox and set its checked state to match the "Select All" checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = document.getElementById("selectAllCheckbox").checked;
+        });
+    });
+</script>
+
+{%endblock%}

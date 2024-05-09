@@ -131,6 +131,7 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
         "temp3":temp3,
         "temp4":temp4,
         "temp5":temp5,
+        "idinformationuser":informationuserid
     } 
     return templates.TemplateResponse("core/informationuserjob.html",context)
     
@@ -239,7 +240,8 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
         "temp4":temp4,
         "temp5":temp5,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
     } 
     return templates.TemplateResponse("core/informationuserjob.html",context)
     
@@ -295,7 +297,8 @@ def laborcontract(request:Request,informationuserjobid,informationuserid,current
         "informationuserid":informationuserid,
         "contract":contracttemp,
         "informationuserjobid":_informationuserjobid,
-        "idaccount":idaccount
+        "idaccount":idaccount,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/contract.html",context)
     
@@ -332,7 +335,8 @@ def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,c
         "informationuserid":informationuserid,
         "forexSalary":forexSalary,
         "informationuserjobid":_informationuserjobid,
-        "idaccount":idaccount
+        "idaccount":idaccount,
+        "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/forexsalary.html",context)
     
@@ -363,6 +367,7 @@ def employeerelativelist(request:Request,informationuserid,current_user: User = 
         "roleadmin":roleadmin.value,
         "fullname_admin":fullname_adminsession.value,
         "informationuserid":informationuserid,
+        "idinformationuser":informationuserid,
         "employeerelativelist":employeerelativelist,
         "informationuserjobid":_informationuserjobid,
         "idaccount":idaccount,
@@ -401,6 +406,8 @@ async def addemployeerelative_get(request:Request,informationuserid,current_user
         "form":form,
         "informationuserjobid":_informationuserjobid,
         "idaccount":idaccount,
+        "idinformationuser":informationuserid
+
         
         }
     return templates.TemplateResponse("core/addEmployeeRelationship.html",context)
@@ -495,7 +502,9 @@ def employeerelative(request:Request,employeerelativeid,informationuserid,curren
         "informationuserjobid":_informationuserjobid,
         "idaccount":idaccount,
         "employeerelativeid":employeerelativeid,
-        "readrights":readrights.value
+        "readrights":readrights.value,
+        "idinformationuser":informationuserid
+
         }
     return templates.TemplateResponse("core/employeerelative.html",context)
     

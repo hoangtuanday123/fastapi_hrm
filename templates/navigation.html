@@ -28,11 +28,10 @@
             <img class="img" style="object-fit: contain; max-width: 100%;height: 90%;" src="{{ url_for('static', path='source/logo_company.png') }}">
 
             <!-- Topbar Navbar -->
-            <!-- <p>role {{roleadmin}}</p>
-            <p> full name {{ fullname_admin}}</p> -->
+            <p>role {{roleadmin}}</p>
+            <!-- <p> full name {{ fullname_admin}}</p> -->
             <p>role user {{roleuser}}</p>
-            {%if current_user.is_authenticated and roleadmin == "admin" %}
-            {%if fullname_admin %}
+            {%if current_user.is_authenticated and roleadmin == "admin" and roleuser == "admin" or  current_user.is_authenticated and roleadmin == "admin" and roleuser != "admin" %}
             <ul class="navbar-nav  mr-auto">
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
@@ -72,7 +71,7 @@
                  <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('ERP Management', 1)"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        ERP Management
+                        ERP Management  <span>         </span>              
                     </a>
                     <!-- Dropdown - ERP Management -->
                     <div class="dropdown-menu shadow animated--grow-in" onclick="updatePath('Project', 2)"
@@ -123,7 +122,7 @@
                             
                             Weekly Timesheet
                         </a>
-                        <a class="dropdown-item" href="/WeeklyTimesheet">
+                        <a class="dropdown-item" href=>
                             
                             Role
                         </a>
@@ -170,65 +169,7 @@
                 </div>
                     </li>
                 </ul>
-                {% else %}
-                <!-- <ul class="navbar-nav  mr-auto">
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="/home" role="button"
-                            aria-haspopup="true" aria-expanded="false">
-        
-                            <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                            
-                        </a>
-                    </li>
-                </ul> -->
-               
-                <ul class="navbar-nav ml-auto">
-                    <!-- Nav Item - User Information -->
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="/home" role="button"
-                            aria-haspopup="true" aria-expanded="false">
-        
-                            <span class="mr-2 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                            
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                            aria-haspopup="true" aria-expanded="false">
-    
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">ABOUT</span>
-                            
-                        </a>
-                    </li>
-    
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="/signin" role="button"
-                             aria-haspopup="true" aria-expanded="false">
-    
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">SIGN IN</span>
-                            
-                        </a>
-                    </li>
-    
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="/register" role="button"
-                             aria-haspopup="true" aria-expanded="false">
-    
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">REGISTER</span>
-                            
-                        </a>
-                    </li>
-    
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                             aria-haspopup="true" aria-expanded="false">
-    
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">CONTACT</span>
-                            
-                        </a>
-                    </li>
-                </ul>
-            {%endif %}
+                
     
             {% elif current_user.is_authenticated and roleuser == "employee" %}
             {%if fullname %}
