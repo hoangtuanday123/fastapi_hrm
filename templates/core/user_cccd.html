@@ -239,34 +239,34 @@
               
                               <div class="row">
                                 <div class="col-sm-3">
-                                  <p class="mb-0">Front side</p>
-                                </div>             
-                              </div>              
-                          
-                                <input type=file name=fileCCCD_front alt="front CCCD image">
-                                <div class="image-container">
-                                  {% if front_cccd %}
-                                      <div class="spacer"></div>
-                                      <div style="width: 150px; height: auto;">
-                                          <img src="{{ url_for('display_image', path=front_cccd) }}" class="rotated-image" alt="front CCCD image">
-                                      </div>
-                                  {% endif %}
-                              </div>
-              
-                                <div class="row">
-                                  <div class="col-sm-3">
+                                    <p class="mb-0">Front side</p>
+                                </div>
+                            </div>
+                            <input type="file" name="fileCCCD_front" alt="front CCCD image">
+                            <div class="image-container">
+                                {% if front_cccd %}
+                                    <div class="spacer"></div>
+                                    <div style="width: 150px; height: auto;">
+                                        <img src="{{ front_cccd }}" class="rotated-image" alt="front CCCD image">
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-3">
                                     <p class="mb-0">Back side</p>
-                                  </div>             
-                                </div>              
-                  
-                                <input type=file name=fileCCCD_back alt="back CCCD image">
-                                <div class="image-container">
-                                  {% if front_cccd %}
-                                      <div class="spacer"></div>
-                                      <div style="width: 150px; height: auto;">
-                                          <img src="{{ url_for('display_image', path=back_cccd) }}" class="rotated-image" alt="back CCCD image">
-                                      </div>
-                                  {% endif %}
+                                </div>
+                            </div>
+                            <input type="file" name="fileCCCD_back" alt="back CCCD image">
+                            <div class="image-container">
+                                {% if back_cccd %}
+                                    <div class="spacer"></div>
+                                    <div style="width: 150px; height: auto;">
+                                        <img src="{{ back_cccd }}" class="rotated-image" alt="back CCCD image">
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
                               </div>
                                 <div class="row">
                                   <div class="col-sm-3">

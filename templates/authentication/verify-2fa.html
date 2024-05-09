@@ -13,11 +13,21 @@
         <div class="form-floating">
           <input class="form-control mb-2" placeholder="Enter OTP" type="text" name="otp">
         </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Verify</button>
+        <button onclick="resetPath()" class="w-100 btn btn-lg btn-primary" type="submit">Verify</button>
       </form>
     </main>
   </div>
   <div class="col-md-4"></div>
 </div>
+<script>
+  function resetPath() {
+  let path = ["Home"];
+  let lastLevelClicked = 1;
+  let isReloaded = true;
+  localStorage.setItem('path', JSON.stringify(path));
+  localStorage.setItem('lastLevelClicked', JSON.stringify(lastLevelClicked));
+  localStorage.setItem('isReloaded', JSON.stringify(isReloaded));
+}
 
+</script>
 {% endblock %}

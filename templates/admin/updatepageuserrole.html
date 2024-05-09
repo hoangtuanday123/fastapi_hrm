@@ -34,7 +34,7 @@
                     <button type="submit" class="btn btn-primary btn-custom me-2">Assign</button>
                     <button onclick="location.href='/adminpage/usersmanager/blockuser/{{ idaccount }}'" class="btn btn-danger btn-custom me-2">Block</button>
                     {% if userrole=='candidate' %}
-                        <button onclick="location.href='/adminpage/usersmanager/createemployee/{{informationuserid}}'" class="btn btn-success btn-custom me-2">Create Employee</button>
+                        <button type="button" onclick="location.href='/adminpage/usersmanager/createemployee/{{informationuserid}}'" class="btn btn-success btn-custom me-2">Create Employee</button>
                         <button class="btn btn-warning btn-custom">Update Employee</button>
                     {% endif %}
                 </form>

@@ -28,9 +28,7 @@
             <img class="img" style="object-fit: contain; max-width: 100%;height: 90%;" src="{{ url_for('static', path='source/logo_company.png') }}">
 
             <!-- Topbar Navbar -->
-            <p>role {{roleadmin}}</p>
-            <!-- <p> full name {{ fullname_admin}}</p> -->
-            <p>role user {{roleuser}}</p>
+           
             {%if current_user.is_authenticated and roleadmin == "admin" and roleuser == "admin" or  current_user.is_authenticated and roleadmin == "admin" and roleuser != "admin" %}
             <ul class="navbar-nav  mr-auto">
                 <li class="nav-item dropdown no-arrow">
@@ -520,6 +518,20 @@
             <p class=" ml-3 mb-0  " id="pathDisplay"></p>
         </div>
         <script>
+            window.onload = function() {
+                if (window.location.pathname === '/signin') {
+                    resetLocalStorage();
+                }
+            };
+
+            // Hàm reset dữ liệu trong localStorage
+            function resetLocalStorage() {
+                let path = ["Home"];
+                let lastLevelClicked = 1;
+                localStorage.setItem('path', JSON.stringify(path));
+                localStorage.setItem('lastLevelClicked', JSON.stringify(lastLevelClicked));
+                localStorage.setItem('isReloaded', 'true');
+    }
             let path = JSON.parse(localStorage.getItem('path')) || ["Home"];
             let lastLevelClicked = JSON.parse(localStorage.getItem('lastLevelClicked')) || 1;
             

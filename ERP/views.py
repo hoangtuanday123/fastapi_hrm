@@ -8,8 +8,7 @@ from authentication.models import User
 from ultils import file_path_default,encode_id,decode_id
 from datetime import datetime, timedelta
 from.forms import addtaskweeklytimesheetForm
-from globalvariable import image_path_adminsession,fullname_adminsession
-templates = Jinja2Templates(directory="templates")
+from globalvariable import image_path_adminsession,fullname_adminsession,roleuser,roleadmin,fullname_session,image_path_session
 
 _role_user = ""
 _roleadmin = "admin"
@@ -19,6 +18,7 @@ _image_path = ""
 _fullname = ""
 
 ERP=APIRouter()
+templates = Jinja2Templates(directory="templates")
 def calendar(year):
     year=int(year)
     start_date = datetime(year, 1, 1)
@@ -61,7 +61,10 @@ def projectlist(request:Request,current_user: User = Depends(get_current_user_fr
         "projects":projects,
         "roleadmin" : _roleadmin,
         "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value
+        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     }
     return templates.TemplateResponse("ERP/projectlistadmin.html",context)
     #return render_template("ERP/projectlistadmin.html",projects=projects)
@@ -88,7 +91,10 @@ async def createproject_get(request:Request,current_user: User = Depends(get_cur
         "projecttype":projecttype,
         "roleadmin" : _roleadmin,
         "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value
+        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     }
     return templates.TemplateResponse("ERP/createprojectadmin.html",context)
 
@@ -134,7 +140,10 @@ async def createproject(request:Request,current_user: User = Depends(get_current
         "projecttype":projecttype,
         "roleadmin" : _roleadmin,
         "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value
+        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     }
     return templates.TemplateResponse("ERP/createprojectadmin.html",context)
 
@@ -170,7 +179,10 @@ async def createtaskandcomponent_get(request:Request,idproject,current_user: Use
         "form":form,
         "idproject":idproject,
         "tasks":tasks,
-        "components":components
+        "components":components,
+        "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
 
     }
     return templates.TemplateResponse("ERP/addtaskscomponentprojectadmin.html",context)
@@ -227,7 +239,10 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
         "form":form,
         "idproject":idproject,
         "tasks":tasks,
-        "components":components
+        "components":components,
+        "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
 
     }
     return templates.TemplateResponse("ERP/addtaskscomponentprojectadmin.html",context)
@@ -270,6 +285,9 @@ async def assigngroupproject_get(request:Request,idproject,current_user: User = 
         "roleadmin" : _roleadmin,
         "image_path_admin":image_path_adminsession.value,
         "fullname_admin" : fullname_adminsession.value,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value,
         "groups":groups
     }
     return templates.TemplateResponse("ERP/assigngroupprojectadmin.html",context)
@@ -312,7 +330,10 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
         "roleadmin" : _roleadmin,
         "image_path_admin":image_path_adminsession.value,
         "fullname_admin" : fullname_adminsession.value,
-        "groups":groups
+        "groups":groups,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     }
     return templates.TemplateResponse("ERP/assigngroupprojectadmin.html",context)
 
@@ -346,7 +367,10 @@ async def updateproject_get(request:Request,idproject,current_user: User = Depen
         "projectname":project[1],
         "projecttypeid":project[2],
         "projecttypename":project[3],
-        "idproject":idproject
+        "idproject":idproject,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     } 
     return templates.TemplateResponse("ERP/updateprojectadmin.html",context)   
     
@@ -393,7 +417,10 @@ async def updateproject(request:Request,idproject,current_user: User = Depends(g
         "projectname":project[1],
         "projecttypeid":project[2],
         "projecttypename":project[3],
-        "idproject":idproject
+        "idproject":idproject,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     } 
     return templates.TemplateResponse("ERP/updateprojectadmin.html",context)   
     
@@ -456,7 +483,7 @@ async def weeklytimesheet_get(request:Request,iduser,year,weeknum,current_user: 
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
+        "roleadmin" : roleadmin.value,
         "image_path_admin":image_path_adminsession.value,
         "fullname_admin" : fullname_adminsession.value,
         "weeks_in_year":weeks_in_year,
@@ -466,7 +493,11 @@ async def weeklytimesheet_get(request:Request,iduser,year,weeknum,current_user: 
         "weeklytimesheetvalues":weeklytimesheetvalues,
         "iduser":iduser,
         "timesheetstatus":timesheetstatus,
-        "percent":percent
+        "percent":percent,
+        "roleuser":roleuser.value,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     } 
     return templates.TemplateResponse("ERP/WeeklyTimesheet.html",context)
 
@@ -577,7 +608,7 @@ async def weeklytimesheet(request:Request,iduser,year,weeknum,current_user: User
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
+        "roleadmin" : roleadmin.value,
         "image_path_admin":image_path_adminsession.value,
         "fullname_admin" : fullname_adminsession.value,
         "weeks_in_year":weeks_in_year,
@@ -587,7 +618,11 @@ async def weeklytimesheet(request:Request,iduser,year,weeknum,current_user: User
         "weeklytimesheetvalues":weeklytimesheetvalues,
         "iduser":iduser,
         "timesheetstatus":timesheetstatus,
-        "percent":percent
+        "percent":percent,
+        "roleuser":roleuser.value,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     } 
     return templates.TemplateResponse("ERP/WeeklyTimesheet.html",context)
 
@@ -691,7 +726,10 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
         "fullname_admin" : fullname_adminsession.value,
         "projects":projects,
         "tasks":tasks,
-        "components":components
+        "components":components,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     }
     return templates.TemplateResponse("ERP/addtaskweeklytimesheet.html",context)     
     
@@ -756,7 +794,10 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
         "fullname_admin" : fullname_adminsession.value,
         "projects":projects,
         "tasks":tasks,
-        "components":components
+        "components":components,
+                "roleuser":roleuser.value,
+        "image_path": image_path_session.value,
+        "fullname": fullname_session.value
     }
     return templates.TemplateResponse("ERP/addtaskweeklytimesheet.html",context)     
     

@@ -18,7 +18,7 @@ import shutil
 from werkzeug.utils import secure_filename
 from .models import user_cccd,user_avatar,allowed_file,allowed_attachment_file
 from ultils import file_path_default
-from globalvariable import is_admin,roleuser,rolegroup,readrights,writerights,idaccountadminmanager,image_path_session,fullname_session
+from globalvariable import is_admin,roleuser,rolegroup,readrights,writerights,idaccountadminmanager,image_path_session,fullname_session,id_useraccount,selectionItem,tablesession
 from admin.forms import groupuserForm
 import pyotp
 from authentication.models import verifyPassword
@@ -81,6 +81,7 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
         return RedirectResponse(url=f"/candidate/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
         #return redirect(url_for("candidate.candidatepage",image_path = image_path_session.value,fullname = _fullname))
     elif user_role[0]=="employee":
+        #roleuser.value="employee"
         image_path = image_path_session.value
         fullname = fullname_session.value
         return RedirectResponse(url=f"/employeepage/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
@@ -145,12 +146,48 @@ def startPage(request: Request):
 def logout_get():
     response = RedirectResponse(url="/")
     response.delete_cookie(settings.COOKIE_NAME)
+    is_admin.value=None
+    roleuser.value=None
+    rolegroup.value=None
+    readrights.value=None
+    writerights.value=None
+    verify_password.value=None
+    messages.data=None
+    id_useraccount.value=None
+    idaccountadminmanager.value=None
+    selectionItem.value=None
+    tablesession.value=None
+    image_path_adminsession.value=None
+    fullname_adminsession.value=None
+    roleadmin.value=None
+    image_path_session.value=None
+    fullname_session.value=None
+    front_cccd_session.value=None
+    back_cccd_session.value=None
     return response
 
 @core_bp.post("/logout",tags=['user'], response_class=HTMLResponse)
 def logout():
     response = RedirectResponse(url="/")
     response.delete_cookie(settings.COOKIE_NAME)
+    is_admin.value=None
+    roleuser.value=None
+    rolegroup.value=None
+    readrights.value=None
+    writerights.value=None
+    verify_password.value=None
+    messages.data=None
+    id_useraccount.value=None
+    idaccountadminmanager.value=None
+    selectionItem.value=None
+    tablesession.value=None
+    image_path_adminsession.value=None
+    fullname_adminsession.value=None
+    roleadmin.value=None
+    image_path_session.value=None
+    fullname_session.value=None
+    front_cccd_session.value=None
+    back_cccd_session.value=None
     return response
 
 @core_bp.get("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
@@ -263,8 +300,7 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "idinformationuser":encode_id(str(user_temp[0]))
+        "fullname_admin":fullname_adminsession.value
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -320,8 +356,7 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "idinformationuser":encode_id(str(user_temp[0]))
+        "fullname_admin":fullname_adminsession.value
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -380,8 +415,7 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
         "image_path":image_path_session.value,
         "roleuser":roleuser.value,
         "form":form,
-        "fullname":fullname_session.value,
-        "idinformationuser":idinformationuser
+        "fullname":fullname_session.value
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
@@ -427,8 +461,7 @@ def latestEmployment_get(request:Request,informationuserid,current_user: User = 
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "idinformationuser":informationuserid
+        "fullname_admin":fullname_adminsession.value
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
@@ -472,8 +505,7 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         "readrights":readrights.value,
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "idinformationuser":informationuserid
+        "fullname_admin":fullname_adminsession.value
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
@@ -495,12 +527,8 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
         form.PlaceOfBirth=user_temp[4]
         form.Address=user_temp[5]
         form.IssueOn=user_temp[6]
-    if user_temp is None:
-        id = 0
-    else:
-        id = user_temp[0]
-    print("id user is %d" % id)
-    found_cccd = user_cccd.find_picture_name_by_id(id)
+
+    found_cccd = user_cccd.find_picture_name_by_id(decode_id(informationuserid))
 
     if found_cccd and found_cccd[2] != "":
         front_cccd_session.value = found_cccd[2]
@@ -513,7 +541,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     else:
         back_cccd_session.value_cccd = ""
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
             idaccount=idaccountadminmanager.value
     context={
         "request":request,
@@ -551,12 +579,8 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
         form.PlaceOfBirth=user_temp[4]
         form.Address=user_temp[5]
         form.IssueOn=user_temp[6]
-    if user_temp is None:
-        id = 0
-    else:
-        id = user_temp[0]
-    print("id user is %d" % id)
-    found_cccd = user_cccd.find_picture_name_by_id(id)
+
+    found_cccd = user_cccd.find_picture_name_by_id(decode_id(informationuserid))
 
     if found_cccd and found_cccd[2] != "":
         front_cccd_session.value = found_cccd[2]
@@ -569,7 +593,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     else:
         back_cccd_session.value_cccd = ""
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
             idaccount=idaccountadminmanager.value
     context={
         "request":request,
@@ -606,7 +630,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         df = pd.concat([df,df2])
     conn.close()
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
         idaccount=idaccountadminmanager.value
     context={
         "request":request,
@@ -620,8 +644,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "idinformationuser":informationuserid
+        "readrights":readrights.value
     }    
     return templates.TemplateResponse("core/healthCheckCertificates.html",context)
 @core_bp.post('/healthCheckCertificates/{informationuserid}',tags=['user'],response_class=HTMLResponse)
@@ -639,7 +662,7 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         df = pd.concat([df,df2])
     conn.close()
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
         idaccount=idaccountadminmanager.value
     context={
         "request":request,
@@ -653,15 +676,14 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "idinformationuser":informationuserid
+        "readrights":readrights.value
     }    
     return templates.TemplateResponse("core/healthCheckCertificates.html",context)
 
 @core_bp.get('/educationbackground/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def educationbackground(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
         idaccount=idaccountadminmanager.value
    
     conn = db.connection()
@@ -686,14 +708,13 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "idinformationuser":informationuserid
+        "readrights":readrights.value
     }
     return templates.TemplateResponse("core/educationbackground.html",context)  
 @core_bp.post('/educationbackground/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def educationbackground(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
         idaccount=idaccountadminmanager.value
    
     conn = db.connection()
@@ -718,8 +739,7 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "idinformationuser":informationuserid
+        "readrights":readrights.value
     }
     return templates.TemplateResponse("core/educationbackground.html",context) 
 
@@ -736,7 +756,7 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
         df = pd.concat([df,df2])
     conn.close()   
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
         idaccount=idaccountadminmanager.value 
     context={
         "request":request,
@@ -750,8 +770,7 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "idinformationuser":informationuserid
+        "readrights":readrights.value
     }
     return templates.TemplateResponse("core/qualification.html",context)       
 
@@ -768,7 +787,7 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
         df = pd.concat([df,df2])
     conn.close()   
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
+    if roleadmin.value=="admin" and roleuser.value != "admin" :
         idaccount=idaccountadminmanager.value 
     context={
         "request":request,
@@ -782,8 +801,7 @@ def qualification(request:Request,informationuserid,current_user: User = Depends
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "idinformationuser":informationuserid
+        "readrights":readrights.value
     }
     return templates.TemplateResponse("core/qualification.html",context)       
     
@@ -864,7 +882,6 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
             "front_cccd": "",
             "back_cccd": "",
             "messages":messages.message_array(),
-            "idinformationuser":informationuserid
         }
     return templates.TemplateResponse("core/user_cccd.html",context)
 
@@ -919,7 +936,6 @@ async def update_avatar(request:Request,informationuserid,idaccount,current_user
             "front_cccd": "",
             "back_cccd": "",
             "messages":messages.message_array(),
-            "idinformationuser":informationuserid
         }
         return templates.TemplateResponse("core/user_information.html",context)
 @core_bp.get('/remove_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
@@ -1022,7 +1038,7 @@ async def edit_informationcccd(request:Request,col,informationuserid,current_use
 @core_bp.post('/upload_HCC/{informationuserid}', response_class=HTMLResponse)
 async def upload_HCC(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     
-    readrights.value=None
+    #readrights.value=None
     form = HCCForm(request)
     await form.load_data()
     file = form.file
@@ -1113,7 +1129,7 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
 @core_bp.get('/upload_HCC/{informationuserid}', response_class=HTMLResponse)
 async def upload_HCC(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     
-    readrights.value=None
+    #readrights.value=None
     form = HCCForm(request)
     await form.load_data()
     file = form.file
@@ -1204,7 +1220,7 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
 @core_bp.post('/upload_education/{informationuserid}', response_class=HTMLResponse)
 async def upload_education(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
    
-    readrights.value=None
+    #readrights.value=None
     form = EducationForm(request)
     await form.load_data()
     file = form.file
@@ -1282,7 +1298,7 @@ async def upload_education(request:Request,informationuserid,current_user: User 
 @core_bp.get('/upload_education/{informationuserid}', response_class=HTMLResponse)
 async def upload_education(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
    
-    readrights.value=None
+    #readrights.value=None
     form = EducationForm(request)
     await form.load_data()
     file = form.file
@@ -1360,7 +1376,7 @@ async def upload_education(request:Request,informationuserid,current_user: User 
 @core_bp.post('/upload_qualification/{informationuserid}', response_class=HTMLResponse)
 async def upload_qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
    
-    readrights.value=None
+    #readrights.value=None
     form = QualificationForm(request)
     await form.load_data()
     file = form.file
@@ -1434,7 +1450,7 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
 @core_bp.get('/upload_qualification/{informationuserid}', response_class=HTMLResponse)
 async def upload_qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
    
-    readrights.value=None
+    #readrights.value=None
     form = EducationForm(request)
     await form.load_data()
     file = form.file
@@ -1592,4 +1608,4 @@ def deleteQualification(request:Request,informationuserid,idqualification,curren
         cursor.commit()
         cursor.close()
         return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
-    return "hello"
+  

@@ -1,0 +1,64 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+        <main class="form-signin w-100 m-auto">
+            
+            <form role="form" method="post" action="">
+                <h1 class="h3 mb-3 fw-normal text-center">FOREX SALARY</h1>
+                {{ form.csrf_token }}
+                <div class="form-floating">
+                    <label>forextype</label>
+                    <input class="form-control mb-2" type="text" name="forextype" value="{{ form.forextype }}">
+                    
+                    
+                </div>
+                <div class="form-floating">
+                    <label>Annualsalary</label>
+                    <input class="form-control mb-2" type="text" name="Annualsalary" value="{{ form.Annualsalary }}">
+                    
+                    
+                </div>
+                <div class="form-floating">
+                    <label>Monthlysalary</label>
+                    <input class="form-control mb-2" type="text" name="Monthlysalary" value="{{ form.Monthlysalary }}">
+                    
+                    
+                </div>
+                <div class="form-floating">
+                    <label>Monthlysalaryincontract</label>
+                    <input class="form-control mb-2" type="text" name="Monthlysalaryincontract" value="{{ form.Monthlysalaryincontract }}">
+                    
+                    
+                </div>
+                <div class="form-floating">
+                    <label>Quaterlybonustarget</label>
+                    <input class="form-control mb-2" type="text" name="Quaterlybonustarget" value="{{ form.Quaterlybonustarget }}">
+                    
+                    
+                </div>
+                <div class="form-floating">
+                    <label>Annualbonustarget</label>
+                    <input class="form-control mb-2" type="text" name="Annualbonustarget" value="{{ form.Annualbonustarget }}">
+                    
+                    
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">END</button>
+            
+                <!-- <div>
+                    <label for="companysite">choose company site code:</label>
+                    <select id="companysite" name="companysite">
+                        {% for code in companysite %}
+                            <option value="{{ code }}">{{ code }}</option>
+                        {% endfor %}
+                    </select>
+                </div> -->
+    
+            </form
+        </main>
+  </div>
+</div>
+{% endblock %}
