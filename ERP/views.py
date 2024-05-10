@@ -635,7 +635,7 @@ def copytasks():
         ) and w.statustimesheet!='pending approval' and w.statustimesheet!='copied'
 
         update weeklytimesheet set statustimesheet='copied' from weeklytimesheet w join DATE d on w.Date=d.Date where
-        d.WeekNumber=(select WeekNumber from DATE where DATE=CONVERT(date, DATEADD(day, -7, GETDATE()))) and w.statustimesheet!='pending approval'
+        d.WeekNumber=(select WeekNumber from DATE where DATE=CONVERT(date, DATEADD(day, -7, GETDATE()))) and w.statustimesheet!='pending approval and statustimesheet !='approval'
         """
     cursor.execute(sql)
     conn.commit()
@@ -644,7 +644,7 @@ def copytasks():
 def submittasks(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization'"
+    sql="update weeklytimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval "
     cursor.execute(sql,select)
     conn.commit()
     conn.close()
@@ -652,7 +652,7 @@ def submittasks(select):
 def recalltasks(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set statustimesheet='recalling' where id=? and statustimesheet !='saved'"
+    sql="update weeklytimesheet set statustimesheet='recalling' where id=? and statustimesheet !='saved' and statustimesheet !='approval'"
     cursor.execute(sql,select)
     conn.commit()
     conn.close()
@@ -660,7 +660,7 @@ def recalltasks(select):
 def resetValueTask(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set mon=0,tue=0,wed=0,thu=0, fri=0,sat=0,sun=0,progress=0 where id=? and statustimesheet !='pending approval'"
+    sql="update weeklytimesheet set mon=0,tue=0,wed=0,thu=0, fri=0,sat=0,sun=0,progress=0 where id=? and statustimesheet !='pending approval' and statustimesheet !='approval"
     value=(select)
     cursor.execute(sql,value)
     conn.commit()
@@ -671,7 +671,7 @@ def savetasks(listweeklytimesheet):
         conn=db.connection()
         cursor=conn.cursor()
         sql="""update weeklytimesheet set mon=?,tue=?,wed=?,thu=?, fri=?,sat=?,sun=?,statustimesheet='saved' where id=? and statustimesheet !='pending approval'
-        update weeklytimesheet set progress=(mon+tue+wed+thu+fri+sat+sun) where id=? and statustimesheet !='pending approval'"""
+        update weeklytimesheet set progress=(mon+tue+wed+thu+fri+sat+sun) where id=? and statustimesheet !='pending approval' and statustimesheet !='approval"""
         value=(weeklytimesheet[1],weeklytimesheet[2],weeklytimesheet[3],weeklytimesheet[4],weeklytimesheet[5],weeklytimesheet[6],weeklytimesheet[7],weeklytimesheet[0],weeklytimesheet[0])
         cursor.execute(sql,value)
         conn.commit()
@@ -851,14 +851,14 @@ async def weeklytimesheetview(request:Request,current_user: User = Depends(get_c
                             project[6],project[7],project[8],project[9],project[10],project[11],
                             project[12],project[13],project[14],project[15],project[16])for project in weeklytimesheet]
     form_method=await request.form()
-    if  form_method.get('searchproject')=='searchproject':
+    if "searchproject" in form_method and form_method.get('searchproject')=='searchproject':
         
         conn=db.connection()
         cursor=conn.cursor()
         sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
     from weeklytimesheet w join project p on w.projectid=p.projectid join
     projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
-    taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' and w.projectid=? """
+    taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' or w.statustimesheet ='approval' and w.projectid=? """
         cursor.execute(sql,form_method['project'])
         weeklytimesheet=cursor.fetchall()
         conn.commit()
@@ -866,7 +866,14 @@ async def weeklytimesheetview(request:Request,current_user: User = Depends(get_c
         weeklytimesheetvalues=[(project[0],project[1],project[2],project[3],project[4],project[5],
                                 project[6],project[7],project[8],project[9],project[10],project[11],
                                 project[12],project[13],project[14],project[15],project[16])for project in weeklytimesheet]
-
+    if "approvals" in form_method and form_method.get('approvals')=="approvals":
+        sellectionItem=form_method.getlist("checkbox")
+        approvalWeeklytimesheet(sellectionItem)
+        return RedirectResponse(url="/ERP/weeklytimesheetview",status_code=status.HTTP_302_FOUND)
+    elif "pendingapprovals" in form_method and form_method.get('pendingapprovals')=="pendingapprovals":
+        sellectionItem=form_method.getlist("checkbox")
+        pendingapprovalWeeklytimesheet(sellectionItem)
+        return RedirectResponse(url="/ERP/weeklytimesheetview",status_code=status.HTTP_302_FOUND)
     context={
         "request":request,
         "current_user":current_user,
@@ -896,7 +903,7 @@ async def weeklytimesheetview_get(request:Request,current_user: User = Depends(g
     sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
  from weeklytimesheet w join project p on w.projectid=p.projectid join
  projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
- taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' """
+ taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' or w.statustimesheet ='approval' """
     cursor.execute(sql)
     weeklytimesheet=cursor.fetchall()
     conn.commit()
@@ -917,3 +924,20 @@ async def weeklytimesheetview_get(request:Request,current_user: User = Depends(g
     }
     return templates.TemplateResponse("ERP/weeklytimesheetviewadmin.html",context)
     
+def approvalWeeklytimesheet(selectionItem):
+    for item in selectionItem:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="update weeklytimesheet set statustimesheet='approval' where id=?"
+        cursor.execute(sql,item)
+        conn.commit()
+        conn.close()
+
+def pendingapprovalWeeklytimesheet(selectionItem):
+    for item in selectionItem:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="update weeklytimesheet set statustimesheet='pending approval' where id=?"
+        cursor.execute(sql,item)
+        conn.commit()
+        conn.close()

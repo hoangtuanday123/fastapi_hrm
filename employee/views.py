@@ -115,7 +115,7 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
         "request":request,
         "current_user":current_user,
         "image_path":user[19],
-        "roleuser":user[17],
+        "roleuser":roleuser.value,
         "fullname":user[18],
         "image_path_admin":image_path_adminsession.value,
         "roleadmin":roleadmin.value,
@@ -589,6 +589,41 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
         cursor.close()
         
         return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
-    
+
+
+@employee.post('/edit_employeerelative/{col}/{employeerelativeid}/{informationuserid}', response_class=HTMLResponse)
+async def edit_employeerelative(request:Request,col,employeerelativeid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select id from informationUser where id_useraccount=?"
+    cursor.execute(sql,decode_id(current_user.id))
+    verify_user=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    form = EditForm(request,col)
+    await form.load_data(col)
+    idaccount=current_user.id
+    if roleadmin.value=="admin" :
+        idaccount=idaccountadminmanager.value
+    if str(decode_id(informationuserid))==str(verify_user[0]):
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"UPDATE employeeRelative SET {col} = ? WHERE idinformationuser= ?"
+        new_value = getattr(form, col)
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+        return RedirectResponse(f'/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}',status_code=status.HTTP_302_FOUND)
+    elif readrights.value==4:
+        conn= db.connection()
+        cursor = conn.cursor()
+        sql = f"UPDATE employeeRelative SET {col} = ? WHERE idinformationuser= ?"
+        new_value = getattr(form, col)
+        cursor.execute(sql,new_value,decode_id(informationuserid))
+        cursor.commit()
+        cursor.close()
+
+        idaccount= idaccountadminmanager.value
+        return RedirectResponse(f'/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}',status_code=status.HTTP_302_FOUND)
 
     

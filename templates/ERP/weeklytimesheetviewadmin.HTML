@@ -68,27 +68,31 @@
                         </thead>
                         
                         <tbody >
-                            {% for project in weeklytimesheetvalues%}
-                            <tr>
-                                <td class="text-center"><input type="checkbox" name="checkbox" value="{{project[14]}}"></td>
-                                <td>{{project[0]}}</td>
-                                <td>{{project[1]}}</td>
-                                <td>{{project[2]}}</td>
-                                <td>{{project[3]}}</td>
-                                <td>{{project[4]}}</td>
-                                <td>{{project[5]}}</td>
-                                <td>{{project[6]}}</td>
-                                <td>{{project[7]}}</td>
-                                <td>{{project[8]}}</td>
-                                <td>{{project[9]}}</td>
-                                <td>{{project[10]}}</td>
-                                <td>{{project[11]}}</td>
-                                <td>{{project[15]}}</td>
-                                <td>{{project[16]}}</td>
-                                <td>{{project[12]}}</td>
-                                <td>{{project[13]}}</td>
-                            </tr>
-                            {% endfor %}    
+                            <form method="post">
+                                {% for project in weeklytimesheetvalues%}
+                                <tr>
+                                    <td class="text-center"><input type="checkbox" name="checkbox" value="{{project[14]}}"></td>
+                                    <td>{{project[0]}}</td>
+                                    <td>{{project[1]}}</td>
+                                    <td>{{project[2]}}</td>
+                                    <td>{{project[3]}}</td>
+                                    <td>{{project[4]}}</td>
+                                    <td>{{project[5]}}</td>
+                                    <td>{{project[6]}}</td>
+                                    <td>{{project[7]}}</td>
+                                    <td>{{project[8]}}</td>
+                                    <td>{{project[9]}}</td>
+                                    <td>{{project[10]}}</td>
+                                    <td>{{project[11]}}</td>
+                                    <td>{{project[15]}}</td>
+                                    <td>{{project[16]}}</td>
+                                    <td>{{project[12]}}</td>
+                                    <td>{{project[13]}}</td>
+                                </tr>
+                                {% endfor %}    
+                                <button type="submit" name="approvals" value="approvals" >Aproval</button>
+                                <button type="submit" name="pendingapprovals" value="pendingapprovals" >pengding Aproval</button>
+                            </form>
                         </tbody>
                     </table>
                     <div class="row" >

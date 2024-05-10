@@ -224,24 +224,7 @@ async def login_get(request: Request,response:Response):
     }
     return templates.TemplateResponse("authentication/login.html",context)
 
-# @auth.get("/set-cookie/{key}/{value}")
-# def set_cookie(response: Response,key,value):
-#     content = {"message": "cookie set"}
-#     #response = JSONResponse(content=content)
-#     response.set_cookie(key=key, value=value,httponly=True)
-#     return {"message": "Cookie set successfully"}
 
-# @auth.get("/get-cookie/{key}")
-# def get_cookie(request: Request,key):
-#     # Lấy giá trị của cookie
-#     cookies = request.cookies
-#     cookie_value = cookies.get(key)
-#     return  cookie_value
-
-# @auth.get("/test")
-# async def test(response: Response):
-#     is_admin.value="None"
-#     return is_admin.value
 
 
 @auth.post("/signin",tags=["authentication"], response_class=HTMLResponse)

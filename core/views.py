@@ -41,8 +41,49 @@ templates = Jinja2Templates(directory="templates")
 # image_path_session.value_admin = ""
 # fullname_adminsession.value = ""
 
+# @auth.get("/set-cookie/{key}/{value}")
+# def set_cookie(response: Response,key,value):
+    
+#     content = {"message": "cookie set"}
+#     #response = JSONResponse(content=content)
+#     response.set_cookie(key=key, value=value,httponly=True)
+#     return {"message": "Cookie set successfully"}
 
-def authorizationUser(current_user: User = Depends(get_current_user_from_token)):
+# @auth.get("/get-cookie/{key}")
+# def get_cookie(request: Request,key):
+#     # Lấy giá trị của cookie
+#     cookies = request.cookies
+#     cookie_value = cookies.get(key)
+#     return  cookie_value
+
+# @auth.get("/test")
+# async def test(request: Request):
+#     cookie_value = request.cookies.get("test_admin")
+    
+#     return str(cookie_value)
+
+def authorizationUser(request:Request,response:Response, current_user: User = Depends(get_current_user_from_token)):
+    #set cookie 
+    response.set_cookie(key="is_admin", value=None,httponly=True)
+    response.set_cookie(key="roleuser", value=None,httponly=True)
+    response.set_cookie(key="rolegroup", value=None,httponly=True)
+    response.set_cookie(key="readrights", value=None,httponly=True)
+    response.set_cookie(key="writerights", value=None,httponly=True)
+    response.set_cookie(key="verify_password", value=None,httponly=True)
+    response.set_cookie(key="messages", value=None,httponly=True)
+    response.set_cookie(key="id_useraccount", value=None,httponly=True)
+    response.set_cookie(key="idaccountadminmanager", value=None,httponly=True)
+    response.set_cookie(key="selectionItem", value=None,httponly=True)
+    response.set_cookie(key="tablesession", value=None,httponly=True)
+    response.set_cookie(key="image_path_adminsession", value=None,httponly=True)
+    response.set_cookie(key="fullname_adminsession", value=None,httponly=True)
+    response.set_cookie(key="roleadmin", value=None,httponly=True)
+    response.set_cookie(key="image_path_session", value=None,httponly=True)
+    response.set_cookie(key="fullname_session", value=None,httponly=True)
+    response.set_cookie(key="front_cccd_session", value=None,httponly=True)
+    response.set_cookie(key="back_cccd_session", value=None,httponly=True)
+
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="select role_name from role_user where id=?"
@@ -62,28 +103,35 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     #   set image path
     found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
     if found_avatar and found_avatar[2] != "":
-        image_path_session.value = found_avatar[2]
+        #image_path_session.value = found_avatar[2]
+        response.set_cookie(key="image_path_session", value=found_avatar[2],httponly=True)
     else:
-        image_path_session.value = file_path_default
+        #image_path_session.value = file_path_default
+        response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
   
-    fullname_session.value = user_temp[1]
+    #fullname_session.value = user_temp[1]
+    response.set_cookie(key="fullname_session", value=user_temp[1],httponly=True)
+ 
+    # rolegroup.value=""
 
-    #session['rolegroup']=""
-    rolegroup.value=""
-    #session['readrights']=None
-    readrights.value=None
-    #session['writerights']=None
-    writerights.value=None
+    # readrights.value=None
+
+    # writerights.value=None
 
     if user_role[0]=="candidate":
-        image_path = image_path_session.value
-        fullname = fullname_session.value
+        #image_path = image_path_session.value
+        image_path=request.cookies.get("image_path_session")
+        #fullname = fullname_session.value
+        fullname=request.cookies.get("fullname_session")
         return RedirectResponse(url=f"/candidate/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
         #return redirect(url_for("candidate.candidatepage",image_path = image_path_session.value,fullname = _fullname))
     elif user_role[0]=="employee":
+        return str(request.cookies.get("roleadmin"))
         #roleuser.value="employee"
-        image_path = image_path_session.value
-        fullname = fullname_session.value
+        #image_path = image_path_session.value
+        image_path=request.cookies.get("image_path_session")
+        #fullname = fullname_session.value
+        fullname=request.cookies.get("fullname_session")
         return RedirectResponse(url=f"/employeepage/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
 
     # elif user_role[0]=="employee_manager":
@@ -93,26 +141,35 @@ def authorizationUser(current_user: User = Depends(get_current_user_from_token))
     # elif user_role[0]=="account_manager":
     #     return redirect(url_for("accountmanager.accountmanagerpage",image_path = image_path_session.value,fullname = _fullname))
     elif user_role[0]=="admin":
-        roleadmin.value = "admin"
-        roleuser.value = ""
-        image_path_adminsession.value = image_path_session.value
-        fullname_adminsession.value = fullname_session.value
-        #session['writerights']=1
-        writerights.value=1
-        readrights.value=4
-        image_path_admin=image_path_adminsession.value
-        fullname_admin = fullname_adminsession.value
+        #roleadmin.value = "admin"
+        response.set_cookie(key="roleadmin", value="admin",httponly=True)
+        #roleuser.value = ""
+        #image_path_adminsession.value = image_path_session.value
+        image_path_session=request.cookies.get("image_path_session")
+        response.set_cookie(key="image_path_adminsession", value=image_path_session,httponly=True)
+        #fullname_adminsession.value = fullname_session.value
+        fullname_session=request.cookies.get("fullname_session")
+        response.set_cookie(key="fullname_adminsession", value=fullname_session,httponly=True)
+      
+        #writerights.value=1
+        response.set_cookie(key="writerights", value=1,httponly=True)
+        #readrights.value=4
+        response.set_cookie(key="readrights", value=4,httponly=True)
+        #image_path_admin=image_path_adminsession.value
+        image_path_admin=request.cookies.get("image_path_adminsession")
+        #fullname_admin = fullname_adminsession.value
+        fullname_admin=request.cookies.get("fullname_adminsession")
         return RedirectResponse(url=f'/adminpage/{image_path_admin}/{fullname_admin}')
     else:
         return "You have not been granted access to the resource"
 
 @core_bp.get("/home",tags=['user'])
-def home(current_user: User = Depends(get_current_user_from_token)): 
-    return authorizationUser(current_user)
+def home(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)): 
+    return authorizationUser(request,response,current_user)
 
 @core_bp.post("/home",tags=['user'])
-def home_get(current_user: User = Depends(get_current_user_from_token)): 
-    return authorizationUser(current_user)
+def home_get(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)): 
+    return authorizationUser(request,response,current_user)
 
 @core_bp.get('/',tags=['user'])
 def index_get():
@@ -191,7 +248,7 @@ def logout():
     return response
 
 @core_bp.get("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
-def getcodechangepassword_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
+def getcodechangepassword_get(response:Response,request:Request,current_user: User = Depends(get_current_user_from_token)):
         messages.categorary=None
         messages.message=None
         conn=db.connection()
@@ -207,7 +264,8 @@ def getcodechangepassword_get(request:Request,current_user: User = Depends(get_c
             totp=pyotp.TOTP(secret)
             verify=verifyPassword(email=user_temp[15],totp_temp=totp.now())
             #session['verify_password']=verify
-            verify_password.value=verify
+            #verify_password.value=verify
+            response.set_cookie(key="verify_password", value=verify,httponly=True)
             messages.categorary="success"
             messages.message="A confirmation email has been sent via email."
             #flash("A confirmation email has been sent via email.", "success")
@@ -221,7 +279,7 @@ def getcodechangepassword_get(request:Request,current_user: User = Depends(get_c
             #return redirect(url_for("core.startPage"))
 
 @core_bp.post("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
-def getcodechangepassword(request:Request,current_user: User = Depends(get_current_user_from_token)):
+def getcodechangepassword(response:Response,request:Request,current_user: User = Depends(get_current_user_from_token)):
         messages.categorary=None
         messages.message=None
         conn=db.connection()
@@ -237,7 +295,8 @@ def getcodechangepassword(request:Request,current_user: User = Depends(get_curre
             totp=pyotp.TOTP(secret)
             verify=verifyPassword(email=user_temp[15],totp_temp=totp.now())
             #session['verify_password']=verify
-            verify_password.value=verify
+            #verify_password.value=verify
+            response.set_cookie(key="verify_password", value=verify,httponly=True)
             messages.categorary="success"
             messages.message="A confirmation email has been sent via email."
             #flash("A confirmation email has been sent via email.", "success")
@@ -252,7 +311,7 @@ def getcodechangepassword(request:Request,current_user: User = Depends(get_curre
 
 # user profile page
 @core_bp.get('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
-def userinformation_get(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
+def userinformation_get(response:Response,request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
   
     #readrights.value=None    
     #session['readrights']=None
@@ -281,33 +340,37 @@ def userinformation_get(request:Request,idaccount,current_user: User = Depends(g
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
         if found_avatar and found_avatar[2] != "":
-            image_path_session.value = found_avatar[2]
+            response.set_cookie(key="image_path_session", value=found_avatar[2],httponly=True)
+            #image_path_session.value = found_avatar[2]
         else:
-            image_path_session.value = file_path_default
-        if roleadmin.value == "admin" and roleuser.value != "admin":
-            roleuser.value = user_temp[13]
-            idaccountadminmanager.value = idaccount
+            #image_path_session.value = file_path_default
+            response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
+        if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin":
+            #roleuser.value = user_temp[13]
+            response.set_cookie(key="roleuser", value=user_temp[13],httponly=True)
+            #idaccountadminmanager.value = idaccount
+            response.set_cookie(key="idaccountadminmanager", value=idaccount,httponly=True)
             
     context={
         "request":request,
         "current_user":current_user,
         "form":form,
-        "image_path":image_path_session.value,
+        "image_path":request.cookies.get("image_path_session"),
         "informationuserid":encode_id(str(user_temp[0])),
         "fullname":user_temp[1],
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "readrights":request.cookies.get("readrights"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
     
 
 @core_bp.post('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
-def userinformation(request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
+def userinformation(response:Response,request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
   
     #readrights.value=None    
     #session['readrights']=None
@@ -335,28 +398,31 @@ def userinformation(request:Request,idaccount,current_user: User = Depends(get_c
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
         if found_avatar and found_avatar[2] != "":
-            image_path_session.value = found_avatar[2]
+            response.set_cookie(key="image_path_session", value=found_avatar[2],httponly=True)
+            #image_path_session.value = found_avatar[2]
         else:
-            image_path_session.value = file_path_default
-
-        if roleadmin.value == "admin" and roleuser.value != "admin":
-            roleuser.value = user_temp[13]
-            idaccountadminmanager.value = idaccount
+            #image_path_session.value = file_path_default
+            response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
+        if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin":
+            #roleuser.value = user_temp[13]
+            response.set_cookie(key="roleuser", value=user_temp[13],httponly=True)
+            #idaccountadminmanager.value = idaccount
+            response.set_cookie(key="idaccountadminmanager", value=idaccount,httponly=True)
 
 
     context={
         "request":request,
         "current_user":current_user,
         "form":form,
-        "image_path":image_path_session.value,
+        "image_path":request.cookies.get("image_path_session"),
         "informationuserid":encode_id(str(user_temp[0])),
         "fullname":user_temp[1],
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "readrights":request.cookies.get("readrights"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
 
     }
     return templates.TemplateResponse("core/user_information.html",context)
@@ -383,7 +449,7 @@ async def edit_userInformation(request:Request,col,informationuserid,current_use
         idaccount= str(current_user.id)
         return RedirectResponse(f'/userinformation/{idaccount}')
         
-    elif readrights.value==4:
+    elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"UPDATE informationUser SET {col} = ? WHERE id= ?"
@@ -391,7 +457,7 @@ async def edit_userInformation(request:Request,col,informationuserid,current_use
         cursor.execute(sql,new_value,decode_id(informationuserid))
         cursor.commit()
         cursor.close()
-        idaccount= idaccountadminmanager.value
+        idaccount= request.cookies.get("idaccountadminmanager")
         return RedirectResponse(f'/userinformation/{idaccount}')
     #return "hello"
 @core_bp.get('/groupuserpage/{idinformationuser}',tags=['user'], response_class=HTMLResponse)
@@ -412,10 +478,10 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
         "request":request,
         "current_user":current_user,
         "groups":groups,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
         "form":form,
-        "fullname":fullname_session.value
+        "fullname":request.cookies.get("fullname_session")
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
@@ -442,26 +508,25 @@ def latestEmployment_get(request:Request,informationuserid,current_user: User = 
             form.StartDate = user_temp[8]
             form.EndDate=user_temp[9]
         idaccount=current_user.id
-        print("idaacount" + str(idaccount))
-        print("roleadmin value: "+ str(roleadmin.value))
-        if roleadmin.value=="admin" and roleuser.value != "admin" :
-            print("roleadmin value a1: "+ str(idaccountadminmanager.value))
-            idaccount=idaccountadminmanager.value
-        print("fullname is:"+ str(fullname_session.value))
+        
+        if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+            idaccount=request.cookies.get("idaccountadminmanager")
+        
         
         context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
         "form":form,
-        "fullname":fullname_session.value,
+        "fullname":request.cookies.get("fullname_session"),
         "informationuserid":informationuserid,
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "readrights":request.cookies.get("readrights"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
         } 
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
@@ -488,29 +553,27 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
             form.StartDate = user_temp[8]
             form.EndDate=user_temp[9]
         idaccount=current_user.id
-        if roleadmin.value=="admin" and roleuser.value != "admin" :
-            idaccount=idaccountadminmanager.value
+        if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+            idaccount=request.cookies.get("idaccountadminmanager")
         context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
         "form":form,
-        "fullname":fullname_session.value,
+        "fullname":request.cookies.get("fullname_session"),
         "informationuserid":informationuserid,
-
-       
-       
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
-        } 
+        "readrights":request.cookies.get("readrights"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
+        }
         return templates.TemplateResponse("core/latestEmployment.html",context)
 
 @core_bp.get('/usercccd/{informationuserid}',tags=['user'], response_class=HTMLResponse)
-def usercccd(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+def usercccd_get(response:Response,request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     
     form = usercccdForm(request)
     conn=db.connection()
@@ -531,38 +594,43 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     found_cccd = user_cccd.find_picture_name_by_id(decode_id(informationuserid))
 
     if found_cccd and found_cccd[2] != "":
-        front_cccd_session.value = found_cccd[2]
+        #front_cccd_session.value = found_cccd[2]
+        response.set_cookie(key="front_cccd_session", value=found_cccd[2],httponly=True)
     else:
-        front_cccd_session.value = ""
+        #front_cccd_session.value = ""
+        response.set_cookie(key="front_cccd_session", value="",httponly=True)
 
     if found_cccd and found_cccd[3] != "":
-        back_cccd_session.value = found_cccd[3]
+        #back_cccd_session.value = found_cccd[3]
+        response.set_cookie(key="back_cccd_session", value=found_cccd[3],httponly=True)
 
     else:
-        back_cccd_session.value_cccd = ""
+        #back_cccd_session.value_cccd = ""
+        response.set_cookie(key="back_cccd_session", value="",httponly=True)
     idaccount=current_user.id
-    if roleadmin.value=="admin" and roleuser.value != "admin" :
-            idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+        idaccount=request.cookies.get("idaccountadminmanager")
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
         "form":form,
-        "fullname":fullname_session.value,
+        "fullname":request.cookies.get("fullname_session"),
         "informationuserid":informationuserid,
-        "front_cccd":front_cccd_session.value,
-        "back_cccd":back_cccd_session.value,
+        "front_cccd":request.cookies.get("front_cccd_session"),
+        "back_cccd":request.cookies.get("back_cccd_session"),
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "readrights":request.cookies.get("readrights"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/user_cccd.html",context)
 @core_bp.post('/usercccd/{informationuserid}',tags=['user'], response_class=HTMLResponse)
-def usercccd(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+def usercccd(response:Response,request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     
     form = usercccdForm(request)
     conn=db.connection()
@@ -583,33 +651,38 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
     found_cccd = user_cccd.find_picture_name_by_id(decode_id(informationuserid))
 
     if found_cccd and found_cccd[2] != "":
-        front_cccd_session.value = found_cccd[2]
+        #front_cccd_session.value = found_cccd[2]
+        response.set_cookie(key="front_cccd_session", value=found_cccd[2],httponly=True)
     else:
-        front_cccd_session.value = ""
+        #front_cccd_session.value = ""
+        response.set_cookie(key="front_cccd_session", value="",httponly=True)
 
     if found_cccd and found_cccd[3] != "":
-        back_cccd_session.value = found_cccd[3]
+        #back_cccd_session.value = found_cccd[3]
+        response.set_cookie(key="back_cccd_session", value=found_cccd[3],httponly=True)
 
     else:
-        back_cccd_session.value_cccd = ""
+        #back_cccd_session.value_cccd = ""
+        response.set_cookie(key="back_cccd_session", value="",httponly=True)
     idaccount=current_user.id
-    if roleadmin.value=="admin" and roleuser.value != "admin" :
-            idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+        idaccount=request.cookies.get("idaccountadminmanager")
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
         "form":form,
-        "fullname":fullname_session.value,
+        "fullname":request.cookies.get("fullname_session"),
         "informationuserid":informationuserid,
-        "front_cccd":front_cccd_session.value,
-        "back_cccd":back_cccd_session.value,
+        "front_cccd":request.cookies.get("front_cccd_session"),
+        "back_cccd":request.cookies.get("back_cccd_session"),
         "idaccount":idaccount,
-        "readrights":readrights.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "readrights":request.cookies.get("readrights"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "idinformationuser":informationuserid
     }
     return templates.TemplateResponse("core/user_cccd.html",context)
@@ -617,7 +690,7 @@ def usercccd(request:Request,informationuserid,current_user: User = Depends(get_
 
 @core_bp.get('/healthCheckCertificates/{informationuserid}',tags=['user'],response_class=HTMLResponse)
 
-def healthCheckCertificates(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+def healthCheckCertificates_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
 
     conn = db.connection()
     cursor = conn.cursor()
@@ -630,21 +703,22 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         df = pd.concat([df,df2])
     conn.close()
     idaccount=current_user.id
-    if roleadmin.value=="admin" and roleuser.value != "admin" :
-        idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+        idaccount=request.cookies.get("idaccountadminmanager")
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
-        "fullname":fullname_session.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":request.cookies.get("readrights")
     }    
     return templates.TemplateResponse("core/healthCheckCertificates.html",context)
 @core_bp.post('/healthCheckCertificates/{informationuserid}',tags=['user'],response_class=HTMLResponse)
@@ -662,29 +736,31 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
         df = pd.concat([df,df2])
     conn.close()
     idaccount=current_user.id
-    if roleadmin.value=="admin" and roleuser.value != "admin" :
-        idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+        idaccount=request.cookies.get("idaccountadminmanager")
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
-        "fullname":fullname_session.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
-    }    
+        "readrights":request.cookies.get("readrights")
+    }   
     return templates.TemplateResponse("core/healthCheckCertificates.html",context)
 
 @core_bp.get('/educationbackground/{informationuserid}',tags=['user'], response_class=HTMLResponse)
-def educationbackground(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+def educationbackground_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     idaccount=current_user.id
-    if roleadmin.value=="admin" and roleuser.value != "admin" :
-        idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+        idaccount=request.cookies.get("idaccountadminmanager")
    
     conn = db.connection()
     cursor = conn.cursor()
@@ -699,23 +775,24 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
-        "fullname":fullname_session.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":request.cookies.get("readrights")
     }
     return templates.TemplateResponse("core/educationbackground.html",context)  
 @core_bp.post('/educationbackground/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 def educationbackground(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     idaccount=current_user.id
-    if roleadmin.value=="admin" and roleuser.value != "admin" :
-        idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
+            
+        idaccount=request.cookies.get("idaccountadminmanager")
    
     conn = db.connection()
     cursor = conn.cursor()
@@ -730,16 +807,16 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
-        "fullname":fullname_session.value,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "temp":temp,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":request.cookies.get("readrights")
     }
     return templates.TemplateResponse("core/educationbackground.html",context) 
 

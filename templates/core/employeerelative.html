@@ -1,376 +1,506 @@
 {% extends "core/user_profile.html" %}
 
 {% block content_body %}
-{% if readrights==3 or readrights==4 or readrights is none %}
-<!-- child template -->
-<div class="col-lg-8">
-  <div class="card mb-4">
-    <div class="card-body">
-      <div id="" class="row">
-        <div class="col-sm-3">
-          <label for="id" class="mb-0">ID</label>
-        </div>
-        <div  class="col-sm-9" id="id-container">
-          <p class="text-muted mb-0">
-            {{employeerelative.id}}
-          </p>
-        </div>
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="Relationship" class="mb-0">Relationship</label>
-          </div>
-          <div class="col-sm-9" id="Relationship-container">
-            <input type="hidden" id="edit_mode_Relationship" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="Relationship" name="Relationship" class="form-control" placeholder="{{employeerelative.Relationship}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.Relationship}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Relationship','{{employeerelative.Relationship}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="phone" class="mb-0">Phone</label>
-          </div>
-          <div class="col-sm-9" id="phone-container">
-            <input type="hidden" id="edit_mode_phone" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="phone" name="phone" class="form-control" placeholder="{{employeerelative.phone}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.phone}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('phone','{{employeerelative.phone}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="email" class="mb-0">Email</label>
-          </div>
-          <div class="col-sm-9" id="email-container">
-            <input type="hidden" id="edit_mode_email" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="email" name="email" class="form-control" placeholder="{{employeerelative.email}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.email}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('phone','{{employeerelative.phone}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="contactaddress" class="mb-0">Contact Address</label>
-          </div>
-          <div class="col-sm-9" id="contactaddress-container">
-            <input type="hidden" id="edit_mode_contactaddress" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="contactaddress" name="contactaddress" class="form-control" placeholder="{{employeerelative.contactaddress}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.contactaddress}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('contactaddress','{{employeerelative.contactaddress}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-      {% if  readrights==4 or readrights is none %}
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="career" class="mb-0">Career</label>
-          </div>
-          <div class="col-sm-9" id="career-container">
-            <input type="hidden" id="edit_mode_career" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="career" name="career" class="form-control" placeholder="{{employeerelative.career}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.career}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('career','{{employeerelative.career}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="citizenIdentificationNo" class="mb-0">Citizen Identification No</label>
-          </div>
-          <div class="col-sm-9" id="citizenIdentificationNo-container">
-            <input type="hidden" id="edit_mode_citizenIdentificationNo" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="citizenIdentificationNo" name="citizenIdentificationNo" class="form-control" placeholder="{{employeerelative.citizenIdentificationNo}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.citizenIdentificationNo}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('citizenIdentificationNo','{{employeerelative.citizenIdentificationNo}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="fullname" class="mb-0">Full Name</label>
-          </div>
-          <div class="col-sm-9" id="fullname-container">
-            <input type="hidden" id="edit_mode_fullname" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="fullname" name="fullname" class="form-control" placeholder="{{employeerelative.fullname}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.fullname}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('fullname','{{employeerelative.fullname}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="dateofbirth" class="mb-0">Date Of Birth</label>
-          </div>
-          <div class="col-sm-9" id="dateofbirth-container">
-            <input type="hidden" id="edit_mode_dateofbirth" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="dateofbirth" name="dateofbirth" class="form-control" placeholder="{{employeerelative.dateofbirth}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.dateofbirth}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('dateofbirth','{{employeerelative.dateofbirth}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="placeofbirth" class="mb-0">Place Of Birth</label>
-          </div>
-          <div class="col-sm-9" id="placeofbirth-container">
-            <input type="hidden" id="edit_mode_placeofbirth" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="placeofbirth" name="placeofbirth" class="form-control" placeholder="{{employeerelative.placeofbirth}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.placeofbirth}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('placeofbirth','{{employeerelative.placeofbirth}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="issuedon" class="mb-0">Issued On</label>
-          </div>
-          <div class="col-sm-9" id="issuedon-container">
-            <input type="hidden" id="edit_mode_issuedon" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="issuedon" name="issuedon" class="form-control" placeholder="{{employeerelative.issuedon}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.issuedon}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('issuedon','{{employeerelative.issuedon}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
-
-      
-      <form action="" role="form" method="POST">
-        <div id = "" class="row">
-          <div class="col-sm-3">
-            <label for="address" class="mb-0">Address</label>
-          </div>
-          <div class="col-sm-9" id="address-container">
-            <input type="hidden" id="edit_mode_address" name="edit_mode" value="{{ edit_mode }}">
-            
-            {% if edit_mode %}
-              <div class="input-group">
-                <input type="text" id="address" name="address" class="form-control" placeholder="{{employeerelative.address}}" style="margin-right: 5px;">
-                <div class="input-group-append">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted mb-0">
-                {{employeerelative.address}}
-                <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('address','{{employeerelative.address}}')"></i>
-              </p>
-            {% endif %}
-          </div>
-        </div>
-      </form>
-      
-      <hr>
+{% if readrights==4 or readrights==None %}
+              <!-- child template -->
 
 
+              <div class="col-lg-8">
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-sm-3">
+                            <label  class="mb-0">ID</label>
+                        </div>
+                        <div class="col-sm-9" >     
+                
+                              <div >
+                                <p class="col text-muted mb-0">
+                                  {{employeerelative.id}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                      <hr>
+                    <form action="/edit_employeerelative/Relationship/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <label for="Relationship" class="mb-0">Relationship</label>
+                        </div>
+                        <div class="col-sm-9" id="Relationship-container">
+                  
+                          <div id="edit_mode_Relationship_edit" style="display: none;" >
+                            <div class="row">
+                              <div class="col">
+                                  <input type="text" id="Relationship" name="Relationship" class="form-control" placeholder="{{employeerelative.Relationship}}">
+                              </div>
+                              <div class="col-auto ml-auto"> 
+                                  <div class="d-flex">
+                                      <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                      <button type="button" onclick="cancelEdit('Relationship')" class="btn btn-danger">Cancel</button>
+                                  </div>
+                              </div>
+                          </div>
+                          
+                          </div>
+                  
+                          <div id="edit_mode_Relationship_show">
+                            <p class="col text-muted mb-0">
+                              {{employeerelative.Relationship}}
+                                {% if readrights == 4 or readrights == None %}
+                                    <span class="float-right">
+                                        <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Relationship','{{employeerelative.Relationship}}')"></i>
+                                    </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        </div>
+                      </div>
+                    </form>
+                    <hr>
+                    <form action="/edit_employeerelative/phone/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <label for="phone" class="mb-0">Phone</label>
+                      </div>
+                      <div class="col-sm-9" id="phone-container">
+                
+                        <div id="edit_mode_phone_edit" style="display: none;" >
+                          <div class="row">
+                            <div class="col">
+                                <input type="text" id="phone" name="phone" class="form-control" placeholder="{{employeerelative.phone}}">
+                            </div>
+                            <div class="col-auto ml-auto"> 
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                    <button type="button" onclick="cancelEdit('phone')" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                
+                        <div id="edit_mode_phone_show">
+                          <p class="col text-muted mb-0">
+                            {{employeerelative.phone}}
+                              {% if readrights == 4 or readrights == None %}
+                                  <span class="float-right">
+                                      <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('phone','{{employeerelative.phone}}')"></i>
+                                  </span>
+                              {% endif %}
+                          </p>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+                  <hr>
+                    <form action="/edit_employeerelative/email/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <label for="email" class="mb-0">Email</label>
+                      </div>
+                      <div class="col-sm-9" id="email-container">
+                
+                        <div id="edit_mode_email_edit" style="display: none;" >
+                          <div class="row">
+                            <div class="col">
+                                <input type="text" id="email" name="email" class="form-control" placeholder="{{employeerelative.email}}">
+                            </div>
+                            <div class="col-auto ml-auto"> 
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                    <button type="button" onclick="cancelEdit('email')" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                
+                        <div id="edit_mode_email_show">
+                          <p class="col text-muted mb-0">
+                            {{employeerelative.email}}
+                              {% if readrights == 4 or readrights == None %}
+                                  <span class="float-right">
+                                      <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('email','{{employeerelative.email}}')"></i>
+                                  </span>
+                              {% endif %}
+                          </p>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+                  <hr>
+                  <form action="/edit_employeerelative/contactaddress/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label for="contactaddress" class="mb-0">Contact Address</label>
+                    </div>
+                    <div class="col-sm-9" id="contactaddress-container">
+              
+                      <div id="edit_mode_contactaddress_edit" style="display: none;" >
+                        <div class="row">
+                          <div class="col">
+                              <input type="text" id="contactaddress" name="contactaddress" class="form-control" placeholder="{{employeerelative.contactaddress}}">
+                          </div>
+                          <div class="col-auto ml-auto"> 
+                              <div class="d-flex">
+                                  <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                  <button type="button" onclick="cancelEdit('contactaddress')" class="btn btn-danger">Cancel</button>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      </div>
+              
+                      <div id="edit_mode_contactaddress_show">
+                        <p class="col text-muted mb-0">
+                          {{employeerelative.contactaddress}}
+                            {% if readrights == 4 or readrights == None %}
+                                <span class="float-right">
+                                    <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('contactaddress','{{employeerelative.contactaddress}}')"></i>
+                                </span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    </div>
+                  </div>
+                </form>
+                <hr>
+                <form action="/edit_employeerelative/career/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label for="career" class="mb-0">Career</label>
+                  </div>
+                  <div class="col-sm-9" id="career-container">
+            
+                    <div id="edit_mode_career_edit" style="display: none;" >
+                      <div class="row">
+                        <div class="col">
+                            <input type="text" id="career" name="career" class="form-control" placeholder="{{employeerelative.career}}">
+                        </div>
+                        <div class="col-auto ml-auto"> 
+                            <div class="d-flex">
+                                <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                <button type="button" onclick="cancelEdit('career')" class="btn btn-danger">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    </div>
+            
+                    <div id="edit_mode_career_show">
+                      <p class="col text-muted mb-0">
+                        {{employeerelative.career}}
+                          {% if readrights == 4 or readrights == None %}
+                              <span class="float-right">
+                                  <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('career','{{employeerelative.career}}')"></i>
+                              </span>
+                          {% endif %}
+                      </p>
+                  </div>
+                  </div>
+                </div>
+                <hr>
+                    <form action="/edit_employeerelative/citizenIdentificationNo/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <label for="citizenIdentificationNo" class="mb-0">Citizen Identification No</label>
+                      </div>
+                      <div class="col-sm-9" id="citizenIdentificationNo-container">
+                
+                        <div id="edit_mode_citizenIdentificationNo_edit" style="display: none;" >
+                          <div class="row">
+                            <div class="col">
+                                <input type="text" id="citizenIdentificationNo" name="citizenIdentificationNo" class="form-control" placeholder="{{employeerelative.citizenIdentificationNo}}">
+                            </div>
+                            <div class="col-auto ml-auto"> 
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                    <button type="button" onclick="cancelEdit('citizenIdentificationNo')" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                
+                        <div id="edit_mode_citizenIdentificationNo_show">
+                          <p class="col text-muted mb-0">
+                            {{employeerelative.citizenIdentificationNo}}
+                              {% if readrights == 4 or readrights == None %}
+                                  <span class="float-right">
+                                      <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('citizenIdentificationNo','{{employeerelative.citizenIdentificationNo}}')"></i>
+                                  </span>
+                              {% endif %}
+                          </p>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+
+                  <hr>
+                    <form action="/edit_employeerelative/fullname/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <label for="fullname" class="mb-0">Full Name</label>
+                      </div>
+                      <div class="col-sm-9" id="fullname-container">
+                
+                        <div id="edit_mode_fullname_edit" style="display: none;" >
+                          <div class="row">
+                            <div class="col">
+                                <input type="text" id="fullname" name="fullname" class="form-control" placeholder="{{employeerelative.fullname}}">
+                            </div>
+                            <div class="col-auto ml-auto"> 
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                    <button type="button" onclick="cancelEdit('fullname')" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                
+                        <div id="edit_mode_fullname_show">
+                          <p class="col text-muted mb-0">
+                            {{employeerelative.fullname}}
+                              {% if readrights == 4 or readrights == None %}
+                                  <span class="float-right">
+                                      <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('fullname','{{employeerelative.fullname}}')"></i>
+                                  </span>
+                              {% endif %}
+                          </p>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+
+                  <hr>
+                  <form action="/edit_employeerelative/dateofbirth/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label for="dateofbirth" class="mb-0">Date Of Birth</label>
+                    </div>
+                    <div class="col-sm-9" id="dateofbirth-container">
+              
+                      <div id="edit_mode_dateofbirth_edit" style="display: none;" >
+                        <div class="row">
+                          <div class="col">
+                              <input type="text" id="dateofbirth" name="dateofbirth" class="form-control" placeholder="{{employeerelative.dateofbirth}}">
+                          </div>
+                          <div class="col-auto ml-auto"> 
+                              <div class="d-flex">
+                                  <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                  <button type="button" onclick="cancelEdit('dateofbirth')" class="btn btn-danger">Cancel</button>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      </div>
+              
+                      <div id="edit_mode_dateofbirth_show">
+                        <p class="col text-muted mb-0">
+                          {{employeerelative.dateofbirth}}
+                            {% if readrights == 4 or readrights == None %}
+                                <span class="float-right">
+                                    <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('dateofbirth','{{employeerelative.dateofbirth}}')"></i>
+                                </span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    </div>
+                  </div>
+                </form>
+
+                <hr>
+                    <form action="/edit_employeerelative/placeofbirth/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <label for="placeofbirth" class="mb-0">Place Of Birth</label>
+                      </div>
+                      <div class="col-sm-9" id="placeofbirth-container">
+                
+                        <div id="edit_mode_placeofbirth_edit" style="display: none;" >
+                          <div class="row">
+                            <div class="col">
+                                <input type="text" id="placeofbirth" name="placeofbirth" class="form-control" placeholder="{{employeerelative.placeofbirth}}">
+                            </div>
+                            <div class="col-auto ml-auto"> 
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                    <button type="button" onclick="cancelEdit('placeofbirth')" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                
+                        <div id="edit_mode_placeofbirth_show">
+                          <p class="col text-muted mb-0">
+                            {{employeerelative.placeofbirth}}
+                              {% if readrights == 4 or readrights == None %}
+                                  <span class="float-right">
+                                      <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('placeofbirth','{{employeerelative.placeofbirth}}')"></i>
+                                  </span>
+                              {% endif %}
+                          </p>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+
+                  <hr>
+                    <form action="/edit_employeerelative/issuedon/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <label for="issuedon" class="mb-0">Issued On</label>
+                      </div>
+                      <div class="col-sm-9" id="issuedon-container">
+                
+                        <div id="edit_mode_issuedon_edit" style="display: none;" >
+                          <div class="row">
+                            <div class="col">
+                                <input type="text" id="issuedon" name="issuedon" class="form-control" placeholder="{{employeerelative.issuedon}}">
+                            </div>
+                            <div class="col-auto ml-auto"> 
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                    <button type="button" onclick="cancelEdit('issuedon')" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                
+                        <div id="edit_mode_issuedon_show">
+                          <p class="col text-muted mb-0">
+                            {{employeerelative.issuedon}}
+                              {% if readrights == 4 or readrights == None %}
+                                  <span class="float-right">
+                                      <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('issuedon','{{employeerelative.issuedon}}')"></i>
+                                  </span>
+                              {% endif %}
+                          </p>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+
+                  <hr>
+                    <form action="/edit_employeerelative/address/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <label for="address" class="mb-0">Address</label>
+                      </div>
+                      <div class="col-sm-9" id="address-container">
+                
+                        <div id="edit_mode_address_edit" style="display: none;" >
+                          <div class="row">
+                            <div class="col">
+                                <input type="text" id="address" name="address" class="form-control" placeholder="{{employeerelative.address}}">
+                            </div>
+                            <div class="col-auto ml-auto"> 
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-primary mr-2">Save</button> 
+                                    <button type="button" onclick="cancelEdit('address')" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                
+                        <div id="edit_mode_address_show">
+                          <p class="col text-muted mb-0">
+                            {{employeerelative.address}}
+                              {% if readrights == 4 or readrights == None %}
+                                  <span class="float-right">
+                                      <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('address','{{employeerelative.address}}')"></i>
+                                  </span>
+                              {% endif %}
+                          </p>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+                  <br>
+                            <!-- <div class="row">
+                              <div class="col-sm-3">
+                                <p class="mb-0" style="color:red">Upload Notarized Document</p>
+                              </div>             
+                            </div>
+              
+                            <form method="POST" action="/uploadDocument/{{employeerelativeid}}/{{informationuserid}}" enctype="multipart/form-data" id="uploadDocument">            
+                            <input type="file" name="document_notarized" alt="document_notarized image">
+                            
+                              </div>
+                                <div class="row">
+                                  <div class="col-sm-3 ml-4">
+                                    <input class="btn btn-primary mb-3" type=submit value=Upload>
+                                  </div>
+                                  
+                                </div>
+                                
+                              </form>
+
+  
+
+            <div style="background-color: aliceblue; color: black;" >
+              <div class="ml-4 mr-4">
+                <div class="row ">
+                  <div class="col-sm-3">
+                    <p class="mb-0" style="color:red">The document list</p>
+                       
+                  </div>
+              </div>
+              <br>
+                
+                
+
+                {% if temp %}
+                <table class="table">
+                    <thead >
+                        <tr >
+                            <th hidden>ID</th>
+                            <th style="text-align: center;">Document No</th>
+                            <th style="text-align: center;">Document Name</th>
+                            <th style="text-align: center;">Dowload</th>
+                            <th style="text-align: center;">Delete</th>
+                 
+          
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for record in temp %}
+                            <tr>
+                                <td style="text-align: center;" >{{ record[0] }}</td>
+                                <td style="text-align: center;">{{ record[1] }}</td>
+                                <td style="text-align: center;">
+                                  <a href="{{ record[2] }}" target="_blank">Dowload</a>
+                                </td>
+                                <td style="text-align: center;">
+                                  <a href=""
+                                  style="color:#f04d3b">
+                                   <i class="fas fa-times-circle" ></i>
+                                </a>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+
+
+                
+              </div>
+            </div> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
         
-
-<form method="POST" action="/uploadDocument/{{employeerelativeid}}/{{informationuserid}}" enctype="multipart/form-data" id="uploadDocument">            
-  <div class="row">
-    <div class="col-sm-3">
-      <p class="mb-0" style="color:red">Upload Notarized Document</p>
-    </div>             
-  </div>
-  <div class="row">
-    <div class="col-sm-9">
-      <input type="file" name="document_notarized" alt="document_notarized image">
-      <button type="submit">Upload</button>
     </div>
-  </div>
-</form>
-<hr>
-<div class="row">
-  <div class="col-sm-3">
-    <p class="mb-0" style="color:red">The document list</p>
-  </div>
-  <div class="col-md-4"></div>
-</div>
-<!-- Display existing records -->
-{% if temp %}
-<table class="table">
-    <thead>
-        <tr>
-            <th>Document No</th>
-            <th>Document Name</th>
-            <th>Dowload</th>
-            <th>Delete</th>
+  
+  </section>
 
-        </tr>
-    </thead>
-    <tbody>
-        {% for record in temp %}
-            <tr>
-                <td>{{ record[0] }}</td>
-                <td>{{ record[1] }}</td>
-                <td>
-                  <a href="{{ record[2] }}" target="_blank">{{ record[1] }}</a>
-                </td>
-                <td>
-                  <a href=""
-                   class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash-alt"></i> 
-                </a>
-                </td>
-
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No documents available.</p>
-{% endif %}
-{% endif %}
-{% endif %}
-{% endblock %}
+  {% endif %}
+  {%endblock %}
