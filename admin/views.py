@@ -834,20 +834,20 @@ def info(idaccount,response:Response,current_user: User = Depends(get_current_us
     response.set_cookie(key="roleadmin", value="admin",httponly=True)
     return RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
 
-def readrights_func(rolegroup):
+def readrights_func(rolegroup,response:Response):
     if rolegroup=="manager" or rolegroup=="admin":
-        readrights.value=4
-        writerights.value=1
+            response.set_cookie(key="readrights", value=4,httponly=True)
+            response.set_cookie(key="writerights", value=1,httponly=True)
         #session["readrights"]=4
         # session['writerights']=1
     elif rolegroup=="leader":
-        readrights.value=3
+            response.set_cookie(key="readrights", value=3,httponly=True)
         #["readrights"]=3
     elif rolegroup=="member" or rolegroup=="client":
-        readrights.value=2
+            response.set_cookie(key="readrights", value=2,httponly=True)
         #session["readrights"]=2
     else:
-        readrights.value=5
+            response.set_cookie(key="readrights", value=5,httponly=True)
         #session["readrights"]=5
 
 @admin.get('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
