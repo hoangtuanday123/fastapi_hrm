@@ -20,37 +20,37 @@ templates = Jinja2Templates(directory="templates")
 admin=APIRouter()
 
 @admin.get('/adminpage/{image_path_admin}/{fullname_admin}',tags=['user managerment'], response_class=HTMLResponse)
-def adminpage_get(request: Request,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
-    image_path_adminsession.value=image_path_admin
-    fullname_adminsession.value=fullname_admin
+def adminpage_get(request: Request,response:Response,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
+    response.set_cookie(key="image_path_adminsession", value=image_path_admin,httponly=True)
+    response.set_cookie(key="fullname_adminsession", value=fullname_admin,httponly=True)
 
-    roleuser.value = "admin"
-    roleadmin.value = "admin"
-    print("admin fullname is " + fullname_adminsession.value)
+    response.set_cookie(key="roleuser", value="admin",httponly=True) 
+    response.set_cookie(key="roleadmin", value="admin",httponly=True)
+    print("admin fullname is " + request.cookies.get("fullname_adminsession"))
     context={
         "request":request,
-        "image_path_admin":image_path_adminsession.value,
-        "roleuser":roleuser.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleuser":request.cookies.get("roleuser"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "current_user":current_user
     }
     return templates.TemplateResponse("admin/adminpage.html",context)
 
 @admin.post('/adminpage/{image_path_admin}/{fullname_admin}',tags=['user managerment'], response_class=HTMLResponse)
-def adminpage(request: Request,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
-    image_path_adminsession.value=image_path_admin
-    fullname_adminsession.value=fullname_admin
+def adminpage(request: Request,response:Response,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
+    response.set_cookie(key="image_path_adminsession", value=image_path_admin,httponly=True)
+    response.set_cookie(key="fullname_adminsession", value=fullname_admin,httponly=True)
 
-    roleuser.value = "admin"
-    roleadmin.value = "admin"
-    print("admin fullname is " + fullname_adminsession.value)
+    response.set_cookie(key="roleuser", value="admin",httponly=True) 
+    response.set_cookie(key="roleadmin", value="admin",httponly=True)
+    print("admin fullname is " + request.cookies.get("fullname_adminsession"))
     context={
         "request":request,
-        "image_path_admin":image_path_adminsession.value,
-        "roleuser":roleuser.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleuser":request.cookies.get("roleuser"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "current_user":current_user
     }
     return templates.TemplateResponse("admin/adminpage.html",context)
@@ -71,10 +71,10 @@ async def displayRoles_get(request:Request,current_user: User = Depends(get_curr
         "request":request,
         "data":role_names,
         "form":form,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "roleuser":roleuser.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser"),
         "current_user":current_user
     }
     return templates.TemplateResponse("admin/manageRole.html",context)
@@ -105,10 +105,10 @@ async def displayRoles(request:Request,current_user: User = Depends(get_current_
         "request":request,
         "data":role_names,
         "form":form,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "roleuser":roleuser.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser"),
         "current_user":current_user
     }
     return templates.TemplateResponse("admin/manageRole.html",context)
@@ -129,10 +129,10 @@ def rolepage_get(request:Request,idrole,current_user: User = Depends(get_current
         "current_user":current_user,
         "rolename":rolename[0],
         "idrole":idrole,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "roleuser":roleuser.value
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser")
     }
     
     return templates.TemplateResponse("admin/updatepagerole.html",context)
@@ -164,10 +164,10 @@ async def rolepage(request:Request,idrole,current_user: User = Depends(get_curre
         "current_user":current_user,
         "rolename":rolename[0],
         "idrole":idrole,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "roleuser":roleuser.value
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser")
     }
     return templates.TemplateResponse("admin/updatepagerole.html",context)
     
@@ -184,7 +184,7 @@ def deleterole(idrole):
     return RedirectResponse(url="/adminpage/roles",status_code=status.HTTP_302_FOUND)
 
 @admin.get("/adminpage/usersmanager",tags=['user managerment'], response_class=HTMLResponse)
-def displayusers_get(request:Request,current_user: User = Depends(get_current_user_from_token)):  
+def displayusers_get(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):  
 
     totp=pyotp.TOTP('adminroles')
     totp=totp.now()
@@ -192,7 +192,7 @@ def displayusers_get(request:Request,current_user: User = Depends(get_current_us
     #session['rolegroup']='admin'
     is_admin.value=str(totp)
     rolegroup.value='admin'
-    roleadmin.value = "admin"
+    response.set_cookie(key="roleadmin", value="admin",httponly=True)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select u.id, i.email,r.role_name ,u.is_active,i.id from informationUser i join user_account u on i.id_useraccount=u.id join role_user r on r.id= u.role_id where u.role_id is not null"
@@ -247,14 +247,14 @@ def displayusers_get(request:Request,current_user: User = Depends(get_current_us
         "roletype":roles,
         "table":table,
         "selecttionitem":selecttionitem,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "roleuser":roleuser.value
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser")
     }
     return templates.TemplateResponse("admin/manageusers.html",context)
 @admin.post("/adminpage/usersmanager",tags=['user managerment'], response_class=HTMLResponse)
-async def displayusers(request:Request,current_user: User = Depends(get_current_user_from_token)):  
+async def displayusers(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):  
     #list account
     totp=pyotp.TOTP('adminroles')
     totp=totp.now()
@@ -262,7 +262,7 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
     #session['rolegroup']='admin'
     is_admin.value=str(totp)
     rolegroup.value='admin'
-    roleadmin.value = "admin"
+    response.set_cookie(key="roleadmin", value="admin",httponly=True)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select u.id, i.email,r.role_name ,u.is_active,i.id from informationUser i join user_account u on i.id_useraccount=u.id join role_user r on r.id= u.role_id where u.role_id is not null"
@@ -439,14 +439,14 @@ async def displayusers(request:Request,current_user: User = Depends(get_current_
         "roletype":roles,
         "table":table,
         "selecttionitem":selecttionitem,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
-        "roleuser":roleuser.value
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser")
         }
     return templates.TemplateResponse("admin/manageusers.html",context)
     # return render_template("admin/manageusers.html",Alluser=Alluser,usersrole=usersrole,usersblock=usersblock,
-    #                        roletype=roles,table=table,selecttionitem=selecttionitem,image_path_admin=image_path_session.value_admin,roleadmin=roleadmin.value,fullname_admin =  fullname_adminsession.value
+    #                        roletype=roles,table=table,selecttionitem=selecttionitem,image_path_admin=image_path_session.value_admin,roleadmin=request.cookies.get("roleadmin"),fullname_admin =  request.cookies.get("fullname_adminsession")
     #                        ,totp=totp,roleuser=session.get('roleuser'))
 
 def is_all_null(array):
@@ -710,12 +710,12 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
         "roles":roles,
         "email":email[0],
         "idaccount":idaccount,
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "userrole":userrole,
         "informationuserid":encode_id(idinformationuser),
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("admin/updatepageuserrole.html",context)
 
@@ -786,12 +786,12 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
         "roles":roles,
         "email":email[0],
         "idaccount":idaccount,
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "userrole":userrole,
         "informationuserid":encode_id(idinformationuser),
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("admin/updatepageuserrole.html",context)
 
@@ -820,7 +820,7 @@ def openblock(idaccount,current_user: User = Depends(get_current_user_from_token
     return RedirectResponse(url="/adminpage/usersmanager", status_code=status.HTTP_302_FOUND) 
 
 @admin.get('/adminpage/usersmanager/lookinformationuser/{idaccount}',tags=['user managerment'])
-def info(idaccount,current_user: User = Depends(get_current_user_from_token)):
+def info(idaccount,response:Response,current_user: User = Depends(get_current_user_from_token)):
     idaccount_encode=idaccount
     idaccountadminmanager.value=idaccount
     conn=db.connection()
@@ -830,8 +830,8 @@ def info(idaccount,current_user: User = Depends(get_current_user_from_token)):
     cursor.execute(sql,value)
     user_role=cursor.fetchone()
     #session['roleuser']=user_role[0]
-    roleuser.value=user_role[0]
-    roleadmin.value="admin"
+    response.set_cookie(key="roleuser", value=user_role[0],httponly=True) 
+    response.set_cookie(key="roleadmin", value="admin",httponly=True)
     return RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
 
 def readrights_func(rolegroup):
@@ -851,8 +851,8 @@ def readrights_func(rolegroup):
         #session["readrights"]=5
 
 @admin.get('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
-async def groupuserpage_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    roleadmin.value = "admin"
+async def groupuserpage_get(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):
+    response.set_cookie(key="roleadmin", value="admin",httponly=True)
     rolegroup.value='admin'
     conn=db.connection()
     cursor=conn.cursor()
@@ -868,17 +868,17 @@ async def groupuserpage_get(request:Request,current_user: User = Depends(get_cur
         "current_user":current_user,
         "groups":groups,
         "image_path":image_path_session.value,
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "form":form,
         "rolegroup":'admin',
-        "roleadmin":roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin":fullname_adminsession.value
+        "roleadmin":request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 @admin.post('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
-async def groupuserpage(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    roleadmin.value = "admin"
+async def groupuserpage(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):
+    response.set_cookie(key="roleadmin", value="admin",httponly=True)
     rolegroup.value='admin'
     conn=db.connection()
     cursor=conn.cursor()
@@ -911,24 +911,24 @@ async def groupuserpage(request:Request,current_user: User = Depends(get_current
         "current_user":current_user,
         "groups":groups,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "form":form,
         "rolegroup":'admin',
-        "roleadmin":roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin":fullname_adminsession.value
+        "roleadmin":request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 
 @admin.get('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
-async def updategropuser_get(request:Request,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
+async def updategropuser_get(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
     readrights_func(rolegroupvalue)
     rolegroup.value=rolegroupvalue
     
     if str(rolegroup.value) !='admin':
-        roleadmin.value=""
+        response.set_cookie(key="roleadmin", value="",httponly=True)
     else:
-        roleadmin.value = "admin"
+        response.set_cookie(key="roleadmin", value="admin",httponly=True)
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -984,27 +984,27 @@ async def updategropuser_get(request:Request,idgroup,rolegroupvalue,current_user
         "current_user":current_user,
         "idgroup":idgroup,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "usersSelect":usersSelect,
         "grouprole":grouprole,
         "users":users,
         "rolegroup":rolegroupvalue,
         #totp=str(totp),
         "form":form,
-        "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("admin/updategroupuser.html",context)
 
 @admin.post('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
-async def updategropuser(request:Request,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
+async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
     readrights_func(rolegroupvalue)
     rolegroup.value=rolegroupvalue
     if str(rolegroup.value) !='admin':
-        roleadmin.value=""
+        response.set_cookie(key="roleadmin", value="",httponly=True)
     else:
-        roleadmin.value = "admin"
+        response.set_cookie(key="roleadmin", value="admin",httponly=True)
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -1147,16 +1147,16 @@ async def updategropuser(request:Request,idgroup,rolegroupvalue,current_user: Us
         "current_user":current_user,
         "idgroup":idgroup,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "usersSelect":usersSelect,
         "grouprole":grouprole,
         "users":users,
         "rolegroup":rolegroupvalue,
         #totp=str(totp),
         "form":form,
-        "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("admin/updategroupuser.html",context)
     
@@ -1276,10 +1276,10 @@ async def createemployeeinfor_get(request:Request,idinformation,current_user: Us
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "informationuserid":idinformation,
         "userjob":userjob,
         "form":form,
@@ -1371,10 +1371,10 @@ async def createlaborcontract_get(request:Request,idinformation,current_user: Us
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "informationuserid":idinformation,
         "form":form,
        
@@ -1406,10 +1406,10 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "informationuserid":idinformation,
         "form":form
         
@@ -1432,10 +1432,10 @@ async def createforexsalary_get(request:Request,idinformation,current_user: User
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "informationuserid":idinformation,
         "form":form
         
@@ -1488,10 +1488,10 @@ async def createforexsalary(request:Request,idinformation,current_user: User = D
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "informationuserid":idinformation,
         "form":form,
         
