@@ -316,7 +316,7 @@ def getcodechangepassword(response:Response,request:Request,current_user: User =
 # user profile page
 @core_bp.get('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
 def userinformation_get(response:Response,request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
-    return request.cookies.get("roleuser")
+    
     #request.cookies.get("readrights")=None    
     #session['readrights']=None
     form = informationUserForm(request)
