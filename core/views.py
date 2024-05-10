@@ -148,21 +148,23 @@ def authorizationUser(request:Request,response:Response, current_user: User = De
         response.set_cookie(key="roleadmin", value="admin",httponly=True)
         #roleuser.value = ""
         #image_path_adminsession.value = image_path_session.value
-        image_path_session=request.cookies.get("image_path_session")
-        response.set_cookie(key="image_path_adminsession", value=image_path_session,httponly=True)
+        #image_path_session=request.cookies.get("image_path_session")
+        #response.set_cookie(key="image_path_adminsession", value=image_path_session,httponly=True)
         #fullname_adminsession.value = fullname_session.value
-        fullname_session=request.cookies.get("fullname_session")
-        response.set_cookie(key="fullname_adminsession", value=fullname_session,httponly=True)
+        #fullname_session=request.cookies.get("fullname_session")
+        #response.set_cookie(key="fullname_adminsession", value=fullname_session,httponly=True)
       
         #writerights.value=1
         response.set_cookie(key="writerights", value=1,httponly=True)
         #request.cookies.get("readrights")=4
         response.set_cookie(key="readrights", value=4,httponly=True)
         #image_path_admin=image_path_adminsession.value
-        image_path_admin=request.cookies.get("image_path_adminsession")
+        image_path=request.cookies.get("image_path_session")
+        response.set_cookie(key="image_path_adminsession", value=image_path,httponly=True)
         #fullname_admin = fullname_adminsession.value
-        fullname_admin=request.cookies.get("fullname_adminsession")
-        return RedirectResponse(url=f'/adminpage/{image_path_admin}/{fullname_admin}')
+        fullname=request.cookies.get("fullname_session")
+        response.set_cookie(key="fullname_adminsession", value=fullname,httponly=True)
+        return RedirectResponse(url=f'/adminpage/{image_path}/{fullname}')
     else:
         return "You have not been granted access to the resource"
 

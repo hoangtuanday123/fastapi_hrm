@@ -26,7 +26,7 @@ def adminpage_get(request: Request,response:Response,image_path_admin, fullname_
 
     response.set_cookie(key="roleuser", value="admin",httponly=True) 
     response.set_cookie(key="roleadmin", value="admin",httponly=True)
-    print("admin fullname is " + request.cookies.get("fullname_adminsession"))
+   
     context={
         "request":request,
         "image_path_admin":request.cookies.get("image_path_adminsession"),
@@ -44,7 +44,7 @@ def adminpage(request: Request,response:Response,image_path_admin, fullname_admi
 
     response.set_cookie(key="roleuser", value="admin",httponly=True) 
     response.set_cookie(key="roleadmin", value="admin",httponly=True)
-    print("admin fullname is " + request.cookies.get("fullname_adminsession"))
+    
     context={
         "request":request,
         "image_path_admin":request.cookies.get("image_path_adminsession"),
