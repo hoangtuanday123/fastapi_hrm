@@ -1,7 +1,7 @@
 {% extends "core/user_profile.html" %}
 
 {% block content_body %}
-{% if readrights==4 or readrights==None %}
+{% if readrights==4 or readrights=="None" %}
               <!-- child template -->
               {{form.csrf_token}}
 
@@ -32,7 +32,7 @@
                             <div id="edit_mode_No_show">
                               <p class="col text-muted mb-0">
                                   {{ form.No }}
-                                  {% if readrights == 4 or readrights == None %}
+                                  {% if readrights == 4 or readrights == "None" %}
                                       <span class="float-right">
                                           <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('No','{{ form.No }}')"></i>
                                       </span>
@@ -70,7 +70,7 @@
                             <div id="edit_mode_FullName_show">
                               <p class="col text-muted mb-0">
                                   {{ form.FullName }}
-                                  {% if readrights == 4 or readrights == None %}
+                                  {% if readrights == 4 or readrights == "None" %}
                                       <span class="float-right">
                                           <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('FullName','{{ form.FullName }}')"></i>
                                       </span>
@@ -107,7 +107,7 @@
                             <div id="edit_mode_DateOfbirth_show">
                               <p class="col text-muted mb-0">
                                   {{ form.DateOfbirth}}
-                                  {% if readrights == 4 or readrights == None %}
+                                  {% if readrights == 4 or readrights == "None" %}
                                       <span class="float-right">
                                           <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('FullDateOfbirthname','{{ form.DateOfbirth}}')"></i>
                                       </span>
@@ -143,7 +143,7 @@
                             <div id="edit_mode_PlaceOfBirth_show">
                               <p class="col text-muted mb-0">
                                   {{ form.PlaceOfBirth }}
-                                  {% if readrights == 4 or readrights == None %}
+                                  {% if readrights == 4 or readrights == "None" %}
                                       <span class="float-right">
                                           <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('PlaceOfBirth','{{ form.PlaceOfBirth }}')"></i>
                                       </span>
@@ -180,7 +180,7 @@
                             <div id="edit_mode_Address_show">
                               <p class="col text-muted mb-0">
                                   {{ form.Address }}
-                                  {% if readrights == 4 or readrights == None %}
+                                  {% if readrights == 4 or readrights == "None" %}
                                       <span class="float-right">
                                           <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Address','{{ form.Address }}')"></i>
                                       </span>
@@ -217,7 +217,7 @@
                             <div id="edit_mode_IssueOn_show">
                               <p class="col text-muted mb-0">
                                   {{ form.IssueOn }}
-                                  {% if readrights == 4 or readrights == None %}
+                                  {% if readrights == 4 or readrights == "None" %}
                                       <span class="float-right">
                                           <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('IssueOn','{{ form.IssueOn }}')"></i>
                                       </span>

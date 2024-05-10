@@ -172,7 +172,7 @@
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <li><a class="dropdown-item" href="/informationuserjob/{{informationuserid}}">Employee Information Job</a></li>
                         <li><a class="dropdown-item mb-0" href="/employeepage/informationuserjob/employeerelativelist/{{informationuserid}}">Employee Relationship</a></li>
-                        {% if readrights==3 or readrights==4 or readrights is none %}
+                        {% if readrights==3 or readrights==4 or readrights =="None" %}
                         <li>
                           <a class="dropdown-item" href="/employeepage/informationuserjob/laborcontract/{{informationuserjobid}}/{informationuserid}">Contract</a>
 

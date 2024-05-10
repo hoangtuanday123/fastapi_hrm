@@ -211,7 +211,6 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
 
 @auth.get("/signin",tags=["authentication"], response_class=HTMLResponse)
 async def login_get(request: Request,response:Response):
-    is_admin.value="None"
     try:
         user = get_current_user_from_cookie(request)
     except:
@@ -234,7 +233,7 @@ async def login(request: Request):
     except:
         current_user = None
     #session['is_admin']="None"
-    is_admin.value="None"
+    
     messages=[]
     # if current_user:
     #     if current_user.is_authenticated:
@@ -327,7 +326,7 @@ async def forgotpassword_get(request: Request):
     }
     return templates.TemplateResponse("authentication/forgotpassword.html",context)
 @auth.post("/forgotpassword",tags=["authentication"], response_class=HTMLResponse )
-async def forgotpassword(request: Request):
+async def forgotpassword(response:Response,request: Request):
     try:
         current_user = get_current_user_from_cookie(request)
     except:
@@ -351,7 +350,7 @@ async def forgotpassword(request: Request):
                 totp=pyotp.TOTP(secret)
                 verify=verifyPassword(email=form.email,totp_temp=totp.now())
                 #session['verify_password']=verify
-                verify_password.value=verify
+                response.set_cookie(key="verify_password", value=verify,httponly=True)
                 #flash("A confirmation email has been sent via email.", "success")
                 messages.categorary="success"
                 messages.message="A confirmation email has been sent via email."
@@ -386,7 +385,7 @@ async def verifypassword_get(request:Request):
     except:
         current_user = None
     #verify_password=session.get('verify_password')
-    verify=verify_password.value
+    verify=request.cookies.get("verify_password")
     subject = "this is otp :"
     html=verify.totp_temp
     send_mail(verify.email, subject, html,2)
@@ -396,19 +395,19 @@ async def verifypassword_get(request:Request):
         "form":form,
         "messages":messages.message_array(),
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "fullname":fullname_session.value,
-        "roleuser":roleuser.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "fullname":request.cookies.get("fullname_session"),
+        "roleuser":request.cookies.get("roleuser"),
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
 @auth.post("/verifypassword",tags=["authentication"], response_class=HTMLResponse)
-async def verifypassword(request:Request):
+async def verifypassword(response:Response,request:Request):
     try:
         current_user = get_current_user_from_cookie(request)
     except:
         current_user = None
     #verify_password=session.get('verify_password')
-    verify=verify_password.value
+    verify=request.cookies.get("verify_password")
     subject = "this is otp :"
     html=verify.totp_temp
     send_mail(verify.email, subject, html,2)
@@ -429,7 +428,7 @@ async def verifypassword(request:Request):
                 conn.commit()
                 conn.close()
                 #session['id_useraccount']=user_temp[5]
-                id_useraccount.value=encode_id(user_temp[5])
+                response.set_cookie(key="id_useraccount", value=encode_id(user_temp[5]),httponly=True)
             return RedirectResponse(url="/changepassword",status_code=status.HTTP_302_FOUND)    
             #return redirect(url_for("authentication.changepassword"))
         else:
@@ -443,9 +442,9 @@ async def verifypassword(request:Request):
         "form":form,
         "messages":messages.message_array(),
         "current_user":current_user,
-        "image_path":image_path_session.value,
-        "fullname":fullname_session.value,
-        "roleuser":roleuser.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "fullname":request.cookies.get("fullname_session"),
+        "roleuser":request.cookies.get("roleuser"),
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
     #return render_template("authentication/verify-2fa.html", form=form)
@@ -473,7 +472,7 @@ async def changepassword(request:Request):
     except:
         current_user = None
     #id_user=session.get('id_useraccount')
-    id_user=id_useraccount.value
+    id_user=request.cookies.get("id_useraccount")
     id_user=decode_id(id_user)
     form=ChangePasswordForm(request)
     await form.load_data()
