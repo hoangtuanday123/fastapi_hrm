@@ -10,12 +10,12 @@ from datetime import datetime, timedelta
 from.forms import addtaskweeklytimesheetForm
 from globalvariable import image_path_adminsession,fullname_adminsession,roleuser,roleadmin,fullname_session,image_path_session
 
-_role_user = ""
-_roleadmin = "admin"
-_image_path_admin = ""
-_fullname_admin = ""
-_image_path = ""
-_fullname = ""
+# _role_user = ""
+# request.cookies.get("roleadmin") = "admin"
+# _image_path_admin = ""
+# _fullname_admin = ""
+# _image_path = ""
+# _fullname = ""
 
 ERP=APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -42,7 +42,7 @@ def calendar(year):
 
 @ERP.get("/ERP/projectlist",tags=['ERP'], response_class=HTMLResponse)
 def projectlist(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="""select p.projectid,p.projectname,pt.Name,i.Fullname,g.name,
@@ -59,19 +59,19 @@ def projectlist(request:Request,current_user: User = Depends(get_current_user_fr
         "request":request,
         "current_user":current_user,
         "projects":projects,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
-        "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("image_path_adminsession"),
+        "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     }
     return templates.TemplateResponse("ERP/projectlistadmin.html",context)
     #return render_template("ERP/projectlistadmin.html",projects=projects)
 
 @ERP.get("/ERP/createproject",tags=['ERP'], response_class=HTMLResponse)
 async def createproject_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+
     form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -89,18 +89,18 @@ async def createproject_get(request:Request,current_user: User = Depends(get_cur
         "current_user":current_user,
         "form":form,
         "projecttype":projecttype,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
-        "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     }
     return templates.TemplateResponse("ERP/createprojectadmin.html",context)
 
 @ERP.post("/ERP/createproject",tags=['ERP'], response_class=HTMLResponse)
 async def createproject(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path_admin,_fullname_admin
+
     form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -138,12 +138,12 @@ async def createproject(request:Request,current_user: User = Depends(get_current
         "current_user":current_user,
         "form":form,
         "projecttype":projecttype,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
-        "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
+        "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     }
     return templates.TemplateResponse("ERP/createprojectadmin.html",context)
 
@@ -173,16 +173,16 @@ async def createtaskandcomponent_get(request:Request,idproject,current_user: Use
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "form":form,
         "idproject":idproject,
         "tasks":tasks,
         "components":components,
-        "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+        "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
 
     }
     return templates.TemplateResponse("ERP/addtaskscomponentprojectadmin.html",context)
@@ -233,16 +233,16 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "form":form,
         "idproject":idproject,
         "tasks":tasks,
         "components":components,
-        "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+        "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
 
     }
     return templates.TemplateResponse("ERP/addtaskscomponentprojectadmin.html",context)
@@ -282,12 +282,12 @@ async def assigngroupproject_get(request:Request,idproject,current_user: User = 
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session"),
         "groups":groups
     }
     return templates.TemplateResponse("ERP/assigngroupprojectadmin.html",context)
@@ -327,13 +327,13 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "groups":groups,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     }
     return templates.TemplateResponse("ERP/assigngroupprojectadmin.html",context)
 
@@ -360,17 +360,17 @@ async def updateproject_get(request:Request,idproject,current_user: User = Depen
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "projecttype":projecttype,
         "projectname":project[1],
         "projecttypeid":project[2],
         "projecttypename":project[3],
         "idproject":idproject,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     } 
     return templates.TemplateResponse("ERP/updateprojectadmin.html",context)   
     
@@ -410,17 +410,17 @@ async def updateproject(request:Request,idproject,current_user: User = Depends(g
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "projecttype":projecttype,
         "projectname":project[1],
         "projecttypeid":project[2],
         "projecttypename":project[3],
         "idproject":idproject,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     } 
     return templates.TemplateResponse("ERP/updateprojectadmin.html",context)   
     
@@ -484,8 +484,8 @@ async def weeklytimesheet_get(request:Request,iduser,year,weeknum,current_user: 
         "request":request,
         "current_user":current_user,
         "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "weeks_in_year":weeks_in_year,
         "weekdates":weekdates,
         "year":year,
@@ -494,10 +494,10 @@ async def weeklytimesheet_get(request:Request,iduser,year,weeknum,current_user: 
         "iduser":iduser,
         "timesheetstatus":timesheetstatus,
         "percent":percent,
-        "roleuser":roleuser.value,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+        "roleuser":request.cookies.get("roleuser"),
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     } 
     return templates.TemplateResponse("ERP/WeeklyTimesheet.html",context)
 
@@ -609,8 +609,8 @@ async def weeklytimesheet(request:Request,iduser,year,weeknum,current_user: User
         "request":request,
         "current_user":current_user,
         "roleadmin" : roleadmin.value,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "weeks_in_year":weeks_in_year,
         "weekdates":weekdates,
         "year":year,
@@ -619,10 +619,10 @@ async def weeklytimesheet(request:Request,iduser,year,weeknum,current_user: User
         "iduser":iduser,
         "timesheetstatus":timesheetstatus,
         "percent":percent,
-        "roleuser":roleuser.value,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+        "roleuser":request.cookies.get("roleuser"),
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     } 
     return templates.TemplateResponse("ERP/WeeklyTimesheet.html",context)
 
@@ -721,15 +721,15 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "projects":projects,
         "tasks":tasks,
         "components":components,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     }
     return templates.TemplateResponse("ERP/addtaskweeklytimesheet.html",context)     
     
@@ -789,15 +789,15 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "projects":projects,
         "tasks":tasks,
         "components":components,
-                "roleuser":roleuser.value,
-        "image_path": image_path_session.value,
-        "fullname": fullname_session.value
+                "roleuser":request.cookies.get("roleuser"),
+        "image_path": request.cookies.get("image_path_session"),
+        "fullname": request.cookies.get("fullname_session")
     }
     return templates.TemplateResponse("ERP/addtaskweeklytimesheet.html",context)     
     
@@ -877,9 +877,9 @@ async def weeklytimesheetview(request:Request,current_user: User = Depends(get_c
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "projects":projects,
         "weeklytimesheetvalues":weeklytimesheetvalues,
         "projects":projects
@@ -915,9 +915,9 @@ async def weeklytimesheetview_get(request:Request,current_user: User = Depends(g
     context={
         "request":request,
         "current_user":current_user,
-        "roleadmin" : _roleadmin,
-        "image_path_admin":image_path_adminsession.value,
-        "fullname_admin" : fullname_adminsession.value,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "projects":projects,
         "weeklytimesheetvalues":weeklytimesheetvalues,
         "projects":projects

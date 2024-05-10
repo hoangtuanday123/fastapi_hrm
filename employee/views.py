@@ -13,17 +13,17 @@ from .forms import Employeeinformation
 templates = Jinja2Templates(directory="templates")
 employee = APIRouter()
 
-_image_path = ""
-_fullname = ""
-_roleuser = "employee"
-_informationuserjobid = ""
-_roleadmin = ""
-_image_path_admin = ""
-_fullname_admin = ""
+# request.cookies.get("image_path_session") = ""
+# request.cookies.get("fullname_session") = ""
+# request.cookies.get("roleuser") = "employee"
+# _informationuserjobid = ""
+# request.cookies.get("roleadmin") = ""
+# request.cookies.get("image_path_session")_admin = ""
+# request.cookies.get("fullname_session")_admin = ""
 
 @employee.get("/employeepage/{image_path}/{fullname}",tags=['employee'], response_class=HTMLResponse)
-def employeepage(request:Request,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
-    global _informationuserjobid, _image_path_admin,_fullname_admin,_fullname,_roleuser,_image_path
+def employeepage(request:Request,response:Response,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from informationUser where id_useraccount=?  "
@@ -32,14 +32,14 @@ def employeepage(request:Request,image_path,fullname,current_user: User = Depend
     user=cursor.fetchone()
     conn.commit()
     conn.close()
-    _image_path = image_path
-    _fullname = fullname
-    print("fullname is: " + str(_fullname))
+    response.set_cookie(key="image_path_session", value=image_path,httponly=True) 
+    response.set_cookie(key="fullname_session", value=fullname,httponly=True)
+    print("fullname is: " + str(request.cookies.get("fullname_session")))
     context={
         "request":request,
         "roleuser":"employee",
-        "image_path":image_path,
-        "fullname":_fullname,
+        "image_path":request.cookies.get("image_path_session"),
+        "fullname":request.cookies.get("fullname_session"),
         "current_user":current_user,
         "idinformationuser":encode_id(user[0]),
         "informationuserid":encode_id(user[0]),
@@ -49,9 +49,9 @@ def employeepage(request:Request,image_path,fullname,current_user: User = Depend
 
 @employee.get("/informationuserjob/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 async def informationuserjob_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _informationuserjobid, _image_path_admin,_fullname_admin,_fullname,_roleuser,_image_path
+   
     #session['readrights']=None
-    #readrights.value=None
+    #request.cookies.get("readrights")=None
     form=Employeeinformation(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -105,25 +105,25 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
         userjob=informationUserJob(EmployeeNo=None,Companysitecode=None,Department=None,Directmanager=None,Workforcetype=None,Workingphone=None,Workingemail=None,
             Bankaccount=None,Bankname=None,Taxcode=None,Socialinsurancecode=None,Healthinsurancecardcode=None,Registeredhospitalname=None,Registeredhospitalcode=None)
     
-    print( "image path is : " + str(_image_path)) 
-    print("fullname is: " + str(_fullname))
+    print( "image path is : " + str(request.cookies.get("image_path_session"))) 
+    print("fullname is: " + str(request.cookies.get("fullname_session")))
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
-        idaccount=idaccountadminmanager.value 
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager") 
 
     context={
         "request":request,
         "current_user":current_user,
         "image_path":user[19],
-        "roleuser":roleuser.value,
+        "roleuser":request.cookies.get("roleuser"),
         "fullname":user[18],
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "temp2":temp2,
         "idaccount":idaccount,
-        "readrights":readrights.value,
+        "readrights":request.cookies.get("readrights"),
         "userjob":userjob,
         "form":form,
         "Employeerelative":Employeerelative,
@@ -136,12 +136,10 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
     return templates.TemplateResponse("core/informationuserjob.html",context)
     
 @employee.post("/informationuserjob/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
-async def informationuserjob(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _informationuserjobid, _image_path_admin,_fullname_admin,_fullname,_roleuser,_image_path
-    
-    
+async def informationuserjob(request:Request,response:Response,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+   
     #session['readrights']=None
-    #readrights.value=None
+    #request.cookies.get("readrights")=None
     form=Employeeinformation(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -214,24 +212,24 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
             Bankaccount=None,Bankname=None,Taxcode=None,Socialinsurancecode=None,Healthinsurancecardcode=None,Registeredhospitalname=None,Registeredhospitalcode=None)
     print("id information user before redirect:" + str(informationuserid))   
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
-        idaccount=idaccountadminmanager.value
-        _roleuser = user[17]
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager")
+        response.set_cookie(key="roleuser", value=user[17],httponly=True)
     else:
-        _roleuser = roleuser.value
+        response.set_cookie(key="roleuser", value=request.cookies.get("roleuser"),httponly=True)
     context={
         "request":request,
         "current_user":current_user,
         "image_path":user[19],
-        "roleuser":_roleuser,
+        "roleuser":request.cookies.get("roleuser"),
         "fullname":user[18],
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "temp2":temp2,
         "idaccount":idaccount,
-        "readrights":readrights.value,
+        "readrights":request.cookies.get("readrights"),
         "userjob":userjob,
         "form":form,
         "Employeerelative":Employeerelative,
@@ -240,7 +238,7 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
         "temp4":temp4,
         "temp5":temp5,
         "idaccount":idaccount,
-        "readrights":readrights.value,
+        "readrights":request.cookies.get("readrights"),
         "idinformationuser":informationuserid
     } 
     return templates.TemplateResponse("core/informationuserjob.html",context)
@@ -262,14 +260,13 @@ def addlist(informationuserid,employeerelativeid,type):
     return result[0]
 
 @employee.get("/employeepage/informationuserjob/laborcontract/{informationuserjobid}/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
-def laborcontract(request:Request,informationuserjobid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path,_fullname,_roleuser,_informationuserjobid
-    _roleadmin=""
-    if rolegroup.value=='admin':
-        _roleadmin="admin"
+def laborcontract(request:Request,response:Response,informationuserjobid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
+    response.set_cookie(key="roleadmin", value="",httponly=True)
+    if request.cookies.get("rolegroup")=='admin':
+        response.set_cookie(key="roleadmin", value="admin",httponly=True)
     idaccount=current_user.id
-    if _roleadmin=="admin" :
-        idaccount=idaccountadminmanager.value 
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager") 
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from laborContract where idinformationUserJob=? and is_active=1"
@@ -288,15 +285,15 @@ def laborcontract(request:Request,informationuserjobid,informationuserid,current
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
-        "roleuser":roleuser.value,
-        "fullname":_fullname,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "contract":contracttemp,
-        "informationuserjobid":_informationuserjobid,
+        "informationuserjobid":informationuserjobid,
         "idaccount":idaccount,
         "idinformationuser":informationuserid
     }
@@ -305,7 +302,6 @@ def laborcontract(request:Request,informationuserjobid,informationuserid,current
 @employee.get("/employeepage/informationuserjob/forexsalary/{informationuserjobid}/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 
 def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path,_fullname,_roleuser,_informationuserjobid
     conn=db.connection()
     cursor=conn.cursor()
     sql="select f.*,ft.type from forexsalary f join forextype ft on f.forextypeid=ft.id where idinformationUserJob=? and is_active=1"
@@ -321,20 +317,20 @@ def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,c
         forexSalary=forexsalary(Forex=None,Annualsalary=None,Monthlysalary=None,Monthlysalaryincontract=None,
                                 Quaterlybonustarget=None,Annualbonustarget=None)
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
-        idaccount=idaccountadminmanager.value 
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager") 
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":_image_path,
-        "roleuser":roleuser.value,
-        "fullname":_fullname,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "forexSalary":forexSalary,
-        "informationuserjobid":_informationuserjobid,
+        "informationuserjobid":informationuserjobid,
         "idaccount":idaccount,
         "idinformationuser":informationuserid
     }
@@ -355,30 +351,30 @@ def employeerelativelist(request:Request,informationuserid,current_user: User = 
     if employeerelativelist is None:
         employeerelativelist =[]
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
-        idaccount=idaccountadminmanager.value 
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager") 
     context={
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "fullname":_fullname,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "idinformationuser":informationuserid,
         "employeerelativelist":employeerelativelist,
-        "informationuserjobid":_informationuserjobid,
+        # "informationuserjobid": _informationuserjobid,
         "idaccount":idaccount,
-        "readrights":readrights.value
+        "readrights":request.cookies.get("readrights")
         }
     return templates.TemplateResponse("core/employeeRelativeList.html",context)
 
 @employee.get("/employeepage/informationuserjob/employeerelativelist/addemployeerelationship/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 
 async def addemployeerelative_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path, _fullname, _roleuser
+
     
     form = EmployeeRelativeForm(request)
     
@@ -391,20 +387,20 @@ async def addemployeerelative_get(request:Request,informationuserid,current_user
     conn.commit()
     conn.close()
     idaccount=current_user.id
-    if _roleadmin=="admin" :
-        idaccount=idaccountadminmanager.value 
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager") 
     context={
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "fullname":_fullname,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "form":form,
-        "informationuserjobid":_informationuserjobid,
+        # "informationuserjobid":_informationuserjobid,
         "idaccount":idaccount,
         "idinformationuser":informationuserid
 
@@ -417,7 +413,7 @@ async def addemployeerelative_get(request:Request,informationuserid,current_user
 @employee.post("/employeepage/informationuserjob/employeerelativelist/addemployeerelationship/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 
 async def addemployeerelative(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path, _fullname, _roleuser
+
     
     form = EmployeeRelativeForm(request)
     
@@ -467,7 +463,7 @@ def delete(employeerelativeid,informationuserid,current_user: User = Depends(get
 
 @employee.get("/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}",tags=['employee'],response_class=HTMLResponse)
 def employeerelative(request:Request,employeerelativeid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    global _image_path,_fullname,_roleuser        
+     
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from employeeRelative where id=?"
@@ -486,23 +482,23 @@ def employeerelative(request:Request,employeerelativeid,informationuserid,curren
                                     fullname=None,dateofbirth=None,placeofbirth=None,
                                     issuedon=None,address=None)
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
-        idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager")
     context={
         "request":request,
         "current_user":current_user,
         "image_path":file_path_default,
-        "roleuser":roleuser.value,
-        "fullname":_fullname,
-        "image_path_admin":image_path_adminsession.value,
-        "roleadmin":roleadmin.value,
-        "fullname_admin":fullname_adminsession.value,
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
         "informationuserid":informationuserid,
         "employeerelative":employeerelative,
-        "informationuserjobid":_informationuserjobid,
+        # "informationuserjobid":_informationuserjobid,
         "idaccount":idaccount,
         "employeerelativeid":employeerelativeid,
-        "readrights":readrights.value,
+        "readrights":request.cookies.get("readrights"),
         "idinformationuser":informationuserid
 
         }
@@ -543,7 +539,7 @@ async def edit_employeeinformation_get(request:Request,col,informationuserid,cur
         cursor.commit()
         cursor.close()
         return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
-    elif readrights.value==1:
+    elif request.cookies.get("readrights")==1:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
@@ -552,14 +548,14 @@ async def edit_employeeinformation_get(request:Request,col,informationuserid,cur
         cursor.commit()
         cursor.close()
 
-        idaccount= idaccountadminmanager.value
+        idaccount= request.cookies.get("idaccountadminmanager")
         return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
 @employee.post('/edit_employeeinformation/{col}/{informationuserid}',tags=['user'], response_class=HTMLResponse)
 async def edit_employeeinformation(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     idaccount=current_user.id
-    if roleadmin.value=="admin" and roleuser.value != "admin" :
-        idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin")=="admin" and request.cookies.get("roleuser") != "admin" :
+        idaccount=request.cookies.get("idaccountadminmanager")
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id from informationUser where id_useraccount=?"
@@ -579,7 +575,7 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
         cursor.commit()
         cursor.close()
         return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
-    elif readrights.value==1:
+    elif request.cookies.get("readrights")==1:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
@@ -603,8 +599,8 @@ async def edit_employeerelative(request:Request,col,employeerelativeid,informati
     form = EditForm(request,col)
     await form.load_data(col)
     idaccount=current_user.id
-    if roleadmin.value=="admin" :
-        idaccount=idaccountadminmanager.value
+    if request.cookies.get("roleadmin")=="admin" :
+        idaccount=request.cookies.get("idaccountadminmanager")
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
@@ -614,7 +610,7 @@ async def edit_employeerelative(request:Request,col,employeerelativeid,informati
         cursor.commit()
         cursor.close()
         return RedirectResponse(f'/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}',status_code=status.HTTP_302_FOUND)
-    elif readrights.value==4:
+    elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
         sql = f"UPDATE employeeRelative SET {col} = ? WHERE idinformationuser= ?"
@@ -623,7 +619,7 @@ async def edit_employeerelative(request:Request,col,employeerelativeid,informati
         cursor.commit()
         cursor.close()
 
-        idaccount= idaccountadminmanager.value
+        idaccount= request.cookies.get("idaccountadminmanager")
         return RedirectResponse(f'/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}',status_code=status.HTTP_302_FOUND)
 
     
