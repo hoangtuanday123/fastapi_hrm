@@ -190,8 +190,8 @@ def displayusers_get(request:Request,response:Response,current_user: User = Depe
     totp=totp.now()
     #session['is_admin']=str(totp)
     #session['rolegroup']='admin'
-    is_admin.value=str(totp)
-    rolegroup.value='admin'
+    response.set_cookie(key="is_admin", value=str(totp),httponly=True)
+    response.set_cookie(key="rolegroup", value='admin',httponly=True)
     response.set_cookie(key="roleadmin", value="admin",httponly=True)
     conn=db.connection()
     cursor=conn.cursor()
@@ -237,7 +237,7 @@ def displayusers_get(request:Request,response:Response,current_user: User = Depe
      
     selecttionitem=[]
     #session['selectionItem']=selecttionitem
-    selectionItem.value=selecttionitem
+    response.set_cookie(key="selectionItem", value=selecttionitem,httponly=True)
     context={
         "request":request,
         "current_user":current_user,
@@ -260,8 +260,8 @@ async def displayusers(request:Request,response:Response,current_user: User = De
     totp=totp.now()
     #session['is_admin']=str(totp)
     #session['rolegroup']='admin'
-    is_admin.value=str(totp)
-    rolegroup.value='admin'
+    response.set_cookie(key="is_admin", value=str(totp),httponly=True)
+    response.set_cookie(key="rolegroup", value='admin',httponly=True)
     response.set_cookie(key="roleadmin", value="admin",httponly=True)
     conn=db.connection()
     cursor=conn.cursor()
@@ -307,14 +307,14 @@ async def displayusers(request:Request,response:Response,current_user: User = De
      
     selecttionitem=[]
     #session['selectionItem']=selecttionitem
-    selectionItem.value=selecttionitem
+    response.set_cookie(key="selectionItem", value=selecttionitem,httponly=True)
     form = await request.form()
     
     if 'fillter' in form and form["fillter"]=='fillter':
         table=form['roletype']
         if table=='candidate':
             #session['table']='candidate'
-            tablesession.value='candidate'
+            response.set_cookie(key="tablesession", value='candidate',httponly=True)
             roles.remove('candidate')
             roles.insert(0, 'candidate')
             conn=db.connection()
@@ -327,7 +327,7 @@ async def displayusers(request:Request,response:Response,current_user: User = De
             Alluser=[(user[0],user[1],user[2],user[3],user[4],user[6],user[7],user[8],user[9],user[10],user[11],user[12],user[13]) for user in users]
         elif table=='ALL':
             #session['table']='ALL'
-            tablesession.value='ALL'
+            response.set_cookie(key="tablesession", value='ALL',httponly=True)
             roles.remove('ALL')
             roles.insert(0, 'ALL')
             conn=db.connection()
@@ -340,7 +340,7 @@ async def displayusers(request:Request,response:Response,current_user: User = De
             Alluser=[(user[0],user[1],user[2],user[3],user[4],user[6],user[7],user[8],user[9],user[10],user[11],user[12],user[13]) for user in users]
         elif table=='employee':
             #session['table']='employee'
-            tablesession.value='employee'
+            response.set_cookie(key="tablesession", value='employee',httponly=True)
             roles.remove('employee')
             roles.insert(0, 'employee')
             conn=db.connection()
@@ -353,10 +353,10 @@ async def displayusers(request:Request,response:Response,current_user: User = De
             Alluser=[(user[0],user[1],user[2],user[3],user[4],user[6],user[7],user[8],user[9],user[10],user[11],user[12],user[13]) for user in users]
     elif 'exportexcel' in form and form['exportexcel']=='exportexcel':
         selecttionitem=form.getlist('checkbox')
-        selectionItem.value=selecttionitem
+        response.set_cookie(key="selectionItem", value=selecttionitem,httponly=True)
         
         #table=session.get('table')
-        table=tablesession.value
+        table=request.cookies.get("tablesession")
         if(table==None or table=='ALL'):
             table='ALL'
             typerole=table
@@ -371,17 +371,17 @@ async def displayusers(request:Request,response:Response,current_user: User = De
         #     return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
         # else:
         #     #session['selectionItem']=[]
-        #     selectionItem.value=[]
+        #      response.set_cookie(key="selectionItem", value=None,httponly=True)=[]
         #     typerole=table
         #     return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
     elif 'exportpdf' in form and form['exportpdf']=='exportpdf':
         selecttionitem=form.getlist('checkbox')
-        selectionItem.value=selecttionitem
+        response.set_cookie(key="selectionItem", value=selecttionitem,httponly=True)
         Selecttionitem=[]
-        if selectionItem.value:
-            Selecttionitem=selectionItem.value
+        if  response.set_cookie(key="selectionItem", value=None,httponly=True):
+            Selecttionitem= response.set_cookie(key="selectionItem", value=None,httponly=True)
         #table=session.get('table')
-        table=tablesession.value
+        table=request.cookies.get("tablesession")
         
         if(table==None):
             table='ALL'
@@ -408,11 +408,11 @@ async def displayusers(request:Request,response:Response,current_user: User = De
                 if table=='ALL':
                     Selecttionitem.append(str(user[0]))
             #session['selectionItem']=Selecttionitem
-            selectionItem.value=Selecttionitem
+            response.set_cookie(key="selectionItem", value=Selecttionitem,httponly=True)
             #Selecttionitem=session.get('selectionItem', [])
             Selecttionitem=[]
-            if selectionItem.value:
-                Selecttionitem=selectionItem.value
+            if request.cookies.get("selectionItem"):
+                Selecttionitem=request.cookies.get("selectionItem")
             #return Selecttionitem
             #return table
             zip_buffer = BytesIO()
@@ -456,11 +456,11 @@ def is_all_null(array):
     return True  # Nếu tất cả các phần tử đều là None, trả về True
 
 @admin.post('/adminpage/usersmanager/exportfileexcel/{typerole}',tags=['user managerment'], response_class=HTMLResponse)
-def exportfileexcel(typerole,current_user: User = Depends(get_current_user_from_token)):
+def exportfileexcel(typerole,request:Request,current_user: User = Depends(get_current_user_from_token)):
     #Selecttionitem=session.get('selectionItem', [])
     Selecttionitem=[]
-    if selectionItem.value:
-        Selecttionitem=selectionItem.value
+    if request.cookies.get("selectionItem"):
+        Selecttionitem=request.cookies.get("selectionItem")
     if typerole=='ALL':
         usersrole=[]
          
@@ -720,7 +720,7 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
     return templates.TemplateResponse("admin/updatepageuserrole.html",context)
 
 @admin.post("/adminpage/usersmanager/assignrole/{idaccount}/{userrole}",tags=['user managerment'], response_class=HTMLResponse)
-async def assignrole(request:Request,idaccount,userrole,current_user: User = Depends(get_current_user_from_token)):
+async def assignrole(request:Request,response:Response,idaccount,userrole,current_user: User = Depends(get_current_user_from_token)):
 
     conn=db.connection()
     cursor=conn.cursor()
@@ -768,7 +768,7 @@ async def assignrole(request:Request,idaccount,userrole,current_user: User = Dep
         conn.commit()
         conn.close()
         if(b=='employee'and validate == None):
-            messages.value=[('info','please enter information job employee before assign role employee')]
+            response.set_cookie(key="messages", value=[('info','please enter information job employee before assign role employee')],httponly=True)
             return RedirectResponse(url="/adminpage/usersmanager", status_code=status.HTTP_302_FOUND)
         else:
             conn=db.connection()
@@ -822,7 +822,7 @@ def openblock(idaccount,current_user: User = Depends(get_current_user_from_token
 @admin.get('/adminpage/usersmanager/lookinformationuser/{idaccount}',tags=['user managerment'])
 def info(idaccount,response:Response,current_user: User = Depends(get_current_user_from_token)):
     idaccount_encode=idaccount
-    idaccountadminmanager.value=idaccount
+    response.set_cookie(key="idaccountadminmanager", value=idaccount,httponly=True)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
@@ -853,7 +853,7 @@ def readrights_func(rolegroup,response:Response):
 @admin.get('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
 async def groupuserpage_get(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):
     response.set_cookie(key="roleadmin", value="admin",httponly=True)
-    rolegroup.value='admin'
+    response.set_cookie(key="rolegroup", value='admin',httponly=True)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from groupuser"
@@ -879,7 +879,7 @@ async def groupuserpage_get(request:Request,response:Response,current_user: User
 @admin.post('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
 async def groupuserpage(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):
     response.set_cookie(key="roleadmin", value="admin",httponly=True)
-    rolegroup.value='admin'
+    response.set_cookie(key="rolegroup", value='admin',httponly=True)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from groupuser"
@@ -923,9 +923,9 @@ async def groupuserpage(request:Request,response:Response,current_user: User = D
 @admin.get('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
 async def updategropuser_get(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
     readrights_func(rolegroupvalue)
-    rolegroup.value=rolegroupvalue
+    response.set_cookie(key="rolegroup", value=rolegroupvalue,httponly=True)
     
-    if str(rolegroup.value) !='admin':
+    if str(    response.set_cookie(key="rolegroup", value=None,httponly=True)) !='admin':
         response.set_cookie(key="roleadmin", value="",httponly=True)
     else:
         response.set_cookie(key="roleadmin", value="admin",httponly=True)
@@ -1000,8 +1000,8 @@ async def updategropuser_get(request:Request,response:Response,idgroup,rolegroup
 @admin.post('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
 async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
     readrights_func(rolegroupvalue)
-    rolegroup.value=rolegroupvalue
-    if str(rolegroup.value) !='admin':
+    response.set_cookie(key="rolegroup", value=rolegroupvalue,httponly=True)
+    if str(    response.set_cookie(key="rolegroup", value=None,httponly=True)) !='admin':
         response.set_cookie(key="roleadmin", value="",httponly=True)
     else:
         response.set_cookie(key="roleadmin", value="admin",httponly=True)
