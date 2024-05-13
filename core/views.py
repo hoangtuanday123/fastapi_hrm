@@ -2,7 +2,7 @@ from fastapi import APIRouter
 import pandas as pd
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, status,BackgroundTasks
 from authentication.models import get_current_user_from_cookie,get_current_user_from_token
 from ultils import settings,encode_id,decode_id
 from authentication.models import User
@@ -25,6 +25,7 @@ from authentication.models import verifyPassword
 from globalvariable import verify_password,messages,fullname_adminsession,image_path_adminsession,roleadmin,front_cccd_session,back_cccd_session
 from .forms import CCCDForm,AvatarForm,HCCForm,EducationForm,QualificationForm,EditForm
 from validation.forms import informationUserForm,latestEmploymentForm,usercccdForm
+import asyncio
 core_bp = APIRouter()
 templates = Jinja2Templates(directory="templates")
 # global variables
@@ -61,8 +62,13 @@ templates = Jinja2Templates(directory="templates")
 #     cookie_value = request.cookies.get("test_admin")
     
 #     return str(cookie_value)
+async def send_cookie(response: Response,key:str, value: str):
+    response.set_cookie(key=key, value=value)
+    return response
+
 @core_bp.get("/authorizationUser",tags=['authentication'])
-def authorizationUser(request:Request,response:Response, current_user: User = Depends(get_current_user_from_token)):
+async def authorizationUser(request:Request,response:Response, current_user: User = Depends(get_current_user_from_token)):
+    
     #set cookie 
     # response.set_cookie(key="is_admin", value=None)
     # #response.set_cookie(key="roleuser", value=None)
@@ -101,41 +107,40 @@ def authorizationUser(request:Request,response:Response, current_user: User = De
     roleuser.value=user_role[0]
     
     #   set image path
+    image_path_value=None
     found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
     if found_avatar and found_avatar[2] != "":
-        #image_path_session.value = found_avatar[2]
         response.set_cookie(key="image_path_session", value=str(found_avatar[2]))
+        image_path_value=found_avatar[2]
     else:
-        #image_path_session.value = file_path_default
+        image_path_value=file_path_default
         response.set_cookie(key="image_path_session", value=file_path_default)
-  
-    #fullname_session.value = user_temp[1]
+    
+    fullname_value=user_temp[1]
     response.set_cookie(key="fullname_session", value=str(user_temp[1]))
-    #return request.cookies.get("image_path_session")
-    # rolegroup.value=""
-
-    # request.cookies.get("readrights")=None
-
-    # writerights.value=None
+    #background_tasks.add_task(send_cookie,response,key="fullname_session", value=str(user_temp[1]))
+    
 
     if user_role[0]=="candidate":
-        #image_path = image_path_session.value
+        response=RedirectResponse(url=f"/candidate/{image_path_value}/{fullname_value}",status_code=status.HTTP_302_FOUND)
         response.set_cookie(key="roleuser", value="candidate")
+        #background_tasks.add_task(send_cookie,response,key="roleuser", value="candidate")
         image_path=request.cookies.get("image_path_session")
-        #fullname = fullname_session.value
-        fullname=request.cookies.get("fullname_session")
-        return RedirectResponse(url=f"/candidate/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
-        #return redirect(url_for("candidate.candidatepage",image_path = image_path_session.value,fullname = _fullname))
-    elif user_role[0]=="employee":
-        #return str(request.cookies.get("roleadmin"))
-        #roleuser.value="employee"
-        #image_path = image_path_session.value
-        response.set_cookie(key="roleuser", value="employee")
         
-        image_path=request.cookies.get("image_path_session")
-        #fullname = fullname_session.value
         fullname=request.cookies.get("fullname_session")
-        return RedirectResponse(url=f"/employeepage/{image_path}/{fullname}",status_code=status.HTTP_302_FOUND)
+        return response
+        
+        
+    elif user_role[0]=="employee":
+        response=RedirectResponse(url=f"/employeepage/{image_path_value}/{fullname_value}",status_code=status.HTTP_302_FOUND)
+        response.set_cookie(key="roleuser", value="employee")
+        #background_tasks.add_task(send_cookie,response,key="roleuser", value="employee")
+        image_path=request.cookies.get("image_path_session")
+      
+        fullname=request.cookies.get("fullname_session")
+        return response
+        
+        
 
     # elif user_role[0]=="employee_manager":
     #     return redirect(url_for("employeemanager.employeemanagerpage",image_path = image_path_session.value,fullname = _fullname))
@@ -145,27 +150,22 @@ def authorizationUser(request:Request,response:Response, current_user: User = De
     #     return redirect(url_for("accountmanager.accountmanagerpage",image_path = image_path_session.value,fullname = _fullname))
     elif user_role[0]=="admin":
         #roleadmin.value = "admin"
+        response= RedirectResponse(url=f'/adminpage/{image_path_value}/{fullname_value}')
         response.set_cookie(key="roleadmin", value="admin")
-        #roleuser.value = ""
-        #image_path_adminsession.value = image_path_session.value
-        #image_path_session=request.cookies.get("image_path_session")
-        #response.set_cookie(key="image_path_adminsession", value=image_path_session)
-        #fullname_adminsession.value = fullname_session.value
-        #fullname_session=request.cookies.get("fullname_session")
-        #response.set_cookie(key="fullname_adminsession", value=fullname_session)
-      
-        #writerights.value=1
+  
         response.set_cookie(key="writerights", value=1)
-        #request.cookies.get("readrights")=4
+
         response.set_cookie(key="readrights", value=4)
-        #image_path_admin=image_path_adminsession.value
-        image_path=request.cookies.get("image_path_session")
+      
         
-        response.set_cookie(key="image_path_adminsession", value=image_path)
-        #fullname_admin = fullname_adminsession.value
-        fullname=request.cookies.get("fullname_session")
-        response.set_cookie(key="fullname_adminsession", value=fullname)
-        return RedirectResponse(url=f'/adminpage/{image_path}/{fullname}')
+        
+        response.set_cookie(key="image_path_adminsession", value=image_path_value)
+   
+        
+        response.set_cookie(key="fullname_adminsession", value=fullname_value)
+        response.set_cookie(key="roleuser", value="admin") 
+        return response
+        
     else:
         return "You have not been granted access to the resource"
 

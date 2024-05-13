@@ -16,18 +16,13 @@ import pdfkit
 import zipfile
 from io import BytesIO
 templates = Jinja2Templates(directory="templates")
-
+import asyncio
 admin=APIRouter()
 
 @admin.get('/adminpage/{image_path_admin}/{fullname_admin}',tags=['user managerment'], response_class=HTMLResponse)
-def adminpage_get(request: Request,response:Response,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
-    response.set_cookie(key="image_path_adminsession", value=image_path_admin)
-    response.set_cookie(key="fullname_adminsession", value=fullname_admin)
-
-    response.set_cookie(key="roleuser", value="admin") 
-    response.set_cookie(key="roleadmin", value="admin")
-    #return image_path_admin
-    #return request.cookies.get("readrights")
+async def adminpage_get(request: Request,response:Response,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
+    
+ 
     context={
         "request":request,
         "image_path_admin":request.cookies.get("image_path_adminsession"),
@@ -40,11 +35,7 @@ def adminpage_get(request: Request,response:Response,image_path_admin, fullname_
 
 @admin.post('/adminpage/{image_path_admin}/{fullname_admin}',tags=['user managerment'], response_class=HTMLResponse)
 def adminpage(request: Request,response:Response,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
-    response.set_cookie(key="image_path_adminsession", value=image_path_admin)
-    response.set_cookie(key="fullname_adminsession", value=fullname_admin)
-
-    response.set_cookie(key="roleuser", value="admin") 
-    response.set_cookie(key="roleadmin", value="admin")
+   
     
     context={
         "request":request,
@@ -822,6 +813,7 @@ def openblock(idaccount,current_user: User = Depends(get_current_user_from_token
 
 @admin.get('/adminpage/usersmanager/lookinformationuser/{idaccount}',tags=['user managerment'])
 def info(idaccount,response:Response,current_user: User = Depends(get_current_user_from_token)):
+    
     idaccount_encode=idaccount
     response.set_cookie(key="idaccountadminmanager", value=idaccount)
     conn=db.connection()
@@ -830,10 +822,11 @@ def info(idaccount,response:Response,current_user: User = Depends(get_current_us
     value=(decode_id(idaccount_encode))
     cursor.execute(sql,value)
     user_role=cursor.fetchone()
+    response=RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
     #session['roleuser']=user_role[0]
     response.set_cookie(key="roleuser", value=user_role[0]) 
     response.set_cookie(key="roleadmin", value="admin")
-    return RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
+    return response
 
 def readrights_func(rolegroup,response:Response):
     if rolegroup=="manager" or rolegroup=="admin":

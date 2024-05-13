@@ -76,11 +76,19 @@
           <div class="card mb-4">
               <div class="card-body text-center d-flex flex-column justify-content-center">
                 <div>
+                  {% if roleadmin !="admin" %}
                   <img id="avatarImage" src="{{ url_for('static', path='source/' + image_path) }}" alt="avatar"
                     style="border-radius: 50%; width: 90px; height: 90px;">
                   <h5 class="my-2">
                         {{fullname}}
                   </h5>
+                  {% else %}
+                  <img id="avatarImage" src="{{ url_for('static', path='source/' + image_path_admin) }}" alt="avatar"
+                    style="border-radius: 50%; width: 90px; height: 90px;">
+                  <h5 class="my-2">
+                        {{fullname_admin}}
+                  </h5>
+                  {% endif %}
                 </div>
                 <form role="form" method="POST" action="/update_avatar/{{informationuserid}}/{{idaccount}}" enctype="multipart/form-data" hidden>
                     <div >

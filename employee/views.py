@@ -10,6 +10,7 @@ from globalvariable import readrights,idaccountadminmanager,rolegroup,roleadmin,
 from core.forms import informationUserJob,laborContract,forexsalary,EmployeeRelativeForm,EditForm
 from core.models import employeeRelative
 from .forms import Employeeinformation
+import asyncio
 templates = Jinja2Templates(directory="templates")
 employee = APIRouter()
 
@@ -22,8 +23,8 @@ employee = APIRouter()
 # request.cookies.get("fullname_session")_admin = ""
 
 @employee.get("/employeepage/{image_path}/{fullname}",tags=['employee'], response_class=HTMLResponse)
-def employeepage(request:Request,response:Response,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
-
+async def employeepage(request:Request,response:Response,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
+    await asyncio.sleep(0.1)
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from informationUser where id_useraccount=?  "
@@ -32,8 +33,8 @@ def employeepage(request:Request,response:Response,image_path,fullname,current_u
     user=cursor.fetchone()
     conn.commit()
     conn.close()
-    response.set_cookie(key="image_path_session", value=image_path) 
-    response.set_cookie(key="fullname_session", value=fullname)
+    #response.set_cookie(key="image_path_session", value=image_path) 
+    #response.set_cookie(key="fullname_session", value=fullname)
     print("fullname is: " + str(request.cookies.get("fullname_session")))
     context={
         "request":request,
