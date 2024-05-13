@@ -50,7 +50,7 @@ async def employeepage(request:Request,response:Response,image_path,fullname,cur
 
 @employee.get("/informationuserjob/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 async def informationuserjob_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-   
+    #return str(decode_id(informationuserid))
     #session['readrights']=None
     #request.cookies.get("readrights")=None
     form=Employeeinformation(request)

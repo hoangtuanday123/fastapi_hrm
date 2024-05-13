@@ -326,7 +326,6 @@ def userinformation_get(response:Response,request:Request,idaccount,current_user
     conn=db.connection()
     cursor=conn.cursor()
     sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
-    print("id is:" + str(idaccount))
     value=(decode_id(idaccount))
     cursor.execute(sql,value)
     user_temp=cursor.fetchone()
@@ -344,19 +343,15 @@ def userinformation_get(response:Response,request:Request,idaccount,current_user
         form.Maritalstatus=user_temp[10]
         form.Ethnicgroup=user_temp[11]
         form.Religion=user_temp[12]
-
+        response = Response()
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
-        if found_avatar and found_avatar[2] != "":
-            response.set_cookie(key="image_path_session", value=found_avatar[2])
-            #image_path_session.value = found_avatar[2]
-        else:
-            #image_path_session.value = file_path_default
-            response.set_cookie(key="image_path_session", value=file_path_default)
-        if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin":
-            #roleuser.value = user_temp[13]
-            response.set_cookie(key="roleuser", value=user_temp[13])
-            #request.cookies.get("idaccountadminmanager") = idaccount
-            response.set_cookie(key="idaccountadminmanager", value=idaccount)
+        # if found_avatar and found_avatar[2] != "":
+        #     response.set_cookie(key="image_path_session", value=found_avatar[2])
+        #     #image_path_session.value = found_avatar[2]
+        # else:
+        #     #image_path_session.value = file_path_default
+        #     response.set_cookie(key="image_path_session", value=file_path_default)
+        
     
     context={
         "request":request,
@@ -404,18 +399,13 @@ def userinformation(response:Response,request:Request,idaccount,current_user: Us
         form.Religion=user_temp[12]
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
-        if found_avatar and found_avatar[2] != "":
-            response.set_cookie(key="image_path_session", value=found_avatar[2])
-            #image_path_session.value = found_avatar[2]
-        else:
-            #image_path_session.value = file_path_default
-            response.set_cookie(key="image_path_session", value=file_path_default)
-        if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin":
-            #roleuser.value = user_temp[13]
-            response.set_cookie(key="roleuser", value=user_temp[13])
-            #request.cookies.get("idaccountadminmanager") = idaccount
-            response.set_cookie(key="idaccountadminmanager", value=idaccount)
-
+        # if found_avatar and found_avatar[2] != "":
+        #     response.set_cookie(key="image_path_session", value=found_avatar[2])
+        #     #image_path_session.value = found_avatar[2]
+        # else:
+        #     #image_path_session.value = file_path_default
+        #     response.set_cookie(key="image_path_session", value=file_path_default)
+        
 
     context={
         "request":request,
