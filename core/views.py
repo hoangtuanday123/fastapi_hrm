@@ -46,7 +46,7 @@ templates = Jinja2Templates(directory="templates")
     
 #     content = {"message": "cookie set"}
 #     #response = JSONResponse(content=content)
-#     response.set_cookie(key=key, value=value,httponly=True)
+#     response.set_cookie(key=key, value=value)
 #     return {"message": "Cookie set successfully"}
 
 # @auth.get("/get-cookie/{key}")
@@ -64,24 +64,24 @@ templates = Jinja2Templates(directory="templates")
 @core_bp.get("/authorizationUser",tags=['authentication'])
 def authorizationUser(request:Request,response:Response, current_user: User = Depends(get_current_user_from_token)):
     #set cookie 
-    # response.set_cookie(key="is_admin", value=None,httponly=True)
-    # #response.set_cookie(key="roleuser", value=None,httponly=True)
-    # response.set_cookie(key="rolegroup", value=None,httponly=True)
-    # response.set_cookie(key="readrights", value=None,httponly=True)
-    # response.set_cookie(key="writerights", value=None,httponly=True)
-    # response.set_cookie(key="verify_password", value=None,httponly=True)
-    # response.set_cookie(key="messages", value=None,httponly=True)
-    # response.set_cookie(key="id_useraccount", value=None,httponly=True)
-    # response.set_cookie(key="idaccountadminmanager", value=None,httponly=True)
-    # response.set_cookie(key="selectionItem", value=None,httponly=True)
-    # response.set_cookie(key="tablesession", value=None,httponly=True)
-    # response.set_cookie(key="image_path_adminsession", value=None,httponly=True)
-    # response.set_cookie(key="fullname_adminsession", value=None,httponly=True)
-    # response.set_cookie(key="roleadmin", value=None,httponly=True)
-    # response.set_cookie(key="image_path_session", value=None,httponly=True)
-    # response.set_cookie(key="fullname_session", value=None,httponly=True)
-    # response.set_cookie(key="front_cccd_session", value=None,httponly=True)
-    # response.set_cookie(key="back_cccd_session", value=None,httponly=True)
+    # response.set_cookie(key="is_admin", value=None)
+    # #response.set_cookie(key="roleuser", value=None)
+    # response.set_cookie(key="rolegroup", value=None)
+    # response.set_cookie(key="readrights", value=None)
+    # response.set_cookie(key="writerights", value=None)
+    # response.set_cookie(key="verify_password", value=None)
+    # response.set_cookie(key="messages", value=None)
+    # response.set_cookie(key="id_useraccount", value=None)
+    # response.set_cookie(key="idaccountadminmanager", value=None)
+    # response.set_cookie(key="selectionItem", value=None)
+    # response.set_cookie(key="tablesession", value=None)
+    # response.set_cookie(key="image_path_adminsession", value=None)
+    # response.set_cookie(key="fullname_adminsession", value=None)
+    # response.set_cookie(key="roleadmin", value=None)
+    # response.set_cookie(key="image_path_session", value=None)
+    # response.set_cookie(key="fullname_session", value=None)
+    # response.set_cookie(key="front_cccd_session", value=None)
+    # response.set_cookie(key="back_cccd_session", value=None)
 
 
     conn=db.connection()
@@ -104,14 +104,14 @@ def authorizationUser(request:Request,response:Response, current_user: User = De
     found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
     if found_avatar and found_avatar[2] != "":
         #image_path_session.value = found_avatar[2]
-        response.set_cookie(key="image_path_session", value=found_avatar[2],httponly=True)
+        response.set_cookie(key="image_path_session", value=str(found_avatar[2]))
     else:
         #image_path_session.value = file_path_default
-        response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
+        response.set_cookie(key="image_path_session", value=file_path_default)
   
     #fullname_session.value = user_temp[1]
-    response.set_cookie(key="fullname_session", value=user_temp[1],httponly=True)
- 
+    response.set_cookie(key="fullname_session", value=str(user_temp[1]))
+    #return request.cookies.get("image_path_session")
     # rolegroup.value=""
 
     # request.cookies.get("readrights")=None
@@ -120,7 +120,7 @@ def authorizationUser(request:Request,response:Response, current_user: User = De
 
     if user_role[0]=="candidate":
         #image_path = image_path_session.value
-        response.set_cookie(key="roleuser", value="candidate",httponly=True)
+        response.set_cookie(key="roleuser", value="candidate")
         image_path=request.cookies.get("image_path_session")
         #fullname = fullname_session.value
         fullname=request.cookies.get("fullname_session")
@@ -130,7 +130,7 @@ def authorizationUser(request:Request,response:Response, current_user: User = De
         #return str(request.cookies.get("roleadmin"))
         #roleuser.value="employee"
         #image_path = image_path_session.value
-        response.set_cookie(key="roleuser", value="employee",httponly=True)
+        response.set_cookie(key="roleuser", value="employee")
         
         image_path=request.cookies.get("image_path_session")
         #fullname = fullname_session.value
@@ -145,25 +145,26 @@ def authorizationUser(request:Request,response:Response, current_user: User = De
     #     return redirect(url_for("accountmanager.accountmanagerpage",image_path = image_path_session.value,fullname = _fullname))
     elif user_role[0]=="admin":
         #roleadmin.value = "admin"
-        response.set_cookie(key="roleadmin", value="admin",httponly=True)
+        response.set_cookie(key="roleadmin", value="admin")
         #roleuser.value = ""
         #image_path_adminsession.value = image_path_session.value
         #image_path_session=request.cookies.get("image_path_session")
-        #response.set_cookie(key="image_path_adminsession", value=image_path_session,httponly=True)
+        #response.set_cookie(key="image_path_adminsession", value=image_path_session)
         #fullname_adminsession.value = fullname_session.value
         #fullname_session=request.cookies.get("fullname_session")
-        #response.set_cookie(key="fullname_adminsession", value=fullname_session,httponly=True)
+        #response.set_cookie(key="fullname_adminsession", value=fullname_session)
       
         #writerights.value=1
-        response.set_cookie(key="writerights", value=1,httponly=True)
+        response.set_cookie(key="writerights", value=1)
         #request.cookies.get("readrights")=4
-        response.set_cookie(key="readrights", value=4,httponly=True)
+        response.set_cookie(key="readrights", value=4)
         #image_path_admin=image_path_adminsession.value
         image_path=request.cookies.get("image_path_session")
-        response.set_cookie(key="image_path_adminsession", value=image_path,httponly=True)
+        
+        response.set_cookie(key="image_path_adminsession", value=image_path)
         #fullname_admin = fullname_adminsession.value
         fullname=request.cookies.get("fullname_session")
-        response.set_cookie(key="fullname_adminsession", value=fullname,httponly=True)
+        response.set_cookie(key="fullname_adminsession", value=fullname)
         return RedirectResponse(url=f'/adminpage/{image_path}/{fullname}')
     else:
         return "You have not been granted access to the resource"
@@ -271,7 +272,7 @@ def getcodechangepassword_get(response:Response,request:Request,current_user: Us
             verify=verifyPassword(email=user_temp[15],totp_temp=totp.now())
             #session['verify_password']=verify
             #verify_password.value=verify
-            response.set_cookie(key="verify_password", value=verify,httponly=True)
+            response.set_cookie(key="verify_password", value=verify)
             messages.categorary="success"
             messages.message="A confirmation email has been sent via email."
             #flash("A confirmation email has been sent via email.", "success")
@@ -302,7 +303,7 @@ def getcodechangepassword(response:Response,request:Request,current_user: User =
             verify=verifyPassword(email=user_temp[15],totp_temp=totp.now())
             #session['verify_password']=verify
             #verify_password.value=verify
-            response.set_cookie(key="verify_password", value=verify,httponly=True)
+            response.set_cookie(key="verify_password", value=verify)
             messages.categorary="success"
             messages.message="A confirmation email has been sent via email."
             #flash("A confirmation email has been sent via email.", "success")
@@ -346,16 +347,16 @@ def userinformation_get(response:Response,request:Request,idaccount,current_user
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
         if found_avatar and found_avatar[2] != "":
-            response.set_cookie(key="image_path_session", value=found_avatar[2],httponly=True)
+            response.set_cookie(key="image_path_session", value=found_avatar[2])
             #image_path_session.value = found_avatar[2]
         else:
             #image_path_session.value = file_path_default
-            response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
+            response.set_cookie(key="image_path_session", value=file_path_default)
         if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin":
             #roleuser.value = user_temp[13]
-            response.set_cookie(key="roleuser", value=user_temp[13],httponly=True)
+            response.set_cookie(key="roleuser", value=user_temp[13])
             #request.cookies.get("idaccountadminmanager") = idaccount
-            response.set_cookie(key="idaccountadminmanager", value=idaccount,httponly=True)
+            response.set_cookie(key="idaccountadminmanager", value=idaccount)
     
     context={
         "request":request,
@@ -404,16 +405,16 @@ def userinformation(response:Response,request:Request,idaccount,current_user: Us
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
         if found_avatar and found_avatar[2] != "":
-            response.set_cookie(key="image_path_session", value=found_avatar[2],httponly=True)
+            response.set_cookie(key="image_path_session", value=found_avatar[2])
             #image_path_session.value = found_avatar[2]
         else:
             #image_path_session.value = file_path_default
-            response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
+            response.set_cookie(key="image_path_session", value=file_path_default)
         if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin":
             #roleuser.value = user_temp[13]
-            response.set_cookie(key="roleuser", value=user_temp[13],httponly=True)
+            response.set_cookie(key="roleuser", value=user_temp[13])
             #request.cookies.get("idaccountadminmanager") = idaccount
-            response.set_cookie(key="idaccountadminmanager", value=idaccount,httponly=True)
+            response.set_cookie(key="idaccountadminmanager", value=idaccount)
 
 
     context={
@@ -601,18 +602,18 @@ def usercccd_get(response:Response,request:Request,informationuserid,current_use
 
     if found_cccd and found_cccd[2] != "":
         #front_cccd_session.value = found_cccd[2]
-        response.set_cookie(key="front_cccd_session", value=found_cccd[2],httponly=True)
+        response.set_cookie(key="front_cccd_session", value=found_cccd[2])
     else:
         #front_cccd_session.value = ""
-        response.set_cookie(key="front_cccd_session", value="",httponly=True)
+        response.set_cookie(key="front_cccd_session", value="")
 
     if found_cccd and found_cccd[3] != "":
         #back_cccd_session.value = found_cccd[3]
-        response.set_cookie(key="back_cccd_session", value=found_cccd[3],httponly=True)
+        response.set_cookie(key="back_cccd_session", value=found_cccd[3])
 
     else:
         #back_cccd_session.value_cccd = ""
-        response.set_cookie(key="back_cccd_session", value="",httponly=True)
+        response.set_cookie(key="back_cccd_session", value="")
     idaccount=current_user.id
     if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
             
@@ -658,18 +659,18 @@ def usercccd(response:Response,request:Request,informationuserid,current_user: U
 
     if found_cccd and found_cccd[2] != "":
         #front_cccd_session.value = found_cccd[2]
-        response.set_cookie(key="front_cccd_session", value=found_cccd[2],httponly=True)
+        response.set_cookie(key="front_cccd_session", value=found_cccd[2])
     else:
         #front_cccd_session.value = ""
-        response.set_cookie(key="front_cccd_session", value="",httponly=True)
+        response.set_cookie(key="front_cccd_session", value="")
 
     if found_cccd and found_cccd[3] != "":
         #back_cccd_session.value = found_cccd[3]
-        response.set_cookie(key="back_cccd_session", value=found_cccd[3],httponly=True)
+        response.set_cookie(key="back_cccd_session", value=found_cccd[3])
 
     else:
         #back_cccd_session.value_cccd = ""
-        response.set_cookie(key="back_cccd_session", value="",httponly=True)
+        response.set_cookie(key="back_cccd_session", value="")
     idaccount=current_user.id
     if request.cookies.get("roleadmin") == "admin" and request.cookies.get("roleuser") != "admin" :
             
@@ -1027,7 +1028,7 @@ async def update_avatar(request:Request,informationuserid,idaccount,current_user
 async def remove_avatar_get(response:Response,request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
    
     #request.cookies.get("readrights")=None
-    response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
+    response.set_cookie(key="image_path_session", value=file_path_default)
     #image_path_session.value = file_path_default
     user_avatar.update_pic_name(decode_id(informationuserid),file_path_default)
     return RedirectResponse(f'/userinformation/{idaccount}')
@@ -1036,7 +1037,7 @@ async def remove_avatar_get(response:Response,request:Request,informationuserid,
 async def remove_avatar(response:Response,request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
     # request.cookies.get("readrights")=None
     # image_path_session.value = file_path_default
-    response.set_cookie(key="image_path_session", value=file_path_default,httponly=True)
+    response.set_cookie(key="image_path_session", value=file_path_default)
     user_avatar.update_pic_name(decode_id(informationuserid),file_path_default)
     return RedirectResponse(f'/userinformation/{idaccount}')
 
@@ -1046,7 +1047,7 @@ def display_image(request:Request,filename,current_user: User = Depends(get_curr
     return RedirectResponse(url=static_url, status_code=301)
 
 @core_bp.get('/display/{filename}', response_class=HTMLResponse)
-def display_image(request:Request,filename,current_user: User = Depends(get_current_user_from_token)):
+def display_image_get(request:Request,filename,current_user: User = Depends(get_current_user_from_token)):
     static_url = f'/static/source/{filename}'
     return RedirectResponse(url=static_url, status_code=301)
 

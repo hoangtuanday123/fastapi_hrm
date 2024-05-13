@@ -1,7 +1,7 @@
 {% extends "core/user_profile.html" %}
 
 {% block content_body %}
-{% if readrights=="4" or readrights=="None" %}
+{% if readrights=='4' or readrights==None %}
           
               <!-- child template -->
               {{form.csrf_token}}
@@ -33,7 +33,7 @@
                           <div id="edit_mode_Employer_show">
                             <p class="col text-muted mb-0">
                                 {{form.Employer}}
-                                {% if readrights == '4' or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Employer','{{form.Employer}}')"></i>
                                     </span>
@@ -69,7 +69,7 @@
                           <div id="edit_mode_JobTitle_show">
                             <p class="col text-muted mb-0">
                                 {{form.JobTitle}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('JobTitle','{{form.JobTitle}}')"></i>
                                     </span>
@@ -106,7 +106,7 @@
                           <div id="edit_mode_AnnualSalary_show">
                             <p class="col text-muted mb-0">
                                 {{form.AnnualSalary}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('AnnualSalary','{{form.AnnualSalary}}')"></i>
                                     </span>
@@ -143,7 +143,7 @@
                           <div id="edit_mode_AnnualBonus_show">
                             <p class="col text-muted mb-0">
                                 {{form.AnnualBonus}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('AnnualBonus','{{form.AnnualBonus}}')"></i>
                                     </span>
@@ -180,7 +180,7 @@
                           <div id="edit_mode_RetentionBonus_show">
                             <p class="col text-muted mb-0">
                                 {{form.RetentionBonus}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('RetentionBonus','{{form.RetentionBonus}}')"></i>
                                     </span>
@@ -217,7 +217,7 @@
                           <div id="edit_mode_RetentionBonusExpiredDate_show">
                             <p class="col text-muted mb-0">
                                 {{form.RetentionBonusExpiredDate}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('RetentionBonusExpiredDate','{{form.RetentionBonusExpiredDate}}')"></i>
                                     </span>
@@ -254,7 +254,7 @@
                           <div id="edit_mode_StockOption_show">
                             <p class="col text-muted mb-0">
                                 {{form.StockOption}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('StockOption','{{form.StockOption}}')"></i>
                                     </span>
@@ -291,7 +291,7 @@
                           <div id="edit_mode_StartDate_show">
                             <p class="col text-muted mb-0">
                                 {{form.StartDate}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('StartDate','{{form.StartDate}}')"></i>
                                     </span>
@@ -328,7 +328,7 @@
                           <div id="edit_mode_EndDate_show">
                             <p class="col text-muted mb-0">
                                 {{form.EndDate}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('EndDate','{{form.EndDate}}')"></i>
                                     </span>

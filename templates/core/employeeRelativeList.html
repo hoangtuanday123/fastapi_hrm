@@ -1,7 +1,7 @@
 {% extends "core/user_profile.html" %}
 
 {% block content_body %}
-{% if readrights=="3" or readrights=="4" or readrights =="None" %}
+{% if readrights=="3" or readrights=='4' or readrights ==None %}
           
               <!-- child template -->
 <div class="col-lg-8">
@@ -17,10 +17,10 @@
                   <th hidden>ID</th>
                   <th style="text-align: center;">FullName</th>
                   <th style="text-align: center;">Relationship</th>
-                  {% if readrights=='3' or readrights=="4" or readrights =="None" %}
+                  {% if readrights=='3' or readrights=='4' or readrights ==None %}
                   <th style="text-align: center;">Detail</th>
                   {% endif %}
-                  {% if readrights=="4" or readrights =="None" %}
+                  {% if readrights=='4' or readrights ==None %}
                   <th style="text-align: center;">Delete</th>
                   {% endif %}
 
@@ -32,7 +32,7 @@
                       <td hidden>{{ user[0] }}</td>
                       <td >{{ user[1] }}</td>
                       <td>{{ user[2] }}</td>
-                      {% if readrights=='3' or readrights=="4" or readrights =="None" %}
+                      {% if readrights=='3' or readrights=='4' or readrights ==None %}
                       <td style="text-align: center;">
                         
                         <label class="mb-0 tab_hover " for="userinformation1">View </label>
@@ -40,7 +40,7 @@
 
                       </td>
                       {% endif %}
-                      {% if readrights=="4" or readrights =="None" %} 
+                      {% if readrights=='4' or readrights ==None %} 
                       <td style="text-align: center;">
                         <a href="/employeepage/informationuserjob/employeerelativelist/delete/{{user[0]}}/{{informationuserid}}/{{totp}}"
                          style="color:red">
@@ -53,7 +53,7 @@
               {% endfor %}
           </tbody>
       </table>
-      {% if readrights=="4" or readrights =="None" %} 
+      {% if readrights=='4' or readrights ==None %} 
       <form action="/employeepage/informationuserjob/employeerelativelist/addemployeerelationship/{{informationuserid}}">
         <button type="submit" class="btn btn-link">
             <i class="fas fa-plus-circle"></i> <!-- Icon của Font Awesome -->

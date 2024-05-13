@@ -32,8 +32,8 @@ def employeepage(request:Request,response:Response,image_path,fullname,current_u
     user=cursor.fetchone()
     conn.commit()
     conn.close()
-    response.set_cookie(key="image_path_session", value=image_path,httponly=True) 
-    response.set_cookie(key="fullname_session", value=fullname,httponly=True)
+    response.set_cookie(key="image_path_session", value=image_path) 
+    response.set_cookie(key="fullname_session", value=fullname)
     print("fullname is: " + str(request.cookies.get("fullname_session")))
     context={
         "request":request,
@@ -214,9 +214,9 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
     idaccount=current_user.id
     if request.cookies.get("roleadmin")=="admin" :
         idaccount=request.cookies.get("idaccountadminmanager")
-        response.set_cookie(key="roleuser", value=user[17],httponly=True)
+        response.set_cookie(key="roleuser", value=user[17])
     else:
-        response.set_cookie(key="roleuser", value=request.cookies.get("roleuser"),httponly=True)
+        response.set_cookie(key="roleuser", value=request.cookies.get("roleuser"))
     context={
         "request":request,
         "current_user":current_user,
@@ -261,9 +261,9 @@ def addlist(informationuserid,employeerelativeid,type):
 
 @employee.get("/employeepage/informationuserjob/laborcontract/{informationuserjobid}/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 def laborcontract(request:Request,response:Response,informationuserjobid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    response.set_cookie(key="roleadmin", value="",httponly=True)
+    response.set_cookie(key="roleadmin", value="")
     if request.cookies.get("rolegroup")=='admin':
-        response.set_cookie(key="roleadmin", value="admin",httponly=True)
+        response.set_cookie(key="roleadmin", value="admin")
     idaccount=current_user.id
     if request.cookies.get("roleadmin")=="admin" :
         idaccount=request.cookies.get("idaccountadminmanager") 
@@ -277,10 +277,10 @@ def laborcontract(request:Request,response:Response,informationuserjobid,informa
     conn.close()
     if contract is not None:
         contracttemp=laborContract(idcontract=contract[0],LaborcontractNo=contract[1],Laborcontracttype=contract[2],Laborcontractterm=contract[3],
-                            Commencementdate=contract[4],Position=contract[5],Employeelevel=contract[6])
+                            Commencementdate=contract[4],Position=contract[5],Employeelevel=contract[6],dayoff=contract[9])
     else:
         contracttemp=laborContract(idcontract=None,LaborcontractNo=None,Laborcontracttype=None,Laborcontractterm=None,
-                            Commencementdate=None,Position=None,Employeelevel=None)
+                            Commencementdate=None,Position=None,Employeelevel=None,dayoff=None)
     
     context={
         "request":request,

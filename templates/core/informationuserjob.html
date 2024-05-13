@@ -3,7 +3,7 @@
 {% block content_body %}
           
 <!-- child template -->
-{% if readrights=="2" or readrights=="3" or readrights=="4" or readrights =="None" %}
+{% if readrights=='2' or readrights=='3' or readrights=='4' or readrights ==None %}
 <div class="col-lg-8">
     <div class="card mb-4">
       
@@ -12,7 +12,7 @@
           <button class="btn btn-sm btn-outline-secondary mr-1" data-table="informationJob" type="button">Information Job</button>
           <button class="btn btn-sm btn-outline-secondary mr-1" data-table="Insurance" type="button">Insurance</button>
 
-          {% if readrights=="3" or readrights=="4" or readrights =="None" %}
+          {% if readrights=='3' or readrights=='4' or readrights ==None %}
           <button class="btn btn-sm btn-outline-secondary mr-1" onclick="location.href='/employeepage/informationuserjob/laborcontract/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Contract</button>
           <button class="btn btn-sm btn-outline-secondary" onclick="location.href='/employeepage/informationuserjob/forexsalary/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Forex Salary</button>
           {% endif %}
@@ -162,7 +162,7 @@
                 <div id="edit_mode_Bankaccount_show">
                   <p class="col text-muted mb-0">
                     {{userjob.Bankaccount}}
-                      {% if readrights == "4" or readrights == "None" %}
+                      {% if readrights == '4' or readrights == None %}
                           <span class="float-right">
                               <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Bankaccount','{{userjob.Bankaccount}}')"></i>
                           </span>
@@ -199,7 +199,7 @@
                 <div id="edit_mode_Bankname_show">
                   <p class="col text-muted mb-0">
                     {{userjob.Bankname}}
-                      {% if readrights == "4" or readrights == "None" %}
+                      {% if readrights == '4' or readrights == None %}
                           <span class="float-right">
                               <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Bankname','{{userjob.Bankname}}')"></i>
                           </span>
@@ -236,7 +236,7 @@
                 <div id="edit_mode_Taxcode_show">
                   <p class="col text-muted mb-0">
                     {{userjob.Taxcode}}
-                      {% if readrights == "4" or readrights == "None" %}
+                      {% if readrights == '4' or readrights == None %}
                           <span class="float-right">
                               <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Taxcode','{{userjob.Taxcode}}')"></i>
                           </span>
@@ -273,7 +273,7 @@
                 <div id="edit_mode_Socialinsurancecode_show">
                   <p class="col text-muted mb-0">
                     {{userjob.Socialinsurancecode}}
-                      {% if readrights == "4" or readrights == "None" %}
+                      {% if readrights == '4' or readrights == None %}
                           <span class="float-right">
                               <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Socialinsurancecode','{{userjob.Socialinsurancecode}}')"></i>
                           </span>
@@ -310,7 +310,7 @@
                 <div id="edit_mode_Healthinsurancecardcode_show">
                   <p class="col text-muted mb-0">
                     {{userjob.Healthinsurancecardcode}}
-                      {% if readrights == "4" or readrights == "None" %}
+                      {% if readrights == '4' or readrights == None %}
                           <span class="float-right">
                               <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Healthinsurancecardcode','{{userjob.Healthinsurancecardcode}}')"></i>
                           </span>
@@ -348,7 +348,7 @@
                 <div id="edit_mode_Registeredhospitalname_show">
                   <p class="col text-muted mb-0">
                     {{userjob.Registeredhospitalname}}
-                      {% if readrights == "4" or readrights == "None" %}
+                      {% if readrights == '4' or readrights == None %}
                           <span class="float-right">
                               <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Registeredhospitalname','{{userjob.Registeredhospitalname}}')"></i>
                           </span>
@@ -385,7 +385,7 @@
                 <div id="edit_mode_Registeredhospitalcode_show">
                   <p class="col text-muted mb-0">
                     {{userjob.Registeredhospitalcode}}
-                      {% if readrights == "4" or readrights == "None" %}
+                      {% if readrights == '4' or readrights == None %}
                           <span class="float-right">
                               <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Registeredhospitalcode','{{userjob.Registeredhospitalcode}}')"></i>
                           </span>

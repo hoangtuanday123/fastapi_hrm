@@ -350,7 +350,7 @@ async def forgotpassword(response:Response,request: Request):
                 totp=pyotp.TOTP(secret)
                 verify=verifyPassword(email=form.email,totp_temp=totp.now())
                 #session['verify_password']=verify
-                response.set_cookie(key="verify_password", value=verify,httponly=True)
+                response.set_cookie(key="verify_password", value=verify)
                 #flash("A confirmation email has been sent via email.", "success")
                 messages.categorary="success"
                 messages.message="A confirmation email has been sent via email."
@@ -428,7 +428,7 @@ async def verifypassword(response:Response,request:Request):
                 conn.commit()
                 conn.close()
                 #session['id_useraccount']=user_temp[5]
-                response.set_cookie(key="id_useraccount", value=encode_id(user_temp[5]),httponly=True)
+                response.set_cookie(key="id_useraccount", value=encode_id(user_temp[5]))
             return RedirectResponse(url="/changepassword",status_code=status.HTTP_302_FOUND)    
             #return redirect(url_for("authentication.changepassword"))
         else:

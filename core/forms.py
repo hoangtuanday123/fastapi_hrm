@@ -40,7 +40,7 @@ class informationUserJob:
 class laborContract():
    
     
-    def __init__(self,idcontract,LaborcontractNo,Laborcontracttype,Laborcontractterm,Commencementdate,Position,Employeelevel):
+    def __init__(self,idcontract,LaborcontractNo,Laborcontracttype,Laborcontractterm,Commencementdate,Position,Employeelevel,dayoff):
        
         self.idcontract=idcontract
         self.LaborcontractNo=LaborcontractNo
@@ -49,6 +49,7 @@ class laborContract():
         self.Commencementdate=Commencementdate
         self.Position=Position
         self.Employeelevel=Employeelevel
+        self.dayoff=dayoff
 class forexsalary():
  
     
@@ -104,6 +105,7 @@ class laborcontractForm:
         self.Commencementdate: Optional[date] = None
         self.Position: Optional[str] = None
         self.Employeelevel: Optional[str] = None
+        self.dayoff: Optional[int] = None
         
     
     async def load_data(self):

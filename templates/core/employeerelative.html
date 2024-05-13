@@ -1,7 +1,7 @@
 {% extends "core/user_profile.html" %}
 
 {% block content_body %}
-{% if readrights=="4" or readrights=="None" %}
+{% if readrights=='4' or readrights==None %}
               <!-- child template -->
 
 
@@ -48,7 +48,7 @@
                           <div id="edit_mode_Relationship_show">
                             <p class="col text-muted mb-0">
                               {{employeerelative.Relationship}}
-                                {% if readrights == "4" or readrights == "None" %}
+                                {% if readrights == '4' or readrights == None %}
                                     <span class="float-right">
                                         <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('Relationship','{{employeerelative.Relationship}}')"></i>
                                     </span>
@@ -84,7 +84,7 @@
                         <div id="edit_mode_phone_show">
                           <p class="col text-muted mb-0">
                             {{employeerelative.phone}}
-                              {% if readrights == "4" or readrights == "None" %}
+                              {% if readrights == '4' or readrights == None %}
                                   <span class="float-right">
                                       <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('phone','{{employeerelative.phone}}')"></i>
                                   </span>
@@ -120,7 +120,7 @@
                         <div id="edit_mode_email_show">
                           <p class="col text-muted mb-0">
                             {{employeerelative.email}}
-                              {% if readrights == "4" or readrights == "None" %}
+                              {% if readrights == '4' or readrights == None %}
                                   <span class="float-right">
                                       <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('email','{{employeerelative.email}}')"></i>
                                   </span>
@@ -156,7 +156,7 @@
                       <div id="edit_mode_contactaddress_show">
                         <p class="col text-muted mb-0">
                           {{employeerelative.contactaddress}}
-                            {% if readrights == "4" or readrights == "None" %}
+                            {% if readrights == '4' or readrights == None %}
                                 <span class="float-right">
                                     <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('contactaddress','{{employeerelative.contactaddress}}')"></i>
                                 </span>
@@ -192,7 +192,7 @@
                     <div id="edit_mode_career_show">
                       <p class="col text-muted mb-0">
                         {{employeerelative.career}}
-                          {% if readrights == "4" or readrights == "None" %}
+                          {% if readrights == '4' or readrights == None %}
                               <span class="float-right">
                                   <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('career','{{employeerelative.career}}')"></i>
                               </span>
@@ -227,7 +227,7 @@
                         <div id="edit_mode_citizenIdentificationNo_show">
                           <p class="col text-muted mb-0">
                             {{employeerelative.citizenIdentificationNo}}
-                              {% if readrights == "4" or readrights == "None" %}
+                              {% if readrights == '4' or readrights == None %}
                                   <span class="float-right">
                                       <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('citizenIdentificationNo','{{employeerelative.citizenIdentificationNo}}')"></i>
                                   </span>
@@ -264,7 +264,7 @@
                         <div id="edit_mode_fullname_show">
                           <p class="col text-muted mb-0">
                             {{employeerelative.fullname}}
-                              {% if readrights == "4" or readrights == "None" %}
+                              {% if readrights == '4' or readrights == None %}
                                   <span class="float-right">
                                       <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('fullname','{{employeerelative.fullname}}')"></i>
                                   </span>
@@ -301,7 +301,7 @@
                       <div id="edit_mode_dateofbirth_show">
                         <p class="col text-muted mb-0">
                           {{employeerelative.dateofbirth}}
-                            {% if readrights == "4" or readrights == "None" %}
+                            {% if readrights == '4' or readrights == None %}
                                 <span class="float-right">
                                     <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('dateofbirth','{{employeerelative.dateofbirth}}')"></i>
                                 </span>
@@ -338,7 +338,7 @@
                         <div id="edit_mode_placeofbirth_show">
                           <p class="col text-muted mb-0">
                             {{employeerelative.placeofbirth}}
-                              {% if readrights == "4" or readrights == "None" %}
+                              {% if readrights == '4' or readrights == None %}
                                   <span class="float-right">
                                       <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('placeofbirth','{{employeerelative.placeofbirth}}')"></i>
                                   </span>
@@ -375,7 +375,7 @@
                         <div id="edit_mode_issuedon_show">
                           <p class="col text-muted mb-0">
                             {{employeerelative.issuedon}}
-                              {% if readrights == "4" or readrights == "None" %}
+                              {% if readrights == '4' or readrights == None %}
                                   <span class="float-right">
                                       <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('issuedon','{{employeerelative.issuedon}}')"></i>
                                   </span>
@@ -412,7 +412,7 @@
                         <div id="edit_mode_address_show">
                           <p class="col text-muted mb-0">
                             {{employeerelative.address}}
-                              {% if readrights == "4" or readrights == "None" %}
+                              {% if readrights == '4' or readrights == None %}
                                   <span class="float-right">
                                       <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('address','{{employeerelative.address}}')"></i>
                                   </span>
