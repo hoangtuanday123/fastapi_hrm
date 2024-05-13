@@ -13,12 +13,14 @@
           <button class="btn btn-sm btn-outline-secondary mr-1" data-table="Insurance" type="button">Insurance</button>
 
           {% if readrights=='3' or readrights=='4' or readrights ==None %}
-          <button class="btn btn-sm btn-outline-secondary mr-1" onclick="location.href='/employeepage/informationuserjob/laborcontract/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Contract</button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="location.href='/employeepage/informationuserjob/forexsalary/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Forex Salary</button>
+          <button class="btn btn-sm btn-outline-secondary mr-1"  onclick="location.href='/employeepage/informationuserjob/laborcontract/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Contract</button>
+          <button class="btn btn-sm btn-outline-secondary"  onclick="location.href='/employeepage/informationuserjob/forexsalary/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Forex Salary</button>
           {% endif %}
         </form>
       </nav>
+
       <div id="section">
+
         <div  id="informationJob" style="display: none;" >
           <div  class="card-body">
             <div class="row">
@@ -413,7 +415,7 @@
                 
                 
                 <!-- Display existing records -->
-                <form method="post" >
+                <form method="post" onsubmit="updateValue()" >
                   <div class="row  mb-2">
                     <div class="col-sm-3">
                         <label for="Employeerelative" >Employee Relatives</label>
@@ -424,7 +426,7 @@
                           <option value="{{ person[0] }}">{{ person[1] }}</option>
                           {% endfor %}
                       </select>
-                      <button  type="submit" onclick="updateValue()" name="Privateinsurance" value="Privateinsurance" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                      <button  type="submit" name="Privateinsurance" value="Privateinsurance" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
                   </div>
   
                 </div>
@@ -472,7 +474,7 @@
                   
                   
                   <!-- Display existing records -->
-                  <form method="post">
+                  <form method="post" onsubmit="updateValue()">
                     <div class="row  mb-2">
                       <div class="col-sm-3">
                           <label for="Employeerelative" >Employee Relatives</label>
@@ -483,7 +485,7 @@
                             <option value="{{ person[0] }}">{{ person[1] }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit" onclick="updateValue()" name="Additionalprivateinsurance" value="Additionalprivateinsurance" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                        <button type="submit"  name="Additionalprivateinsurance" value="Additionalprivateinsurance" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
                     </div>
     
                   </div>
@@ -532,7 +534,7 @@
                   
                   
                   <!-- Display existing records -->
-                  <form method="post">
+                  <form method="post" onsubmit="updateValue()">
                     <div class="row  mb-2">
                       <div class="col-sm-3">
                           <label for="Employeerelative" >Employee Relatives</label>
@@ -543,7 +545,7 @@
                             <option value="{{ person[0] }}">{{ person[1] }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit" onclick="updateValue()" name="Dependant" value="Dependant" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                        <button type="submit"  name="Dependant" value="Dependant" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
                     </div>
     
                   </div>
@@ -591,7 +593,7 @@
                 
                 
                 <!-- Display existing records -->
-                <form method="post">
+                <form method="post" onsubmit="updateValue()">
                   <div class="row  mb-2">
                     <div class="col-sm-3">
                         <label for="Employeerelative" >Employee Relatives</label>
@@ -602,7 +604,7 @@
                           <option value="{{ person[0] }}">{{ person[1] }}</option>
                           {% endfor %}
                       </select>
-                      <button type="submit" onclick="updateValue()" name="Emergencycontact" value="Emergencycontact" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                      <button type="submit" name="Emergencycontact" value="Emergencycontact" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
                   </div>
   
                 </div>
@@ -650,7 +652,7 @@
                 
                 
                 <!-- Display existing records -->
-                <form method="post">
+                <form method="post" onsubmit="updateValue()">
                   <div class="row  mb-2">
                     <div class="col-sm-3">
                         <label for="Employeerelative" >Employee Relatives</label>
@@ -661,7 +663,7 @@
                           <option value="{{ person[0] }}">{{ person[1] }}</option>
                           {% endfor %}
                       </select>
-                      <button type="submit" onclick="updateValue()" name="Beneficiarycontact" value="Beneficiarycontact" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
+                      <button type="submit"  name="Beneficiarycontact" value="Beneficiarycontact" class="btn btn-primary btn-sm align-self-stretch">Submit</button>
                   </div>
   
                 </div>
@@ -699,16 +701,20 @@
           </div>
           </div>
           </div>
+
           </div>
-         
+
       </div>
-      
+
   </div>
 </div>
+{%block content_nav%}
+
+{%endblock%}
 <a class="scroll-to-top rounded" href="#page-top">
   <i class="fas fa-angle-up"></i>
   </a>
-  </section>
+  </section>  
 
   <script src="{{url_for('static',path='js/informationJob.js')}}"></script>
   <script>

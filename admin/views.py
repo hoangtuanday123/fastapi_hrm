@@ -1179,8 +1179,22 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
         "image_path_admin":request.cookies.get("image_path_adminsession"),
         "fullname_admin" : request.cookies.get("fullname_adminsession")
     }
-    return templates.TemplateResponse("admin/updategroupuser.html",context)
-    
+    response= templates.TemplateResponse("admin/updategroupuser.html",context)
+    if rolegroupvalue=="manager" or rolegroupvalue=="admin":
+            response.set_cookie(key="readrights", value=4)
+            response.set_cookie(key="writerights", value=1)
+        #session["readrights"]=4
+        # session['writerights']=1
+    elif rolegroupvalue=="leader":
+            response.set_cookie(key="readrights", value=3)
+        #["readrights"]=3
+    elif rolegroupvalue=="member" or rolegroupvalue=="client":
+            response.set_cookie(key="readrights", value=2)
+        #session["readrights"]=2
+    else:
+            response.set_cookie(key="readrights", value=5)
+    return response
+
 @admin.get('/adminpage/groupuserpage/updategroupuser/deleteuser/{idgroupuserdetail}/{idgroup}/{rolegroupvalue}',tags=['user managerment'])
 def deleteuser(idgroupuserdetail,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()

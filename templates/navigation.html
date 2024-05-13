@@ -5,7 +5,7 @@
     <div id="content">
 
         <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-black bg-white topbar mb-4 static-top shadow ">
+        <nav class="navbar navbar-expand fixed-top navbar-black bg-white topbar mb-4 static-top shadow ">
 
             <!-- Sidebar Toggle (Topbar) -->
             <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -511,6 +511,8 @@
         {% endif %}
 
         </nav>
+        </div>
+        </div>
         <!-- Page Wrapper -->
         <!-- display path -->
         {% if current_user.is_authenticated and (fullname or fullname_admin) %}
