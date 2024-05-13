@@ -929,7 +929,7 @@ async def groupuserpage(request:Request,response:Response,current_user: User = D
 
 @admin.get('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
 async def updategropuser_get(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
-    readrights_func(rolegroupvalue,response)
+    #response=readrights_func(rolegroupvalue,response)
     # response.set_cookie(key="rolegroup", value=rolegroupvalue)
     
     # if str(response.set_cookie(key="rolegroup", value=None)) !='admin':
@@ -1002,7 +1002,21 @@ async def updategropuser_get(request:Request,response:Response,idgroup,rolegroup
         "image_path_admin":request.cookies.get("image_path_adminsession"),
         "fullname_admin" : request.cookies.get("fullname_adminsession")
     }
-    return templates.TemplateResponse("admin/updategroupuser.html",context)
+    response= templates.TemplateResponse("admin/updategroupuser.html",context)
+    if rolegroupvalue=="manager" or rolegroupvalue=="admin":
+            response.set_cookie(key="readrights", value=4)
+            response.set_cookie(key="writerights", value=1)
+        #session["readrights"]=4
+        # session['writerights']=1
+    elif rolegroupvalue=="leader":
+            response.set_cookie(key="readrights", value=3)
+        #["readrights"]=3
+    elif rolegroupvalue=="member" or rolegroupvalue=="client":
+            response.set_cookie(key="readrights", value=2)
+        #session["readrights"]=2
+    else:
+            response.set_cookie(key="readrights", value=5)
+    return response
 
 @admin.post('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
 async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
