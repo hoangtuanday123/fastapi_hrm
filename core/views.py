@@ -370,7 +370,37 @@ def userinformation_get(response:Response,request:Request,idaccount,current_user
     }
     return templates.TemplateResponse("core/user_information.html",context)
     
+@core_bp.get('/profile',tags=['user'], response_class=HTMLResponse)
+def profile(response:Response,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select role_name from role_user where id=?"
+    value=(current_user.role_user)
+    cursor.execute(sql,value)
+    temp=cursor.fetchone()
 
+    response=RedirectResponse(url=f"/userinformation/{current_user.id}")
+    response.set_cookie(key="roleuser", value=temp[0])
+
+    
+    cursor1=conn.cursor()
+    sql1="select * from informationUser where id_useraccount=?"
+    value1=(decode_id(current_user.id))
+    cursor1.execute(sql1,value1)
+    user_temp=cursor1.fetchone()
+    
+    
+    found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
+    if found_avatar and found_avatar[2] != "":
+        response.set_cookie(key="image_path_session", value=str(found_avatar[2]))
+        
+    else:
+        
+        response.set_cookie(key="image_path_session", value=file_path_default)
+    
+    response.set_cookie(key="fullname_session", value=str(user_temp[1]))
+    return response
+  
 @core_bp.post('/userinformation/{idaccount}',tags=['user'], response_class=HTMLResponse)
 def userinformation(response:Response,request:Request,idaccount,current_user: User = Depends(get_current_user_from_token)):
   

@@ -857,11 +857,11 @@ def readrights_func(rolegroup,response:Response):
     else:
             response.set_cookie(key="readrights", value=5)
         #session["readrights"]=5
+    return response
 
 @admin.get('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
 async def groupuserpage_get(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):
-    response.set_cookie(key="roleadmin", value="admin")
-    response.set_cookie(key="rolegroup", value='admin')
+    
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from groupuser"
@@ -886,8 +886,7 @@ async def groupuserpage_get(request:Request,response:Response,current_user: User
     return templates.TemplateResponse("admin/groupuserpage.html",context)
 @admin.post('/adminpage/groupuserpage',tags=['user managerment'], response_class=HTMLResponse)
 async def groupuserpage(request:Request,response:Response,current_user: User = Depends(get_current_user_from_token)):
-    response.set_cookie(key="roleadmin", value="admin")
-    response.set_cookie(key="rolegroup", value='admin')
+ 
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from groupuser"
@@ -930,13 +929,13 @@ async def groupuserpage(request:Request,response:Response,current_user: User = D
 
 @admin.get('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
 async def updategropuser_get(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
-    readrights_func(rolegroupvalue)
-    response.set_cookie(key="rolegroup", value=rolegroupvalue)
+    readrights_func(rolegroupvalue,response)
+    # response.set_cookie(key="rolegroup", value=rolegroupvalue)
     
-    if str(    response.set_cookie(key="rolegroup", value=None)) !='admin':
-        response.set_cookie(key="roleadmin", value="")
-    else:
-        response.set_cookie(key="roleadmin", value="admin")
+    # if str(response.set_cookie(key="rolegroup", value=None)) !='admin':
+    #     response.set_cookie(key="roleadmin", value="")
+    # else:
+    #     response.set_cookie(key="roleadmin", value="admin")
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
@@ -1007,12 +1006,12 @@ async def updategropuser_get(request:Request,response:Response,idgroup,rolegroup
 
 @admin.post('/adminpage/groupuserpage/updategroupuser/{idgroup}/{rolegroupvalue}',tags=['user managerment'],response_class=HTMLResponse)
 async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalue,current_user: User = Depends(get_current_user_from_token)):
-    readrights_func(rolegroupvalue)
-    response.set_cookie(key="rolegroup", value=rolegroupvalue)
-    if str(    response.set_cookie(key="rolegroup", value=None)) !='admin':
-        response.set_cookie(key="roleadmin", value="")
-    else:
-        response.set_cookie(key="roleadmin", value="admin")
+    readrights_func(rolegroupvalue,response)
+    # response.set_cookie(key="rolegroup", value=rolegroupvalue)
+    # if str(    response.set_cookie(key="rolegroup", value=None)) !='admin':
+    #     response.set_cookie(key="roleadmin", value="")
+    # else:
+    #     response.set_cookie(key="roleadmin", value="admin")
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
