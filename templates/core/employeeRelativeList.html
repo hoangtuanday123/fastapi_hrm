@@ -17,6 +17,7 @@
                   <th hidden>ID</th>
                   <th style="text-align: center;">FullName</th>
                   <th style="text-align: center;">Relationship</th>
+                  <th style="text-align: center;">Type</th>
                   {% if readrights=='3' or readrights=='4' or readrights ==None %}
                   <th style="text-align: center;">Detail</th>
                   {% endif %}
@@ -32,6 +33,7 @@
                       <td hidden>{{ user[0] }}</td>
                       <td >{{ user[1] }}</td>
                       <td>{{ user[2] }}</td>
+                      <td>{{ user[3] }}</td>
                       {% if readrights=='3' or readrights=='4' or readrights ==None %}
                       <td style="text-align: center;">
                         

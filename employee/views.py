@@ -66,18 +66,19 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-        select ei.id,e.fullname,e.Relationship,ei.col_Privateinsurance,ei.col_Additionalprivateinsurance,ei.col_Dependant,ei.col_Emergencycontact ,ei.col_Beneficiarycontact,e.id
-        from employeerelative_informationuser ei join employeeRelative e on ei.idemployeerelative=e.id join informationUser i on i.id=ei.idinformationuser where i.id=?"""
+        
+select ei.id,e.fullname,e.Relationship,ei.col_Privateinsurance,ei.col_Additionalprivateinsurance,ei.col_Dependant,ei.col_Emergencycontact ,ei.col_Beneficiarycontact,e.id,r.type
+        from employeerelative_informationuser ei join employeeRelative e on ei.idemployeerelative=e.id join informationUser i on i.id=ei.idinformationuser join relationtype r on r.id=e.relationtypeid where i.id=?"""
     value=decode_id(informationuserid)
     cursor.execute(sql,value)
     temp=cursor.fetchall()
     conn.commit()
     conn.close() 
-    temp1=[(user[0],user[1],user[2],user[3],user[8]) for user in temp if user[3]==True]
-    temp2=[(user[0],user[1],user[2],user[4],user[8]) for user in temp if user[4]==True]
-    temp3=[(user[0],user[1],user[2],user[5],user[8]) for user in temp if user[5]==True]
-    temp4=[(user[0],user[1],user[2],user[6],user[8]) for user in temp if user[6]==True]
-    temp5=[(user[0],user[1],user[2],user[7],user[8]) for user in temp if user[7]==True]
+    temp1=[(user[0],user[1],user[2],user[3],user[8],user[9]) for user in temp if user[3]==True]
+    temp2=[(user[0],user[1],user[2],user[4],user[8],user[9]) for user in temp if user[4]==True]
+    temp3=[(user[0],user[1],user[2],user[5],user[8],user[9]) for user in temp if user[5]==True]
+    temp4=[(user[0],user[1],user[2],user[6],user[8],user[9]) for user in temp if user[6]==True]
+    temp5=[(user[0],user[1],user[2],user[7],user[8],user[9]) for user in temp if user[7]==True]
 
     conn=db.connection()
     cursor=conn.cursor()
@@ -344,13 +345,13 @@ def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,c
 def employeerelativelist(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from employeeRelative where idinformationuser=?"
+    sql="select e.id,e.Relationship,e.fullname,r.type from employeeRelative e join relationtype r on e.relationtypeid=r.id where e.idinformationuser=?"
     value=(decode_id(informationuserid))
     cursor.execute(sql,value)
     employeerelativetemp=cursor.fetchall()
     conn.commit()
     conn.close()
-    employeerelativelist=[(relative[0],relative[8],relative[1]) for relative in employeerelativetemp ]
+    employeerelativelist=[(relative[0],relative[1],relative[2],relative[3]) for relative in employeerelativetemp ]
     if employeerelativelist is None:
         employeerelativelist =[]
     idaccount=current_user.id
@@ -378,6 +379,12 @@ def employeerelativelist(request:Request,informationuserid,current_user: User = 
 
 async def addemployeerelative_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
 
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from relationtype"
+    cursor.execute(sql)
+    relativetypetemp=cursor.fetchall()
+    relativetype =[(typeid[0],typeid[1])for typeid in relativetypetemp ]
     
     form = EmployeeRelativeForm(request)
     
@@ -405,7 +412,8 @@ async def addemployeerelative_get(request:Request,informationuserid,current_user
         "form":form,
         # "informationuserjobid":_informationuserjobid,
         "idaccount":idaccount,
-        "idinformationuser":informationuserid
+        "idinformationuser":informationuserid,
+        "relativetype":relativetype
 
         
         }
@@ -429,7 +437,7 @@ async def addemployeerelative(request:Request,informationuserid,current_user: Us
     conn.commit()
     conn.close()
     await form.load_data()
-    
+    form_method= await request.form()
   
     if form.errors:
         print("Form validation errors:", form.errors)
@@ -437,11 +445,11 @@ async def addemployeerelative(request:Request,informationuserid,current_user: Us
     cursor = conn.cursor()
     sql = """
         INSERT INTO employeeRelative(Relationship, phone, email, contactaddress, career, idinformationuser, critizenIdentìicationNo,
-        fullname, dateofbirth, placeofbirth, issuedon, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        fullname, dateofbirth, placeofbirth, issuedon, address,relationtypeid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     """
     value = (
         form.Relationship, form.phone, form.email, form.contactaddress, form.career, decode_id(informationuserid),
-        form.citizenIdentificationNo, form.fullname, form.dateofbirth, form.placeofbirth, form.issued, form.address,
+        form.citizenIdentificationNo, form.fullname, form.dateofbirth, form.placeofbirth, form.issued, form.address,form_method.get("relativetype")
         )
     cursor.execute(sql, value)
     conn.commit()
@@ -469,7 +477,7 @@ def employeerelative(request:Request,employeerelativeid,informationuserid,curren
      
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from employeeRelative where id=?"
+    sql="select e.*,r.type from employeeRelative e join relationtype r on e.relationtypeid=r.id where e.id=?"
     value=(employeerelativeid)
     cursor.execute(sql,value)
     employeerelativetemp=cursor.fetchone()
@@ -478,12 +486,12 @@ def employeerelative(request:Request,employeerelativeid,informationuserid,curren
         employeerelative=employeeRelative(id=employeerelativetemp[0],Relationship=employeerelativetemp[1],phone=employeerelativetemp[2],email=employeerelativetemp[3],
                                     contactaddress=employeerelativetemp[4],career=employeerelativetemp[5],citizenIdentificationNo=employeerelativetemp[7],
                                     fullname=employeerelativetemp[8],dateofbirth=employeerelativetemp[9],placeofbirth=employeerelativetemp[10],
-                                    issuedon=employeerelativetemp[11],address=employeerelativetemp[12])
+                                    issuedon=employeerelativetemp[11],address=employeerelativetemp[12],relationtype=employeerelativetemp[14])
     else:
         employeerelative=employeeRelative(id=None,Relationship=None,phone=None,email=None,
                                     contactaddress=None,career=None,citizenIdentificationNo=None,
                                     fullname=None,dateofbirth=None,placeofbirth=None,
-                                    issuedon=None,address=None)
+                                    issuedon=None,address=None,relationtype=None)
     idaccount=current_user.id
     if request.cookies.get("roleadmin")=="admin" :
         idaccount=request.cookies.get("idaccountadminmanager")

@@ -283,11 +283,13 @@ class employeeRelative():
     placeofbirth=""
     address=""
     issuedon=""
-    def __init__(self ,id,Relationship,phone,
+    relationtype=""
+    def __init__(self ,id,Relationship,phone,relationtype,
     email,contactaddress,career,citizenIdentificationNo,fullname,dateofbirth,placeofbirth,address,issuedon):
        
         self.id=id
         self.Relationship=Relationship
+        self.relationtype=relationtype
         self.phone=phone
         self.email=email
         self.contactaddress=contactaddress

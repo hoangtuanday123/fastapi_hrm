@@ -59,6 +59,37 @@
                       </div>
                     </form>
                     <hr>
+                    <form role="form" method="POST">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <label for="relationtype" class="mb-0">relationtype</label>
+                        </div>
+                        <div class="col-sm-9" id="relationtype-container">
+                  
+                          <div id="edit_mode_relationtype_edit" style="display: none;" >
+                            <div class="row">
+                              <div class="col">
+                                  <input type="text" id="relationtype" name="relationtype" class="form-control" placeholder="{{employeerelative.relationtype}}">
+                              </div>
+                              
+                          </div>
+                          
+                          </div>
+                  
+                          <div id="edit_mode_Relationship_show">
+                            <p class="col text-muted mb-0">
+                              {{employeerelative.relationtype}}
+                                {% if readrights == '4' or readrights == None %}
+                                    <span class="float-right">
+                                        <i class="fas fa-edit edit-icon edit_icon" onclick="enableEdit('relationtype','{{employeerelative.relationtype}}')" hidden></i>
+                                    </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        </div>
+                      </div>
+                    </form>
+                    <hr>
                     <form action="/edit_employeerelative/phone/{{employeerelative.id}}/{{informationuserid}}" role="form" method="POST">
                     <div class="row">
                       <div class="col-sm-3">
