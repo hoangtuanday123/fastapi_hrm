@@ -644,7 +644,7 @@ def copytasks():
 def submittasks(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval "
+    sql="update weeklytimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval' "
     cursor.execute(sql,select)
     conn.commit()
     conn.close()
@@ -671,7 +671,8 @@ def savetasks(listweeklytimesheet):
         conn=db.connection()
         cursor=conn.cursor()
         sql="""update weeklytimesheet set mon=?,tue=?,wed=?,thu=?, fri=?,sat=?,sun=?,statustimesheet='saved' where id=? and statustimesheet !='pending approval'
-        update weeklytimesheet set progress=(mon+tue+wed+thu+fri+sat+sun) where id=? and statustimesheet !='pending approval' and statustimesheet !='approval"""
+        update weeklytimesheet set progress=(mon+tue+wed+thu+fri+sat+sun) where id=? and statustimesheet !='pending approval' and statustimesheet !='approval'
+        """
         value=(weeklytimesheet[1],weeklytimesheet[2],weeklytimesheet[3],weeklytimesheet[4],weeklytimesheet[5],weeklytimesheet[6],weeklytimesheet[7],weeklytimesheet[0],weeklytimesheet[0])
         cursor.execute(sql,value)
         conn.commit()

@@ -136,8 +136,9 @@ async def authorizationUser(request:Request,response:Response, current_user: Use
         response.set_cookie(key="roleuser", value="employee")
         #background_tasks.add_task(send_cookie,response,key="roleuser", value="employee")
         image_path=request.cookies.get("image_path_session")
-      
+        response.set_cookie(key="image_path_session", value=image_path_value)
         fullname=request.cookies.get("fullname_session")
+        response.set_cookie(key="fullname_session", value=fullname_value)
         return response
         
         

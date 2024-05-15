@@ -13,14 +13,16 @@
           <button class="btn btn-sm btn-outline-secondary mr-1" data-table="Insurance" type="button">Insurance</button>
 
           {% if readrights=='3' or readrights=='4' or readrights ==None %}
-          <button class="btn btn-sm btn-outline-secondary mr-1"  onclick="location.href='/employeepage/informationuserjob/laborcontract/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Contract</button>
-          <button class="btn btn-sm btn-outline-secondary"  onclick="location.href='/employeepage/informationuserjob/forexsalary/{{userjob.EmployeeNo}}/{{informationuserid}}/{{totp}}'" type="button">Forex Salary</button>
+          <button class="btn btn-sm btn-outline-secondary mr-1"  onclick="location.href='/employeepage/informationuserjob/laborcontract/{{userjob.EmployeeNo}}/{{informationuserid}}'" type="button">Contract</button>
+          <button class="btn btn-sm btn-outline-secondary"  onclick="location.href='/employeepage/informationuserjob/forexsalary/{{userjob.EmployeeNo}}/{{informationuserid}}'" type="button">Forex Salary</button>
           {% endif %}
         </form>
       </nav>
 
       <div id="section">
+        {%block content_nav%}
 
+        {%endblock%}
         <div  id="informationJob" style="display: none;" >
           <div  class="card-body">
             <div class="row">
@@ -708,9 +710,7 @@
 
   </div>
 </div>
-{%block content_nav%}
 
-{%endblock%}
 <a class="scroll-to-top rounded" href="#page-top">
   <i class="fas fa-angle-up"></i>
   </a>

@@ -127,6 +127,26 @@
 
                     </div>
                 </li>
+
+                <!-- Nav Item - Annual Leave Management -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Payroll Management
+                    <!-- Dropdown - Annual Leave Management -->
+                    <div class="dropdown-menu shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/adminpage/PayrollManagement/payrollReport">
+                            
+                            Payroll Report
+                        </a>
+                        <a class="dropdown-item" href=>
+                            
+                            Role
+                        </a>
+
+                    </div>
+                </li>
                 </ul>
 
                  <!-- avatar -->
@@ -170,7 +190,7 @@
                 
     
             {% elif current_user.is_authenticated and roleuser == "employee" %}
-            {%if fullname %}
+            
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
@@ -281,175 +301,8 @@
                 </li>
 
             </ul>
-            {%endif%}
-            {% elif current_user.is_authenticated%}
-            {%if fullname %}
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
-                        aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                        
-                    </a>
-                </li>
-                <!-- Nav Item - User Management -->
-                <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                       Users
-                   </a>
-                   <!-- Dropdown - User Management -->
-                   <div class="dropdown-menu shadow animated--grow-in"
-                       aria-labelledby="userDropdown">
-                       <a class="dropdown-item" href="">
-                           
-                           Users
-                       </a>
 
-                       <a class="dropdown-item" href="">
-                           
-                           Role
-                       </a>
-
-                       <a class="dropdown-item" href="">
-                           
-                           Groups User
-                       </a>
-
-                   </div>
-               </li>
-
-                <!-- Nav Item -ERP Management -->
-                <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                       ERP
-                   </a>
-                   <!-- Dropdown - ERP Management -->
-                   <div class="dropdown-menu shadow animated--grow-in"
-                       aria-labelledby="userDropdown">
-                       <a class="dropdown-item" href="#">
-                           
-                           Users
-                       </a>
-                       <a class="dropdown-item" href="#">
-                           
-                           Role
-                       </a>
-
-                   </div>
-               </li>
-
-                <!-- Nav Item - Annual Leave Management -->
-                <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                       Annual Leave
-                   </a>
-                   <!-- Dropdown - Annual Leave Management -->
-                   <div class="dropdown-menu shadow animated--grow-in"
-                       aria-labelledby="userDropdown">
-                       <a class="dropdown-item" href="#">
-                           
-                           Users
-                       </a>
-                       <a class="dropdown-item" href="#">
-                           
-                           Role
-                       </a>
-
-                   </div>
-               </li>
-               </ul>
-
-               <!-- avatar -->
-
-               <ul class="navbar-nav ml-auto">
-                <!-- Nav Item - User Information -->
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('My Profile', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        
-                        <img class="img-profile rounded-circle"
-                            src="{{ url_for('static', path='source/' + image_path) }}">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{fullname }}</span>
-                        
-                    </a>
-                    <!-- Dropdown - User Information -->
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
-                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Profile
-                        </a>
-                        <a class="dropdown-item" href="\getcodechangepassword">
-                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Change Password
-                        </a>
-                        <a class="dropdown-item" href="\logout">
-                            <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Activity Log
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <p class="dropdown-item">
-                            <a  href="\logout" onclick="resetLocalStorage()">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Logout
-                            </a>
-                        </p>
-                        
-                    </div>
-                </li>
-
-            </ul>
-            {% else %}
-            <ul class="navbar-nav ml-auto">
-                <!-- Nav Item - User Information -->
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="/home" role="button"
-                        aria-haspopup="true" aria-expanded="false">
-    
-                        <span class="mr-2 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                        
-                    </a>
-                </li>
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                        aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">ABOUT 1</span>
-                        
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="/signin" role="button"
-                         aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">SIGN IN</span>
-                        
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="/register" role="button"
-                         aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">REGISTER</span>
-                        
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                         aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">CONTACT</span>
-                        
-                    </a>
-                </li>
-            </ul>
-            {%endif%}
+            
             {% else %}
             <!-- <ul class="navbar-nav  mr-auto">
                 <li class="nav-item dropdown no-arrow">
@@ -511,14 +364,19 @@
         {% endif %}
 
         </nav>
+        
+        <div  style="padding-top: 70px;">
+            {% if current_user.is_authenticated and (fullname or fullname_admin) %}
+            <div class="card-header row py-1 text-dark">
+                <p class="ml-3 mb-0" id="pathDisplay"></p>
+            </div>
+            {% endif %}
         </div>
+        
         </div>
         <!-- Page Wrapper -->
         <!-- display path -->
-        {% if current_user.is_authenticated and (fullname or fullname_admin) %}
-        <div class="card-header row py-1 ml-auto mr-auto text-dark">
-            <p class=" ml-3 mb-0  " id="pathDisplay"></p>
-        </div>
+
         <script>
             window.onload = function() {
                 if (window.location.pathname === '/signin') {
@@ -560,7 +418,6 @@
             }
             document.getElementById('pathDisplay').textContent = path.join(" / ");
         </script>
-        {% endif %}
         
         <script>
             function resetLocalStorage() {

@@ -24,7 +24,7 @@ employee = APIRouter()
 
 @employee.get("/employeepage/{image_path}/{fullname}",tags=['employee'], response_class=HTMLResponse)
 async def employeepage(request:Request,response:Response,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
-    await asyncio.sleep(0.1)
+   
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from informationUser where id_useraccount=?  "
@@ -296,7 +296,8 @@ def laborcontract(request:Request,response:Response,informationuserjobid,informa
         "contract":contracttemp,
         "informationuserjobid":informationuserjobid,
         "idaccount":idaccount,
-        "idinformationuser":informationuserid
+        "idinformationuser":informationuserid,
+        "readrights": request.cookies.get("readrights")
     }
     return templates.TemplateResponse("core/contract.html",context)
     
@@ -333,7 +334,8 @@ def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,c
         "forexSalary":forexSalary,
         "informationuserjobid":informationuserjobid,
         "idaccount":idaccount,
-        "idinformationuser":informationuserid
+        "idinformationuser":informationuserid,
+        "readrights": request.cookies.get("readrights")
     }
     return templates.TemplateResponse("core/forexsalary.html",context)
     
