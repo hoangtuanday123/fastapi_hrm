@@ -16,6 +16,7 @@ import pdfkit
 import zipfile
 from core.models import user_avatar
 from io import BytesIO
+import datetime
 templates = Jinja2Templates(directory="templates")
 import asyncio
 admin=APIRouter()
@@ -1431,8 +1432,26 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
     if await form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into laborContract values(null,?,?,?,?,?,?,?,?)"
+        sql="""
+        SET NOCOUNT ON;
+        DECLARE @id int;
+        insert into laborContract values(null,?,?,?,?,?,?,?,?)
+        SET @id = SCOPE_IDENTITY();            
+        SELECT @id AS the_output;
+        """
         value=(form.Laborcontracttype,form.Laborcontractterm,form.Commencementdate,form.Position,form.Employeelevel,idinformationuserjob[0],1,form.dayoff)
+        cursor.execute(sql,value)
+        idcontract=cursor.fetchone()
+        conn.commit()
+        conn.close()
+
+        current_year = datetime.datetime.now().year
+        current_year=int(current_year)
+
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="insert into dayoffincontract values(?,?,?)"
+        value=(idcontract[0],form.dayoff,current_year)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()

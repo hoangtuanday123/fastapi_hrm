@@ -1,7 +1,7 @@
 import db
 from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse,FileResponse,StreamingResponse
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from authentication.models import get_current_user_from_cookie,get_current_user_from_token
 from authentication.models import User
@@ -10,6 +10,12 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import calendar
 import ast
+import uuid
+import pandas as pd
+from io import BytesIO
+import pdfkit
+import zipfile
+import io
 templates = Jinja2Templates(directory="templates")
 payroll = APIRouter()
 
@@ -25,6 +31,33 @@ def count_weekdays(start_date, end_date):
     
     return weekdays_count
 
+def calculate_pit(taxable_income):
+    if taxable_income <= 0:
+        return 0
+
+    brackets = [
+        (0,5000000, 0.05),
+        (5000000,10000000, 0.1),
+        (10000000,18000000, 0.15),
+        (18000000,32000000, 0.2),
+        (32000000,52000000, 0.25),
+        (52000000,80000000, 0.3),
+        (80000000,float('inf'), 0.35)
+    ]
+
+    # Calculate tax
+    tax = 0
+    for bracket_under_limit,bracket_top_limit, rate in brackets:
+        if taxable_income > bracket_top_limit:
+            tax += (bracket_top_limit-bracket_under_limit) * rate
+            if bracket_under_limit == "80000000":
+                tax += (taxable_income-bracket_under_limit) * rate
+                break
+        else:
+            tax += (taxable_income-bracket_under_limit) * rate
+            break
+
+    return tax
 
 def tinhluongnhanvientra(g,grosssalary):
     #nhan vien
@@ -48,31 +81,33 @@ def tinhluongnhanvientra(g,grosssalary):
     giacanhnguoiphuthuoc=4400000*int(g[7])
     thunhaptruocthue=grosssalary-bhxh-bhyt-bhtn
     thunhapchiuthue=thunhaptruocthue-giacanhbanthan-giacanhnguoiphuthuoc
-    thuethunhap=0
-    if int(thunhapchiuthue<=5000000):
-        thuethunhap=thunhapchiuthue*0.05
-    elif int(thunhapchiuthue>5000000 and thunhapchiuthue<=10000000 ):
-        thuethunhap=thunhapchiuthue*0.1
-    elif int(thunhapchiuthue>10000000 and thunhapchiuthue<=18000000 ):
-        thuethunhap=thunhapchiuthue*0.15
-    elif int(thunhapchiuthue>18000000 and thunhapchiuthue<=32000000 ):
-        thuethunhap=thunhapchiuthue*0.2   
-    elif int(thunhapchiuthue>32000000 and thunhapchiuthue<=52000000 ):
-        thuethunhap=thunhapchiuthue*0.25
-    elif int(thunhapchiuthue>52000000 and thunhapchiuthue<=80000000 ):
-        thuethunhap=thunhapchiuthue*0.30
-    elif int(thunhapchiuthue>80000000):
-        thuethunhap=thunhapchiuthue*0.35
+    thuethunhap=calculate_pit(thunhapchiuthue)
+    # if int(thunhapchiuthue<=5000000):
+    #     thuethunhap=thunhapchiuthue*0.05
+    # elif int(thunhapchiuthue>5000000 and thunhapchiuthue<=10000000 ):
+    #     thuethunhap=thunhapchiuthue*0.1
+    # elif int(thunhapchiuthue>10000000 and thunhapchiuthue<=18000000 ):
+    #     thuethunhap=thunhapchiuthue*0.15
+    # elif int(thunhapchiuthue>18000000 and thunhapchiuthue<=32000000 ):
+    #     thuethunhap=thunhapchiuthue*0.2   
+    # elif int(thunhapchiuthue>32000000 and thunhapchiuthue<=52000000 ):
+    #     thuethunhap=thunhapchiuthue*0.25
+    # elif int(thunhapchiuthue>52000000 and thunhapchiuthue<=80000000 ):
+    #     thuethunhap=thunhapchiuthue*0.30
+    # elif int(thunhapchiuthue>80000000):
+    #     thuethunhap=thunhapchiuthue*0.35
     netsalary=thunhaptruocthue-thuethunhap
     #congty
     bhxhct=1800000*20*0.17
     bhtnldct=1800000*20*0.005
     bhytct=1800000*20*0.03
     tongcongcongtytra=grosssalary+bhxhct+bhtnct+bhytct+bhtnldct
-    sumsalary=[grosssalary,bhxh,bhyt,bhtn,giacanhbanthan,giacanhnguoiphuthuoc
-               ,thunhaptruocthue,thunhapchiuthue,thuethunhap,netsalary,
-               bhxhct,bhtnldct,bhytct,bhtnct,tongcongcongtytra]
+    sumsalary=[round(grosssalary),bhxh,bhyt,bhtn,giacanhbanthan,giacanhnguoiphuthuoc
+               ,round(thunhaptruocthue),round(thunhapchiuthue),round(thuethunhap),round(netsalary),
+               bhxhct,bhtnldct,bhytct,bhtnct,round(tongcongcongtytra)]
     return sumsalary
+
+
 
 
 def dayoffinmonth(id,last_month_25_str,current_month_25_str):
@@ -81,11 +116,11 @@ def dayoffinmonth(id,last_month_25_str,current_month_25_str):
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-    select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date,d.WeekNumber,w.iduser
+     select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date,d.WeekNumber,w.iduser
  from weeklytimesheet w join project p on w.projectid=p.projectid join
- projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
+ projecttype pt on pt.projecttypeid=p.projecttypeid LEFT JOIN componentproject c on w.componentid =c.id join 
  taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where d.Year=2024 and 
- d.date BETWEEN ? AND ? and w.iduser=? and w.status=1 and w.statustimesheet='approval' and pt.Name='Non-Project'
+ d.date BETWEEN ? AND ? and w.iduser=? and w.status=1 and w.statustimesheet='approval' and pt.Name='Non-Project' and t.name='unpaid days off'
  """
     value=(last_month_25_str,current_month_25_str,id)
     cursor.execute(sql,value)
@@ -119,24 +154,55 @@ def dayoffinmonth(id,last_month_25_str,current_month_25_str):
     dayoff=dayoff/8
     return dayoff
        
+@payroll.get("/payrollmanagement",tags=['payroll'], response_class=HTMLResponse)
+async def payrollmanagement(request:Request,current_user: User = Depends(get_current_user_from_token)):
+    current_date = datetime.now()
+
+    # Lấy tháng và năm hiện tại
+    current_month = current_date.month
+    current_year = current_date.year
+    return RedirectResponse(url=f"/payroll/{current_month}/{current_year}",status_code=status.HTTP_302_FOUND)
 
 
-@payroll.get("/payroll",tags=['payroll'], response_class=HTMLResponse)
-async def payrolllist(request:Request,current_user: User = Depends(get_current_user_from_token)):
-    # Lấy ngày hiện tại
-    today = datetime.today()
+@payroll.get("/payrollmanagementemployee",tags=['payroll'], response_class=HTMLResponse)
+async def payrollmanagementemployee(request:Request,current_user: User = Depends(get_current_user_from_token)):
+    current_date = datetime.now()
 
-    # Tính ngày 25 của tháng hiện tại
-    current_month_25 = today.replace(day=25)
+    # Lấy tháng và năm hiện tại
+    current_month = current_date.month
+    current_year = current_date.year
+    return RedirectResponse(url=f"/payrollemployee/{current_month}/{current_year}",status_code=status.HTTP_302_FOUND)
 
-    # Tính ngày 25 của tháng trước
-    last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+@payroll.get("/payroll/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def payrolllist_get(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
+    current_month_25_str=None
+    last_month_25_str=None
+    current_date = datetime.now()
 
-    # Định dạng ngày theo '%Y-%m-%d'
-    current_month_25_str = current_month_25.strftime('%Y-%m-%d')
-    last_month_25_str = last_month_25.strftime('%Y-%m-%d')
-    print(f"Từ ngày 25 tháng trước: {last_month_25_str}")
-    print(f"Đến ngày 25 tháng này: {current_month_25_str}")
+    # Lấy tháng và năm hiện tại
+    current_month = current_date.month
+    current_year = current_date.year
+    if month==str(current_month) and year==str(current_year):
+        # Lấy ngày hiện tại
+        today = datetime.today()
+
+        # Tính ngày 25 của tháng hiện tại
+        current_month_25 = today.replace(day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+
+        # Định dạng ngày theo '%Y-%m-%d'
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+    else:
+        current_month_25 = datetime(year=int(year), month=int(month), day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+
 
     conn=db.connection()
     cursor=conn.cursor()
@@ -155,36 +221,42 @@ async def payrolllist(request:Request,current_user: User = Depends(get_current_u
     cursor=conn.cursor()
     sql="""
     SELECT i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincontract, f.Quaterlybonustarget, f.Annualbonustarget, 
-    COALESCE(SUM(CASE WHEN ei.col_Dependant = 1 THEN 1 ELSE 0 END), 0) AS TotalDependants,inf.Email,inf.id
+    COALESCE(SUM(CASE WHEN ei.col_Dependant = 1 THEN 1 ELSE 0 END), 0) AS TotalDependants,inf.Email,inf.id, inf.Fullname
 FROM informationUserJob i 
 JOIN laborContract l ON i.id = l.idinformationUserJob 
 JOIN forexSalary f ON f.idinformationUserJob = i.id 
 JOIN informationUser inf ON inf.id = i.idinformationuser 
 LEFT JOIN employeerelative_informationuser ei ON ei.idinformationuser = inf.id
 where i.is_active=1 and l.is_active=1 and f.is_active=1
-GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincontract, f.Quaterlybonustarget, f.Annualbonustarget,inf.Email,inf.id"""
+GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincontract, f.Quaterlybonustarget, f.Annualbonustarget,inf.Email,inf.id,inf.Fullname"""
     cursor.execute(sql)
     grosstemp=cursor.fetchall()
     conn.commit()
     conn.close()
-    gross=[(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9])for p in grosstemp]
+    gross=[(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10])for p in grosstemp]
 
     tempsumsalary=[]
     for g in gross:
         for d in dayofflist:
             if d[0]==g[9]:
-                grosssalary=int(g[3])+int(g[4])+int(g[5])+int(g[6])
-                if int(d[1])>int(d[2]):
-                    a=int(d[1])-int(d[2])
-                    weekdays_count= count_weekdays(last_month_25,current_month_25)
-                    percentworkinmonth=(weekdays_count-a)/weekdays_count
-                    salaryincontract=int(g[4])*percentworkinmonth
-                    grosssalary=salaryincontract
-                salary=tinhluongnhanvientra(g,grosssalary)
+                
+                weekdays_count= count_weekdays(last_month_25,current_month_25)
+                offset=int(d[1])
+                actualday=weekdays_count-offset
+                percentworkinmonth=actualday/weekdays_count
+                amoundgrosssalary=round(int(g[4])*percentworkinmonth)
+                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])
+                salary=tinhluongnhanvientra(g,totalincome)
                 salary.append(g[8])
-                salary.append(d[1])
-                salary.append(g[9])
+                salary.append(round(d[1]))
+                salary.append(round(g[9]))
                 salary.append(str(g[7]))
+                salary.append(str(weekdays_count))
+                salary.append(str(offset))
+                salary.append(str(actualday))
+                salary.append(str(round(g[4])))
+                salary.append(g[10]),
+                salary.append(amoundgrosssalary)
         tempsumsalary.append(salary)
     context={
         "request":request,
@@ -193,31 +265,353 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
         "roleadmin":request.cookies.get("roleadmin"),
         "fullname_admin":request.cookies.get("fullname_adminsession"),
         "current_user":current_user,
-        "tempsumsalary":tempsumsalary
+        "tempsumsalary":tempsumsalary,
+        "current_month":str(current_month),
+        "current_year":str(current_year),
+        "year":year,
+        "month":month
     }
     return templates.TemplateResponse("payroll/payrolllist.html",context)
 
-    
+@payroll.post("/payroll/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def payrolllist(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
+    current_month_25_str=None
+    last_month_25_str=None
+    current_date = datetime.now()
 
-@payroll.get("/payrolldetail/{iduser}/{tempsumsalary}",tags=['payroll'], response_class=HTMLResponse)
-async def payrolldetail(request:Request,iduser,tempsumsalary,current_user: User = Depends(get_current_user_from_token)):
-    data_list = ast.literal_eval(tempsumsalary)
-    detail=[]
-    totalinsurance=0
-    for d in data_list:
-        if str(d[17])==iduser:
-            totalinsurance=int(d[1])+int(d[2])+int(d[3])
-            
-            detail=d
-            break
+    # Lấy tháng và năm hiện tại
+    current_month = current_date.month
+    current_year = current_date.year
+    if month==str(current_month) and year==str(current_year):
+        # Lấy ngày hiện tại
+        today = datetime.today()
+
+        # Tính ngày 25 của tháng hiện tại
+        current_month_25 = today.replace(day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+
+        # Định dạng ngày theo '%Y-%m-%d'
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+    else:
+        current_month_25 = datetime(year=int(year), month=int(month), day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="SELECT i.id,l.dayoff FROM informationUser i join informationUserJob ij on i.id=ij.idinformationuser join laborContract l on l.idinformationUserJob=ij.id"
+    cursor.execute(sql)
+    idtemp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    dayofflist=[]
+    for id in idtemp:
+        dayoff=dayoffinmonth(id[0],last_month_25_str,current_month_25_str)
+        id_dayoff=[id[0],dayoff,id[1]]
+        dayofflist.append(id_dayoff)
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""
+    SELECT i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincontract, f.Quaterlybonustarget, f.Annualbonustarget, 
+    COALESCE(SUM(CASE WHEN ei.col_Dependant = 1 THEN 1 ELSE 0 END), 0) AS TotalDependants,inf.Email,inf.id, inf.Fullname
+FROM informationUserJob i 
+JOIN laborContract l ON i.id = l.idinformationUserJob 
+JOIN forexSalary f ON f.idinformationUserJob = i.id 
+JOIN informationUser inf ON inf.id = i.idinformationuser 
+LEFT JOIN employeerelative_informationuser ei ON ei.idinformationuser = inf.id
+where i.is_active=1 and l.is_active=1 and f.is_active=1
+GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincontract, f.Quaterlybonustarget, f.Annualbonustarget,inf.Email,inf.id,inf.Fullname"""
+    cursor.execute(sql)
+    grosstemp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    gross=[(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10])for p in grosstemp]
+
+    tempsumsalary=[]
+    for g in gross:
+        for d in dayofflist:
+            if d[0]==g[9]:
+                weekdays_count= count_weekdays(last_month_25,current_month_25)
+                offset=int(d[1])
+                actualday=weekdays_count-offset
+                percentworkinmonth=actualday/weekdays_count
+                amoundgrosssalary=int(g[4])*percentworkinmonth
+                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])
+                salary=tinhluongnhanvientra(g,totalincome)
+                salary.append(g[8])
+                salary.append(round(d[1]))
+                salary.append(round(g[9]))
+                salary.append(str(g[7]))
+                salary.append(str(weekdays_count))
+                salary.append(str(offset))
+                salary.append(str(actualday))
+                salary.append(str(round(g[4])))
+                salary.append(g[10]),
+                salary.append(amoundgrosssalary)
+              
+        tempsumsalary.append(salary)
+    form_method=await request.form()
+    if "savepayroll" in form_method and form_method.get("savepayroll")=="savepayroll":
+        savepayroll(tempsumsalary,month,year)
+        return RedirectResponse(url=f"/payroll/{month}/{year}",status_code=status.HTTP_302_FOUND)
+    if "exportexcels" in form_method and form_method.get("exportexcels")=="exportexcels":
+        iduserlist=form_method.getlist("checkbox")
+        file_path=exportexcels(iduserlist,month,year)
+        return FileResponse(file_path, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        #return str(file_path)
+    if 'exportpdf' in form_method and form_method.get("exportpdf")=="exportpdf":
+        iduserlist=form_method.getlist("checkbox")
+       
+        zip_buffer = BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
+            for id in iduserlist:
+                if(str(id)!='None'):
+                    
+                    pdf_content = exportfilepdf(request,id,month,year)
+                    zip_file.writestr(f'output'+id+'.pdf', pdf_content)
+        zip_buffer.seek(0)
+        response = Response(zip_buffer.read())
+        response.headers["Content-Disposition"] = "attachment; filename=your_zip_file_pdf.zip"
+        response.headers["Content-Type"] = "application/zip"
+
+        return response
+        
+
+    return RedirectResponse(url=f"/payroll/{form_method.get("month")}/{form_method.get("year")}",status_code=status.HTTP_302_FOUND)
+    # context={
+    #     "request":request,
+    #     "image_path_admin":request.cookies.get("image_path_adminsession"),
+    #     "roleuser":request.cookies.get("roleuser"),
+    #     "roleadmin":request.cookies.get("roleadmin"),
+    #     "fullname_admin":request.cookies.get("fullname_adminsession"),
+    #     "current_user":current_user,
+    #     "tempsumsalary":tempsumsalary,
+    #     "current_month":str(current_month),
+    #     "current_year":str(current_year),
+    #     "year":year,
+    #     "month":month
+    # }
+    # return templates.TemplateResponse("payroll/payrolllist.html",context)
+
+def exportfilepdf(request:Request,iduser,month,year):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select p.*,l.Position from payroll p join informationUser i on p.iduser=i.id join informationUserJob ij on i.id=ij.idinformationuser join laborContract l on l.idinformationUserJob=ij.id where p.iduser=? and p.month=? and p.year=?"
+    values=(iduser,month,year)
+    cursor.execute(sql,values)
+    export=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    context={
+            "request":request       
+    }
+    html=templates.TemplateResponse("payroll/payrollpdf.html",context).body.decode("utf-8")
+    pdf=pdfkit.from_string(str(html),False,options={"enable-local-file-access": ""})
+    return pdf 
+def exportexcels(iduserlist,month,year):
+    datalist=[]
+    priod=''
+    for id in iduserlist:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select p.*,l.Position from payroll p join informationUser i on p.iduser=i.id join informationUserJob ij on i.id=ij.idinformationuser join laborContract l on l.idinformationUserJob=ij.id where p.iduser=? and p.month=? and p.year=?"
+        values=(id,month,year)
+        cursor.execute(sql,values)
+        export=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        priod=str(export[26])+"-"+str(export[27])
+        data=[priod,export[1],export[3],export[28],0,export[7],0,0,0,0,export[6],export[24],0,0,0,0,0,0,export[8],export[16],
+              0,export[9],0,export[16],0,0,export[18],export[19],export[21],export[22],
+              export[10],export[11],export[12],export[23],0]
+        datalist.append(data)
+    df = pd.DataFrame(datalist, columns=['Priod', 'Emp.No MSNV', 'Full Name', 'Position','Basic salary','Monthly salary','Transportation allowance','Meal allowance','Internet Allowance','phone Allowance'
+                                         ,'Working day','Amount','Transportation allowance','Meal allowance','Internet Allowance','phone Allowance','overtime'
+                                              ,'Year end bonus','Total Income','Taxable income','personal','dependent','BHXH/SI','Income taxs','PIT TTNCN','Other after tax','Net Take Home',
+                                              'SI BHXH(17.5%)','HI BHYT(3%)','UI BHTN(1%)','SI BHXH(8%)','HI BHYT(1.5%)','UI BHTN(1%)','Total Companys SHUI','Total EEs SHUI'])
+    file_path='payroll'+priod+'.xlsx'
+    df.to_excel(file_path, sheet_name='Sheet_name_1')
+    #return FileResponse(file_path, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    return file_path
+    
+  
+
+def savepayroll(salarylist,month,year):
+    for salary in salarylist:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select * from payroll where iduser=? and month=? and year=?"
+        values=(salary[17],month,year)
+        cursor.execute(sql,values)
+        temp=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        if temp :
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="""
+    update payroll set offset=?, standardofworkingday=?,
+    actualday=?, grosssalaryincontract=?, grosssalary=?, dependants=?, bhxh=?, 
+    bhyt=?, bhtn=?, giacanhbanthan=?, giacanhnguoiphuthuoc=?, thunhaptruocthue=?, 
+    thunhapchiuthue=?, thuethunhap=?, netsalary=?, bhxhct=?, bhtnldct=?, 
+    bhytct=?, bhtnct=?, tongcongtytra=?,amoundgrosssalary=?, createdate=getdate() where iduser=? and month=? and year=?
+    """
+            values=(salary[20],salary[19],salary[21],salary[22],
+                    salary[0],salary[18],salary[1],salary[2],salary[3],salary[4],salary[5],salary[6],
+                    salary[7],salary[8],salary[9],salary[10],salary[11],salary[12],salary[13],salary[14],
+                    salary[17],salary[24],month,year)
+            cursor.execute(sql,values)
+            conn.commit()
+            conn.close()
+        else:
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="""
+    INSERT INTO payroll(iduser, email, fullname, offset, standardofworkingday,
+    actualday, grosssalaryincontract, grosssalary, dependants, bhxh, 
+    bhyt, bhtn, giacanhbanthan, giacanhnguoiphuthuoc, thunhaptruocthue, 
+    thunhapchiuthue, thuethunhap, netsalary, bhxhct, bhtnldct, 
+    bhytct, bhtnct, tongcongtytra,amoundgrosssalary, createdate, month, year) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, GETDATE(), ?, ?)
+    """
+            values=(salary[17],salary[15],salary[23],salary[20],salary[19],salary[21],salary[22],
+                    salary[0],salary[18],salary[1],salary[2],salary[3],salary[4],salary[5],salary[6],
+                    salary[7],salary[8],salary[9],salary[10],salary[11],salary[12],salary[13],salary[14],salary[24],
+                    month,year)
+            cursor.execute(sql,values)
+            conn.commit()
+            conn.close()
+        
+
+@payroll.get("/payrolldetail/{iduser}/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def payrolldetail(request:Request,iduser,month,year,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from payroll where iduser=? and month=? and year=?"
+    values=(iduser,month,year)
+    cursor.execute(sql,values)
+    payrolldetail=cursor.fetchone()
+    conn.commit()
+    conn.close()
     context={
         "request":request,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
         "image_path_admin":request.cookies.get("image_path_adminsession"),
         "roleuser":request.cookies.get("roleuser"),
         "roleadmin":request.cookies.get("roleadmin"),
         "fullname_admin":request.cookies.get("fullname_adminsession"),
         "current_user":current_user,
-        "detail":detail,
-        "totalinsurance":str(totalinsurance)
+        "payrolldetail":payrolldetail
     }
     return templates.TemplateResponse("payroll/payrollDetail.html",context)
+
+
+@payroll.get("/payrollemployee/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def payrolllistemployee_get(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
+    current_month_25_str=None
+    last_month_25_str=None
+    current_date = datetime.now()
+
+    # Lấy tháng và năm hiện tại
+    current_month = current_date.month
+    current_year = current_date.year
+    if month==str(current_month) and year==str(current_year):
+        # Lấy ngày hiện tại
+        today = datetime.today()
+
+        # Tính ngày 25 của tháng hiện tại
+        current_month_25 = today.replace(day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+
+        # Định dạng ngày theo '%Y-%m-%d'
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+    else:
+        current_month_25 = datetime(year=int(year), month=int(month), day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+
+ 
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from payroll where iduser=? and month=? and year=?"
+    values=(decode_id(current_user.idinformationuser),month,year)
+    cursor.execute(sql,values)
+    payroll=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "current_month":str(current_month),
+        "current_year":str(current_year),
+        "year":year,
+        "month":month,
+        "payroll":payroll
+    }
+    return templates.TemplateResponse("payroll/payrolllistemployee.html",context)
+
+
+@payroll.post("/payrollemployee/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def payrolllistemployee_(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
+    current_month_25_str=None
+    last_month_25_str=None
+    current_date = datetime.now()
+
+    # Lấy tháng và năm hiện tại
+    current_month = current_date.month
+    current_year = current_date.year
+    if month==str(current_month) and year==str(current_year):
+        # Lấy ngày hiện tại
+        today = datetime.today()
+
+        # Tính ngày 25 của tháng hiện tại
+        current_month_25 = today.replace(day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+
+        # Định dạng ngày theo '%Y-%m-%d'
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+    else:
+        current_month_25 = datetime(year=int(year), month=int(month), day=25)
+
+        # Tính ngày 25 của tháng trước
+        last_month_25 = (current_month_25 - relativedelta(months=1)).replace(day=25)
+        current_month_25_str = current_month_25.strftime('%Y-%m-%d')
+        last_month_25_str = last_month_25.strftime('%Y-%m-%d')
+
+ 
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from payroll where iduser=? and month=? and year=?"
+    values=(decode_id(current_user.idinformationuser),month,year)
+    cursor.execute(sql,values)
+    payroll=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    form_method=await request.form()
+    return RedirectResponse(url=f"/payrollemployee/{form_method.get("month")}/{form_method.get("year")}",status_code=status.HTTP_302_FOUND)
+    

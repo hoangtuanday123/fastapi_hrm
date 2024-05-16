@@ -14,7 +14,7 @@
                         <input type="text" class="form-control" id="projectname" name="projectname" value="{{ projectname }}" >
                     </div>
                     
-                    <div class="form-floating mb-3">
+                    <!-- <div class="form-floating mb-3">
                         <label for="projecttype">Project Type</label>
                         <select type="text" class="form-control" id="projecttype" name="projecttype"  >
                             <option value="{{ projecttypeid }}">{{ projecttypename }}</option>
@@ -22,11 +22,11 @@
                                 <option value="{{ project[0] }}">{{ project[1] }}</option>
                                 {% endfor %}
                         </select>
-                    </div>
+                    </div> -->
                     
                     
                     <div class="form-floating mb-3 row">
-                        <button type="submit" class=" col btn btn-primary mr-2">Update</button>
+                        <!-- <button type="button" onclick="location.href='/ERP/assigngroup/{{idproject}}'" class=" col btn btn-primary mr-2">Update</button> -->
                         <button type="button" onclick="location.href='/ERP/createtaskandcomponent/{{idproject}}'" class=" col btn btn-success mr-2">Task and Component</button>
                         <button type="button" onclick="location.href='/ERP/deleteproject/{{idproject}}'" class=" col btn btn-danger ">Delete</button>
                     </div>

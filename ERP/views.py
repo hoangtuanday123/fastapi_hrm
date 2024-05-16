@@ -55,13 +55,15 @@ def projectlist(request:Request,current_user: User = Depends(get_current_user_fr
     conn.close()
     projects=[(project[0],project[1],project[2],project[3],project[4],
                project[5],project[6],project[7],project[8])for project in projects_temp]
+    
+    
     context={
         "request":request,
         "current_user":current_user,
         "projects":projects,
         "roleadmin" : request.cookies.get("roleadmin"),
         "image_path_admin":request.cookies.get("image_path_adminsession"),
-        "fullname_admin" : request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
         "roleuser":request.cookies.get("roleuser"),
         "image_path": request.cookies.get("image_path_session"),
         "fullname": request.cookies.get("fullname_session")
@@ -271,6 +273,7 @@ def deleteComponent(idproject,idcomponent):
 
 @ERP.get("/ERP/assigngroup/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def assigngroupproject_get(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
+    groups=[(0,'ALL')]
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id,name from groupuser"
@@ -278,7 +281,9 @@ async def assigngroupproject_get(request:Request,idproject,current_user: User = 
     groups_temp=cursor.fetchall()
     conn.commit()
     conn.close()
-    groups=[(group[0],group[1])for group in groups_temp]
+    for group in groups_temp:
+        groups.append((group[0],group[1]))
+    #groups=[(group[0],group[1])for group in groups_temp]
     context={
         "request":request,
         "current_user":current_user,
@@ -294,6 +299,7 @@ async def assigngroupproject_get(request:Request,idproject,current_user: User = 
 
 @ERP.post("/ERP/assigngroup/{idproject}",tags=['ERP'],response_class=HTMLResponse)
 async def assigngroupproject(request:Request,idproject,current_user: User = Depends(get_current_user_from_token)):
+    groups=[(0,'ALL')]
     conn=db.connection()
     cursor=conn.cursor()
     sql="select id,name from groupuser"
@@ -301,10 +307,38 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
     groups_temp=cursor.fetchall()
     conn.commit()
     conn.close()
-    groups=[(group[0],group[1])for group in groups_temp]
+    for group in groups_temp:
+        groups.append((group[0],group[1]))
+    #groups=[(group[0],group[1])for group in groups_temp]
     form=await request.form()
     
     if request.method=="POST":
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select pt.Name from projecttype pt join project p on p.projecttypeid= pt.projecttypeid where p.projectid=?"
+        value=(idproject)
+        cursor.execute(sql,value)
+        projecttype=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        if projecttype[0]=="Non-Project":
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="select g.id,gd.iduser from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser  where g.id=?"
+            value=(form["group"])
+            cursor.execute(sql,value)
+            groups_temp1=cursor.fetchone()
+            conn.commit()
+            conn.close()
+
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="update project set managerid=?,projectteamid=? where projectid=?"
+            value=(int(groups_temp1[1]),int(groups_temp1[0]),idproject)
+            cursor.execute(sql,value)
+            conn.commit()
+            conn.close()
+            return RedirectResponse(url="/LeaveManagement/leaveList",status_code=status.HTTP_302_FOUND)
         conn=db.connection()
         cursor=conn.cursor()
         sql="select g.id,gd.iduser from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser join rolegroupuser rg on rg.id=gd.idrolegroupuser where rg.rolename='manager' and g.id=?"
@@ -316,6 +350,7 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
         if groups_temp1 is None:
             message=[('warn','group dont have manager role')]
             return RedirectResponse(url=f"/ERP/assigngroup/{idproject}",status_code=status.HTTP_302_FOUND)
+
         conn=db.connection()
         cursor=conn.cursor()
         sql="update project set managerid=?,projectteamid=? where projectid=?"
@@ -433,6 +468,17 @@ def deleteproject(idproject,current_user: User = Depends(get_current_user_from_t
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select pt.Name from project p join projecttype pt on pt.projecttypeid=p.projecttypeid where p.projectid=?"
+    value=(idproject)
+    cursor.execute(sql,value)
+    projecttype=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    if projecttype[0]=='Non-Project':
+        return RedirectResponse(url="/LeaveManagement/leaveList",status_code=status.HTTP_302_FOUND)
     return RedirectResponse(url="/ERP/projectlist",status_code=status.HTTP_302_FOUND)
 
 @ERP.get("/WeeklyTimesheet/{iduser}",tags=['ERP'],response_class=HTMLResponse)
@@ -457,10 +503,28 @@ async def weeklytimesheet_get(request:Request,iduser,year,weeknum,current_user: 
             
     conn=db.connection()
     cursor=conn.cursor()
-    sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress
- from weeklytimesheet w join project p on w.projectid=p.projectid join
- projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
- taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where d.Year=? and d.WeekNumber=? and w.iduser=? and w.status=1"""
+    sql="""SELECT p.projectid,
+       pt.Name,
+       p.projectname,
+       ISNULL(c.name, 'null') AS component_name, -- Thay thế 'Default Name' bằng giá trị mặc định bạn muốn
+       t.name,
+       w.mon,
+       w.tue,
+       w.wed,
+       w.thu,
+       w.fri,
+       w.sat,
+       w.sun,
+       w.statustimesheet,
+       w.note,
+       w.id,
+       w.progress
+FROM weeklytimesheet w
+JOIN project p ON w.projectid = p.projectid
+JOIN projecttype pt ON pt.projecttypeid = p.projecttypeid
+LEFT JOIN componentproject c ON w.componentid = c.id -- Sử dụng LEFT JOIN để lấy giá trị nếu có, nếu không thì null
+JOIN taskproject t ON w.taskid = t.id
+JOIN DATE d ON d.Date = w.Date where d.Year=? and d.WeekNumber=? and w.iduser=? and w.status=1"""
     values=(year,weeknum,decode_id(iduser))
     cursor.execute(sql,values)
     weeklytimesheet_temp=cursor.fetchall()
@@ -518,10 +582,28 @@ async def weeklytimesheet(request:Request,iduser,year,weeknum,current_user: User
             
     conn=db.connection()
     cursor=conn.cursor()
-    sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress
- from weeklytimesheet w join project p on w.projectid=p.projectid join
- projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
- taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where d.Year=? and d.WeekNumber=? and w.iduser=? and w.status=1"""
+    sql="""SELECT p.projectid,
+       pt.Name,
+       p.projectname,
+       ISNULL(c.name, 'null') AS component_name, -- Thay thế 'Default Name' bằng giá trị mặc định bạn muốn
+       t.name,
+       w.mon,
+       w.tue,
+       w.wed,
+       w.thu,
+       w.fri,
+       w.sat,
+       w.sun,
+       w.statustimesheet,
+       w.note,
+       w.id,
+       w.progress
+FROM weeklytimesheet w
+JOIN project p ON w.projectid = p.projectid
+JOIN projecttype pt ON pt.projecttypeid = p.projecttypeid
+LEFT JOIN componentproject c ON w.componentid = c.id -- Sử dụng LEFT JOIN để lấy giá trị nếu có, nếu không thì null
+JOIN taskproject t ON w.taskid = t.id
+JOIN DATE d ON d.Date = w.Date where d.Year=? and d.WeekNumber=? and w.iduser=? and w.status=1"""
     values=(year,weeknum,decode_id(iduser))
     cursor.execute(sql,values)
     weeklytimesheet_temp=cursor.fetchall()
@@ -560,11 +642,12 @@ async def weeklytimesheet(request:Request,iduser,year,weeknum,current_user: User
     elif request.method=="POST" and 'savetasks' in form and form['savetasks']=='savetasks':
         listweeklytimesheet=[]
         for project in weeklytimesheet_temp:
+
             listweeklytimesheet.append((project[14],form.get('mon'+str(project[14])),form.get('tue'+str(project[14]))
                                         ,form.get('wed'+str(project[14])),form.get('thu'+str(project[14]))
                                         ,form.get('fri'+str(project[14])),form.get('sat'+str(project[14])),
                                         form.get('sun'+str(project[14]))))
-        savetasks(listweeklytimesheet)
+        count=savetasks(listweeklytimesheet)
         message=[('success','update progress is sucessfull')]
         return RedirectResponse(url=f"/WeeklyTimesheet/{iduser}/{year}/{weeknum}",status_code=status.HTTP_302_FOUND)
 
@@ -667,17 +750,19 @@ def resetValueTask(select):
     conn.close()
 
 def savetasks(listweeklytimesheet):
+  
     for weeklytimesheet in listweeklytimesheet:
+        
         conn=db.connection()
         cursor=conn.cursor()
-        sql="""update weeklytimesheet set mon=?,tue=?,wed=?,thu=?, fri=?,sat=?,sun=?,statustimesheet='saved' where id=? and statustimesheet !='pending approval'
+        sql="""update weeklytimesheet set mon=?,tue=?,wed=?,thu=?, fri=?,sat=?,sun=?,statustimesheet='saved' where id=? and statustimesheet !='pending approval' and statustimesheet !='approval'
         update weeklytimesheet set progress=(mon+tue+wed+thu+fri+sat+sun) where id=? and statustimesheet !='pending approval' and statustimesheet !='approval'
         """
         value=(weeklytimesheet[1],weeklytimesheet[2],weeklytimesheet[3],weeklytimesheet[4],weeklytimesheet[5],weeklytimesheet[6],weeklytimesheet[7],weeklytimesheet[0],weeklytimesheet[0])
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
-
+  
 
 def removetasks(weeklytimesheetid):
     conn=db.connection()
@@ -709,7 +794,6 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
     conn.commit()
     conn.close()
     tasks = [(task[0],task[1])for task in tasks_temp]
-    
     conn=db.connection()
     cursor=conn.cursor()
     sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=? and p.status=1"
@@ -770,18 +854,24 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
     if request.method=="POST":
         current_date = datetime.now().strftime("%Y-%m-%d") 
         if current_date in weekdates:
+            a=None
+            if 'component' in form_method and  form_method['component'] is not None:
+                a=form_method['component']
             conn=db.connection()
             cursor=conn.cursor()
             sql="insert into weeklytimesheet(projectid,componentid,taskid,statustimesheet,Date,iduser) values(?,?,?,'initialization',CONVERT(date, GETDATE()),?)"
-            value=(form_method['project'],form_method['component'],form_method['task'],decode_id(iduser))
+            value=(form_method['project'],a,form_method['task'],decode_id(iduser))
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
         else:
+            a=form_method['component']
+            if 'component' in form_method and  form_method['component'] is not None:
+                a=form_method['component']
             conn=db.connection()
             cursor=conn.cursor()
             sql="insert into weeklytimesheet(projectid,componentid,taskid,statustimesheet,Date,iduser) values(?,?,?,'initialization',?,?)"
-            value=(form_method['project'],form_method['component'],form_method['task'],str(weekdates[2:12]),decode_id(iduser))
+            value=(form_method['project'],a,form_method['task'],str(weekdates[2:12]),decode_id(iduser))
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
@@ -858,7 +948,7 @@ async def weeklytimesheetview(request:Request,current_user: User = Depends(get_c
         cursor=conn.cursor()
         sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
     from weeklytimesheet w join project p on w.projectid=p.projectid join
-    projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
+    projecttype pt on pt.projecttypeid=p.projecttypeid LEFT JOIN componentproject c on w.componentid =c.id join 
     taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' or w.statustimesheet ='approval' and w.projectid=? """
         cursor.execute(sql,form_method['project'])
         weeklytimesheet=cursor.fetchall()
@@ -903,7 +993,7 @@ async def weeklytimesheetview_get(request:Request,current_user: User = Depends(g
     cursor=conn.cursor()
     sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
  from weeklytimesheet w join project p on w.projectid=p.projectid join
- projecttype pt on pt.projecttypeid=p.projecttypeid join componentproject c on w.componentid =c.id join 
+ projecttype pt on pt.projecttypeid=p.projecttypeid LEFT JOIN componentproject c on w.componentid =c.id join 
  taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' or w.statustimesheet ='approval' """
     cursor.execute(sql)
     weeklytimesheet=cursor.fetchall()
