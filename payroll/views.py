@@ -368,21 +368,37 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
         return FileResponse(file_path, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         #return str(file_path)
     if 'exportpdf' in form_method and form_method.get("exportpdf")=="exportpdf":
-        iduserlist=form_method.getlist("checkbox")
+        # iduserlist=form_method.getlist("checkbox")
        
-        zip_buffer = BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
-            for id in iduserlist:
-                if(str(id)!='None'):
+        # zip_buffer = BytesIO()
+        # with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
+        #     for id in iduserlist:
+        #         if(str(id)!='None'):
                     
-                    pdf_content = exportfilepdf(request,id,month,year)
-                    zip_file.writestr(f'output'+id+'.pdf', pdf_content)
-        zip_buffer.seek(0)
-        response = Response(zip_buffer.read())
-        response.headers["Content-Disposition"] = "attachment; filename=your_zip_file_pdf.zip"
-        response.headers["Content-Type"] = "application/zip"
+        #             pdf_content = exportfilepdf(request,id,month,year)
+        #             zip_file.writestr(f'output'+id+'.pdf', pdf_content)
+        # zip_buffer.seek(0)
+        # response = Response(zip_buffer.read())
+        # response.headers["Content-Disposition"] = "attachment; filename=your_zip_file_pdf.zip"
+        # response.headers["Content-Type"] = "application/zip"
+
+        # return response
+        #iduserlist=form_method.getlist("checkbox")
+        path_to_wkhtmltopdf = 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
+        config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+        context={
+            "request":request       
+        }
+        html=templates.TemplateResponse("payroll/payrollpdf.html",context).body.decode("utf-8")
+        pdf=pdfkit.from_string(str(html),False,configuration=config,options={"enable-local-file-access": ""})
+        #html="<html><body><h1>hiii</h1></body></html>"
+        #pdf=pdfkit.from_string(html,False)
+        response=Response(pdf)
+        response.headers["Content-Disposition"] = "attachment; filename=hi.pdf"
+        response.headers["Content-Type"] = "application/pdf"
 
         return response
+
         
 
     return RedirectResponse(url=f"/payroll/{form_method.get("month")}/{form_method.get("year")}",status_code=status.HTTP_302_FOUND)
