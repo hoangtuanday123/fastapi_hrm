@@ -689,7 +689,7 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
     listalowance_temp=cursor.fetchall()
     conn.commit()
     conn.close()
-    listalowance=[(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[9],a[10])for a in listalowance_temp]
+    listalowance=[(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[11],a[12])for a in listalowance_temp]
     context={
         "request":request,
         "current_user":current_user,
