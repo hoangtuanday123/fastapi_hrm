@@ -327,7 +327,7 @@ async def addtask(request:Request,iduser,year,current_user: User = Depends(get_c
     if request.method=="POST":
         startdate = datetime.strptime(form_method['startdate'], '%Y-%m-%d')
         enddate = datetime.strptime(form_method['enddate'], '%Y-%m-%d')
-        total_days = (enddate - startdate).days
+        total_days = (enddate - startdate).days+1
         if total_days>0:
             if 'component' in form_method and  form_method['component'] is not None:
                 conn=db.connection()
