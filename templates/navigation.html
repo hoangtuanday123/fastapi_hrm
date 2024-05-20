@@ -126,13 +126,13 @@
                         ERP Management  <span>         </span>              
                     </a>
                     <!-- Dropdown - ERP Management -->
-                    <div class="dropdown-menu shadow animated--grow-in" onclick="updatePath('Project', 2)"
+                    <div class="dropdown-menu shadow animated--grow-in" 
                         aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/ERP/projectlist">
+                        <a class="dropdown-item" href="/ERP/projectlist" onclick="updatePath('Project', 2)">
                             
                             Projects
                         </a>
-                        <a class="dropdown-item" href="/ERP/weeklytimesheetview">
+                        <a class="dropdown-item" href="/ERP/weeklytimesheetview" onclick="updatePath('Weeklytimesheet View', 2)">
                             
                             Weeklytimesheet view
                         </a>
@@ -142,18 +142,18 @@
 
                  <!-- Nav Item - Annual Leave Management -->
                  <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Annual Leave Management', 1)"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Annual Leave Management
                     </a>
                     <!-- Dropdown - Annual Leave Management -->
                     <div class="dropdown-menu shadow animated--grow-in"
                         aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/LeaveManagement/leaveList">
+                        <a class="dropdown-item" href="/LeaveManagement/leaveList" onclick="updatePath('Leave Management', 2)">
                             
                             Leave Management
                         </a>
-                        <a class="dropdown-item" href="/annualleaveadmin_view">
+                        <a class="dropdown-item" href="/annualleaveadmin_view" onclick="updatePath('Anual Leave View', 2)">
                             
                             Anual Leave View
                         </a>
@@ -163,18 +163,18 @@
 
                  <!-- Nav Item - Annual Leave Management -->
                  <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Timesheet Management', 1)"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Timesheet Management
                     </a>
                     <!-- Dropdown - Annual Leave Management -->
                     <div class="dropdown-menu shadow animated--grow-in"
                         aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="#" onclick="updatePath('Weekly Timesheet', 2)">
                             
                             Weekly Timesheet
                         </a>
-                        <a class="dropdown-item" href=>
+                        <a class="dropdown-item" href="" onclick="updatePath('Project', 2)">
                             
                             Role
                         </a>
@@ -185,18 +185,18 @@
                 <!-- Nav Item - Annual Leave Management -->
                 <!-- Nav Item - Annual Leave Management -->
                 <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Payroll Management', 1)"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Payroll Management
                     </a>
                     <!-- Dropdown - Annual Leave Management -->
                     <div class="dropdown-menu shadow animated--grow-in"
                         aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/payrollmanagement">
+                        <a class="dropdown-item" href="/payrollmanagement" onclick="updatePath('Payroll Report', 2)">
                             
                             Payroll Report
                         </a>
-                        <a class="dropdown-item" href=>
+                        <a class="dropdown-item" href="" onclick="updatePath('Project', 2)">
                             
                             Role
                         </a>
@@ -225,7 +225,7 @@
                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Profile
                             </a>
-                            <a class="dropdown-item" href="\getcodechangepassword">
+                            <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
                                 <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Change Password
                             </a>
@@ -257,7 +257,7 @@
                 </li>
                 <!-- Nav Item - User Management -->
                 <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Users', 1)"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                        Users
                    </a>
@@ -266,7 +266,7 @@
                        aria-labelledby="userDropdown">
                        
 
-                       <a class="dropdown-item" href="/groupuserpage/{{idinformationuser}}">
+                       <a class="dropdown-item" href="/groupuserpage/{{idinformationuser}}" onclick="updatePath('Groups User', 2)">
                            
                            Groups User
                        </a>
@@ -276,18 +276,18 @@
 
                 <!-- Nav Item -ERP Management -->
                 <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('ERP', 1)"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                        ERP
                    </a>
                    <!-- Dropdown - ERP Management -->
                    <div class="dropdown-menu shadow animated--grow-in"
                        aria-labelledby="userDropdown">
-                       <a class="dropdown-item" href="/WeeklyTimesheet/{{idinformationuser}}">
+                       <a class="dropdown-item" href="/WeeklyTimesheet/{{idinformationuser}}" onclick="updatePath('Weekly Timesheet', 1)">
                            
                            Weekly Timesheet
                        </a>
-                       <a class="dropdown-item" href="#">
+                       <a class="dropdown-item" href="#" onclick="updatePath('Project', 2)">
                            
                            Role
                        </a>
@@ -297,14 +297,14 @@
 
                 <!-- Nav Item - Annual Leave Management -->
                 <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Annual Leave', 1)"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                        Annual Leave
                    </a>
                    <!-- Dropdown - Annual Leave Management -->
                    <div class="dropdown-menu shadow animated--grow-in"
                        aria-labelledby="userDropdown">
-                       <a class="dropdown-item" href="/annualLeaveemployee">
+                       <a class="dropdown-item" href="/annualLeaveemployee" onclick="updatePath('Anunual Leave', 2)">
                            
                            Anunual Leave
                        </a>
@@ -334,7 +334,7 @@
                             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                             Profile
                         </a>
-                        <a class="dropdown-item" href="\getcodechangepassword">
+                        <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
                             <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                             Change Password
                         </a>
