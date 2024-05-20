@@ -10,15 +10,27 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-sm-3 ml-auto">
+                        
                         <div class="d-flex justify-content-center align-items-center">
-                            <label for="year" class="mr-2 font-weight-bold">Year:</label>
+                            <form method="post" class="d-flex align-items-center">
+                                <label for="year" class="mr-2 font-weight-bold">Year:</label>
+                                <select id="year" name="year" class="custom-select mr-2">
+                                    <!-- <option value="{{ year }}">{{ year }}</option> -->
+                                    {% for year in range(2024, 1900,-1) %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" name="yearform" value="yearform" class="btn btn-primary btn-sm">Submit</button>
+                            </form>
+                            
+                            <!-- <label for="year" class="mr-2 font-weight-bold">Year:</label>
                             <select id="year" name="year" class="custom-select mr-2">
                                 <option value="{{ year }}">2024</option>
                                 {% for year in range(2023, 2000, -1) %}
                                 <option value="{{ year }}">{{ year }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="submit" name="yearform" value="yearform" class="btn btn-primary btn-sm">Submit</button>
+                            <button type="submit" name="yearform" value="yearform" class="btn btn-primary btn-sm">Submit</button> -->
                         </div>
                     </div>
                 </div>
