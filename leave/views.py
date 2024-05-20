@@ -96,7 +96,7 @@ async def createleave(request:Request,current_user: User = Depends(get_current_u
     return templates.TemplateResponse("leave/createleaveproject.html",context)
 
 
-@leave.get("/annualLeaveemployee",tags=['payroll'], response_class=HTMLResponse)
+@leave.get("/annualLeaveemployee",tags=['Leave management'], response_class=HTMLResponse)
 async def annualLeaveemployee(request:Request,current_user: User = Depends(get_current_user_from_token)):
     current_date = datetime.now()
 
@@ -105,7 +105,7 @@ async def annualLeaveemployee(request:Request,current_user: User = Depends(get_c
     current_year = current_date.year
     return RedirectResponse(url=f"/leave/annualLeaveemployee/{current_year}",status_code=status.HTTP_302_FOUND)
 
-@leave.get("/leave/annualLeaveemployee/{year}",response_class=HTMLResponse)
+@leave.get("/leave/annualLeaveemployee/{year}",tags=["Leave management"],response_class=HTMLResponse)
 async def annualleave_get(request:Request,year,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -140,7 +140,7 @@ LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=d
     
     return templates.TemplateResponse("leave/annualleavelist.html",context)
 
-@leave.post("/leave/annualLeaveemployee/{year}",response_class=HTMLResponse)
+@leave.post("/leave/annualLeaveemployee/{year}",tags=["Leave management"],response_class=HTMLResponse)
 async def annualleave(request:Request,year,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
@@ -235,13 +235,13 @@ def savetasks(id):
 def submittasks(id):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval' "
+    sql="update dayofftimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval' "
     cursor.execute(sql,id)
     conn.commit()
     conn.close()      
   
 
-@leave.get("/annualleave_addtask/{iduser}/{year}",tags=['ERP'],status_code=status.HTTP_302_FOUND)
+@leave.get("/annualleave_addtask/{iduser}/{year}",tags=['Leave management'],status_code=status.HTTP_302_FOUND)
 async def addtask_get(request:Request,iduser,year,current_user: User = Depends(get_current_user_from_token)): 
         #form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
@@ -291,7 +291,7 @@ async def addtask_get(request:Request,iduser,year,current_user: User = Depends(g
     return templates.TemplateResponse("leave/addannualleave.html",context)     
 
 
-@leave.post("/annualleave_addtask/{iduser}/{year}",tags=['ERP'],status_code=status.HTTP_302_FOUND)
+@leave.post("/annualleave_addtask/{iduser}/{year}",tags=['Leave management'],status_code=status.HTTP_302_FOUND)
 async def addtask(request:Request,iduser,year,current_user: User = Depends(get_current_user_from_token)): 
     #form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
@@ -348,3 +348,75 @@ async def addtask(request:Request,iduser,year,current_user: User = Depends(get_c
             messages=[('success','add task weekly timesheet is successfull')]
             return RedirectResponse(url=f"/leave/annualLeaveemployee/{year}",status_code=status.HTTP_302_FOUND)
         return RedirectResponse(url=f"/annualleave_addtask/{iduser}/{year}",status_code=status.HTTP_302_FOUND)
+    
+@leave.get("/annualleaveadmin_view",tags=['Leave management'],status_code=status.HTTP_302_FOUND)
+async def annualleaveadmin_view(request:Request,current_user: User = Depends(get_current_user_from_token)): 
+    current_date = datetime.now()
+    curent_year= current_date.year
+    curent_year=str(curent_year)
+    #return (curent_year)
+    return RedirectResponse(url=f"/annualleave_view/{curent_year}",status_code=status.HTTP_302_FOUND)
+
+@leave.get("/annualleave_view/{year}",tags=['Leave management'],status_code=status.HTTP_302_FOUND)
+async def annualleave_view_get(request:Request,year,current_user: User = Depends(get_current_user_from_token)): 
+    current_date = datetime.now()
+    # Extract the current year
+    curent_year= current_date.year
+    if str(curent_year)==year:
+        year==curent_year
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""select d.id ,p.projectid,p.projectname,t.name,c.name,d.startdate,d.enddate,d.total,d.statustimesheet 
+from dayofftimesheet d join project p on d.projectid=p.projectid join taskproject t on d.taskid=t.id
+LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date  where  da.Year=? """
+    values=(year)
+    cursor.execute(sql,values)
+    annualeave_temp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    annualleavelist=[(project[0],project[1],project[2],project[3],project[4],
+                      project[5],project[6],project[7],project[8])for project in annualeave_temp]
+    context={
+        "request":request,
+        "current_user":current_user,
+        "roleadmin" : request.cookies.get("roleadmin"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "fullname_admin" : request.cookies.get("fullname_adminsession"),
+        "annualleavelist":annualleavelist,
+        "year":year
+    }
+    return templates.TemplateResponse("leave/annualleaveadminview.html",context)
+
+@leave.post("/annualleave_view/{year}",tags=['leave'],status_code=status.HTTP_302_FOUND)
+async def annualleave_view(request:Request,year,current_user: User = Depends(get_current_user_from_token)): 
+    form_method=await request.form()
+    if "yearform" in form_method and form_method.get("yearform")=="yearform":
+       return RedirectResponse(url=f"/annualleave_view/{form_method["year"]}",status_code=status.HTTP_302_FOUND)
+    elif "approvals" in form_method and form_method.get('approvals')=="approvals":
+        sellectionItem=form_method.getlist("checkbox")
+        approvaldayoff(sellectionItem)
+        return RedirectResponse(url=f"/annualleave_view/{year}",status_code=status.HTTP_302_FOUND)
+    elif "pendingapprovals" in form_method and form_method.get('pendingapprovals')=="pendingapprovals":
+        sellectionItem=form_method.getlist("checkbox")
+        pendingapprovaldayoff(sellectionItem)
+        return RedirectResponse(url=f"/annualleave_view/{year}",status_code=status.HTTP_302_FOUND)
+
+
+def approvaldayoff(selectionItem):
+    for item in selectionItem:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="update dayofftimesheet set statustimesheet='approval' where id=?"
+        cursor.execute(sql,item)
+        conn.commit()
+        conn.close()
+
+def pendingapprovaldayoff(selectionItem):
+    for item in selectionItem:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="update dayofftimesheet set statustimesheet='pending approval' where id=?"
+        cursor.execute(sql,item)
+        conn.commit()
+        conn.close()
+
