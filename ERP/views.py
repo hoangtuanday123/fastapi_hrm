@@ -677,8 +677,8 @@ JOIN DATE d ON d.Date = w.Date where d.Year=? and d.WeekNumber=? and w.iduser=? 
             listsubmit.append(project[14])
         for list in listsubmit:
             submittasks(list)
-        for select in selecttiontasks:
-            submittasks(select)
+        # for select in selecttiontasks:
+        #     submittasks(select)
        
         message=[('success','submit tasks is successfull')]
         return RedirectResponse(url=f"/WeeklyTimesheet/{iduser}/{year}/{weeknum}",status_code=status.HTTP_302_FOUND)
@@ -1032,3 +1032,4 @@ def pendingapprovalWeeklytimesheet(selectionItem):
         cursor.execute(sql,item)
         conn.commit()
         conn.close()
+

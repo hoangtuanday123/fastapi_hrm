@@ -1,0 +1,163 @@
+{% extends "_base.html" %}
+
+{% block content %}
+    <style>
+        .grid-container {
+          display: grid;
+          /* grid-template-columns: auto auto auto; */
+          background-color: rgba(255, 255, 255, 0.8);;
+          padding: 10px;
+          height: 100vh;
+          overflow: auto;
+        }
+        .grid-item {
+          background-color: rgba(255, 255, 255, 0.8);
+          border: 1px solid rgba(0, 0, 0, 0.8);
+          padding: 20px;
+          /* font-size: 30px; */
+          /* text-align: center; */
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        </style>
+    <div class="grid-container" style="grid-template-columns: 30% 30% 40%;">
+        <div class="grid-item"  >
+            <div>
+                <div class="row">
+                    <div class="col-md offset-md">
+                        <div class="card card-outline-secondary">
+                            
+                            <div class="card-body">
+                                <form method="post" class = "form">
+
+                                    <div class="form-group mb-1">
+                                        <label >Select calender</label>
+                                            <select class="form-control" id="year" name="year">
+                                                <option value="{{ year }}">{{ year }}</option>
+                                                {% for year in range(1900, 2101) %}
+                                                <option value="{{ year }}">{{ year }}</option>
+                                                {% endfor %}
+                                            </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button type="submit" name="yearform" value="yearform" class="btn btn-primary float-right">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="grid-container" style="grid-template-columns: repeat(3, 1fr);grid-template-rows: repeat(20, 1fr);">
+                {% for week in weeks_in_year %}
+                <button class="btn btn-outline-info" onclick="location.href='/WeeklyTimesheet/{{iduser}}/{{year}}/{{week.week_number}}'">week {{week.week_number}} </button>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="grid-item" style="grid-column: 2 / span 2;">
+            <div class="grid-container" style="grid-template-rows: 10% 10% 10% 10% 50% 10%; grid-template-columns: 50% 50% ; " >
+                <div class="grid-item" style="grid-column: 1/span 2;grid-row: 1; text-align: center;"> Weekly Timesheet</div>
+                <div class="grid-item" style="grid-column: 1; grid-row: 2;">
+                    <div>Weekly Num: </div>
+                    <!-- <div>w{{weeknum}}</div> -->
+                </div>
+                <div class="grid-item" style="grid-column: 2; grid-row: 2;">
+                    <div>Timesheet Status: </div>
+                    <!-- <div>{{timesheetstatus}}</div> -->
+                </div>
+                <div class="grid-item" style="grid-column: 1; grid-row: 3;">
+                    <!-- <div>User: </div>
+                    <div>alex</div> -->
+                </div>
+                <div class="grid-item" style="grid-column: 2; grid-row: 3;">
+                    <!-- <div>Effort filled this week: </div>
+                    <div>{{percent}} %</div> -->
+                </div>
+                
+                    <!-- <div class="grid-item" style="grid-column: 1/span 2; grid-row: 4;">
+                        <button>Copy From Previous WTS</button>
+                        <button onclick="location.href='/WeeklyTimesheet/addtask/{{year}}/{{weeknum}}'">Add Tasks</button>
+                        <button type="submit" name="removetasks" value="removetasks" class="btn btn-success">Remove Tasks</button>
+                        <button>Reset values</button>
+                        
+                    </div> -->
+                    <div  style="grid-column: 1/span 2; grid-row: 5;">
+                        <table>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th>Project Num</th>
+                                <th>Project </th>
+                                <th>Task</th>
+                                <th>Component</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Total</th>
+                                <th>Status timesheet</th>
+                            </tr>
+                            <form method="post">
+                                <div class="grid-item">
+                                    <!-- <button class="btn btn-primary btn-sm" type="submit" name="copytasks" value="copytasks" >Copy From Previous WTS</button> -->
+                                    <button class="btn btn-primary btn-sm" type="submit" name="addtasks" value="addtasks">Add Tasks</button>
+                                    <button class="btn btn-primary btn-sm" type="submit" name="removetasks" value="removetasks" class="btn btn-success">Remove Tasks</button>
+                                    <!-- <button class="btn btn-primary btn-sm" type="submit" name="resetvaluetasks" value="resetvaluetasks">Reset values</button> -->
+                                    
+                                </div>
+                                {% for project in annualleavelist %}
+                                <tr>
+                                    <td><input type="checkbox" name="checkbox" value="{{project[0]}}"></td>
+                                    <td>{{project[1]}}</td>
+                                    <td>{{project[2]}}</td>
+                                    <td>{{project[3]}}</td>
+                                    <td>{{project[4]}}</td>
+                                    <td>{{project[5]}}</td>
+                                    <td>{{project[6]}}</td>
+                                    <td>{{project[7]}}</td>
+                                    <td>{{project[8]}}</td>
+                                </tr>
+                                {% endfor %}
+                                <div class="grid-item" >
+                                    <button class="btn btn-primary btn-sm" type="submit" name="recalltasks" value="recalltasks">Recall</button>
+                                    <button class="btn btn-primary btn-sm" type="submit" name="savetasks" value="savetasks">Save</button>
+                                    <button class="btn btn-primary btn-sm" type="submit" name="submittasks" value="submittasks">Submit</button>
+                                </div>
+                            </form>
+                        </table>
+                        
+            
+                        <script>
+                            const selectAllCheckbox = document.getElementById("selectAll");
+                            const checkboxes = document.querySelectorAll("table input[type='checkbox']");
+                    
+                            selectAllCheckbox.addEventListener("change", () => {
+                                checkboxes.forEach((checkbox) => {
+                                    checkbox.checked = selectAllCheckbox.checked;
+                                });
+                            });
+                        </script>
+                    </div>
+            
+                <!-- <div class="grid-item" style="grid-column: 1/span 2; grid-row: 6;">
+                    <button>Recall</button>
+                    <button>Save</button>
+                    <button>Submit</button>
+                </div> -->
+            
+            </div>
+        </div>
+            
+      </div>
+
+
+{% endblock %}
