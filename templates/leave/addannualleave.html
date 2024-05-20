@@ -15,10 +15,10 @@
 					<div class="form-group">
 						<label >Project Name</label>
 						<select class="form-control" id="project" name="project">
-              {% for project in projects %}
-              <option value="{{ project[0] }}">{{ project[1] }}</option>
-              {% endfor %}
-            </select>
+                        {% for project in projects %}
+                        <option value="{{ project[0] }}">{{ project[1] }}</option>
+                        {% endfor %}
+                        </select>
 					</div>
 
 					<div class="form-group">
@@ -55,9 +55,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="note">Attachment</label>
-                        <input type="file" id="attachment" name="attachment" value="attachment"  class=" form-control-file">
+                        <label >Attachment</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="attachment" >
+                            <label class="custom-file-label" for="attachment">Choose file...</label>
+                        </div>
                     </div>
+
+                    
+
                     </div>
                     <hr>
 

@@ -1,107 +1,206 @@
 {% extends "_base.html" %}
 
 {% block content %}
-<form method="post">
-    <label for="year" class="mb-0 mr-1" style="width: 185px;">Year - Month:</label>
-    <select id="year" name="year" class="custom-select mr-2">
-        <option value="{{ year }}">{{ year }}</option>
-        {% for year in range(1900, 2101) %}
-        <option value="{{ year }}">{{ year }}</option>
-        {% endfor %}
-    </select>
 
-    <select id="month" name="month" class="custom-select mr-2">
-        <option value="{{ month }}">{{ month }}</option>
-        {% for month in range(1, 12) %}
-        <option value="{{ month }}">{{ month }}</option>
-        {% endfor %}
-    </select>
-    <!-- <label  for="fillter"   class="btn btn-primary btn-sm   mr-2">Filter</label> -->
-    <button type="submit" name="yearform" value="yearform" class="btn btn-primary   mr-2"> Submit</button>
-</form>
-<form method="post">
-    <label for="email" class="mb-0 mr-1" style="width: 185px;">Email</label>
-    <select id="email" name="email" class="custom-select mr-2">
-        {% for email in emaillist %}
-        <option value="{{ email[0] }}">{{ email[1] }}</option>
-        {% endfor %}
-    </select>
-    <div>
-        <label>Internet Allowance</label>
-        <input name="Internet_Allowance" value="0">
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <label for="year" class="mb-0 mr-1" style="width: 100px;">Year - Month:</label>
+                <select id="year" name="year" class="custom-select mr-2">
+                    <option value="{{ year }}">{{ year }}</option>
+                    {% for year in range(1900, 2101) %}
+                    <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            
+                <select id="month" name="month" class="custom-select mr-2">
+                    <option value="{{ month }}">{{ month }}</option>
+                    {% for month in range(1, 12) %}
+                    <option value="{{ month }}">{{ month }}</option>
+                    {% endfor %}
+                </select>
+               
+                <button type="submit" name="yearform" value="yearform" class="btn btn-primary"> Filter</button>
+            </form>
+        </div>
     </div>
-    <div>
-        <label>Meal Allowance</label>
-        <input name="Meal_Allowance" value="0">
-    </div>
-    <div>
-        <label>Phone Allowance</label>
-        <input name="Phone_Allowance" value="0">
-    </div>
-    <div>
-        <label>Transportation Allowance</label>
-        <input name="Transportation_Allowance" value="0">
-    </div>
-    <div>
-        <label>Other Cash Allowance</label>
-        <input name="Other_Cash_Allowance" value="0">
-    </div>
-    <div>
-        <label>Year End Bonus</label>
-        <input name="Year_End_Bonus" value="0">
-    </div>
-    <div>
-        <label>Unused Annual Leave</label>
-        <input name="Unused_Annual_Leave" value="0">
-    </div>
-    <button type="submit" name="addallowance" value="addallowance" class="btn btn-primary   mr-2"> Add</button>
-</form>
-<table id="myTable"  width="100%" cellspacing="0">
-    <thead>
-        <tr>
-            <th><input type="checkbox" id="selectAllCheckbox"></th>
-            <th>Email Address 
+    
+
+    <div class="row pt-3">
+        <div class="col-md-3 bg-light">
+            <div class="card card-outline-secondary">
+                <div class="card-header">
+                    <p class=" font-weight-bold "> Adjust Allowance</p>
+                </div>
+                <div class="card-body">
+                    <form  method="post" class = "form">
+                        <div class="form-group">
+                            <label for="email" >Email</label>
+                            <select class="form-control" id="email" name="email">
+                                {% for email in emaillist %}
+                                <option value="{{ email[0] }}">{{ email[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Internet Allowance</label>
+                            <input name="Internet_Allowance" value="0" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Meal Allowance</label>
+                            <input name="Meal_Allowance" value="0" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone Allowance</label>
+                            <input name="Phone_Allowance" value="0" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Transportation Allowance</label>
+                            <input name="Transportation_Allowance" value="0" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Other Cash Allowance</label>
+                            <input name="Other_Cash_Allowance" value="0" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Year End Bonus</label>
+                            <input name="Year_End_Bonus" value="0" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Unused Annual Leave</label>
+                            <input name="Unused_Annual_Leave" value="0" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" name="addallowance" value="addallowance" class="btn btn-success float-right ">Add</button>
+                        </div>
+                    </form>
+                </div>     
+            </div>
+        </div>
+
+    <div class="col-md-9 bg-lightblue">
+        <div >
+            <div class="card card-outline-secondary">
+                <div class="card-header">
+                    <p class=" font-weight-bold ">Allowance Management</p>
+                </div>
+                <div class="card-body py-2 row pt-3">
+                    <div class="mr-auto d-flex align-items-center ml-3">
+                        <label for="entries" class="mr-2">Show</label>
+                        <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <label for="entries" class="mr-4">Entries</label>
+                        </div>
+                        <div class="search-container ml-auto mr-3">
+                            <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
+                        </div>
+                    </div>
+    
+                    <div class="card-body"  >
+                    <div class="text-center" >
+                        <table id="myTable"  width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                    <th>Email Address</th>
+                                    <th>Full name</th>
+                                    <th>Internet Allowance</th>
+                                    <th>Meal Allowance </th>
+                                    <th>Phone Allowance</th>
+                                    <th>Transportation Allowance </th>
+                                    <th>Other Cash Allowance</th>
+                                    <th>Year End Bonus</th>
+                                    <th>Unused Annual Leave</th>
+                                    <th>Detail</th>
+                                </tr>
+                            </thead>
+    
+                            <tbody >
+                                {% for g in listalowance %}
+                                <tr>
+                                    <td class="text-center"><input type="checkbox" name="checkbox" value="{{g[0]}}"></td>
+                                    <td>{{g[8]}}</td>
+                                    <td>{{g[9]}}</td>
+                                    <td class="text-center">{{g[1]}}</td>
+                                    <td class="text-center">{{g[2]}}</td>
+                                    <td class="text-center">{{g[3]}}</td>
+                                    <td class="text-center">{{g[4]}}</td>
+                                    <td class="text-center">{{g[5]}}</td>
+                                    <td class="text-center">{{g[6]}}</td>
+                                    <td class="text-center">{{g[7]}}</td>
+                                    <td class="text-center"><a href="#">View</a></td>
+                                </tr>
+                            {% endfor %}    
+                            </tbody>
+                        </table>
+                        <div class="row" >
+                            <p class="mr-auto ml-3" >
+                                Showing <span id="startEntry"></span> to <span id="endEntry"></span> of <span id="totalEntries"></span> entries
+    
+                            </p>
+                            <p class="ml-auto">
+                                <div class="pagination mr-3">
+                                    <!-- Button with double chevron left -->
+                                    <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                                    <!-- Button with single chevron left -->
+                                    <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                                    <!-- Pagination container for page numbers -->
+                                    <div id="paginationContainer" class="pagination-container">
+                                        <!-- Page numbers will be dynamically added here -->
+                                    </div>
+                                    <!-- Button with single chevron right -->
+                                    <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                                    <!-- Button with double chevron right -->
+                                    <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
+                                </div>
+                                <!-- Hidden div for displaying current page and total pages -->
+                                <div style="display: none;">
+                                    Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+                                </div>
+                            </p>
+                            
+                        </div>
+                        
+                    </div>
+                            </div>
+                        </div>
                 
-            </th>
-            <th>Full name</th>
-            <th>Internet Allowance</th>
-            <th>Meal Allowance </th>
-            <th>Phone Allowance</th>
-            <th>Transportation Allowance </th>
-            <!-- <th>Gross Salary</th>   -->
-            <th>Other Cash Allowance</th>
-            <th>Year End Bonus</th>
-            <th>Unused Annual Leave</th>
-            <th>Detail</th>
+                    </div>
+                
+            </div>
             
-        </tr>
-    </thead>
-    
-    
-    
-    <tbody >
-    
-    {% for g in listalowance %}
-        <tr>
-            
-            <td class="text-center"><input type="checkbox" name="checkbox" value="{{g[0]}}"></td>
-            
-            <td>{{g[8]}}</td>
-            <td>{{g[9]}}</td>
-            <td class="text-center">{{g[1]}}</td>
-            <td class="text-center">{{g[2]}}</td>
-            <td class="text-center">{{g[3]}}</td>
-            <td class="text-center">{{g[4]}}</td>
-            <!-- <td class="text-center">{{g[0]}}</td> -->
-            <td class="text-center">{{g[5]}}</td>
-            <td class="text-center">{{g[6]}}</td>
-            <td class="text-center">{{g[7]}}</td>
-            <td class="text-center"></td>
-            
-            
-        </tr>
-    {% endfor %}    
-</form>
-    </tbody>
-</table>
+        </div>
+    </div>
+</div>
+{% block JavaScript%}
+<script src="{{url_for('static',path='js/table_role.js')}}"></script>
+<script>
+    // Function to handle the click event of the "Select All" checkbox
+    document.getElementById("selectAllCheckbox").addEventListener("click", function() {
+        // Get all checkboxes in the table body
+        var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+
+        // Loop through each checkbox and set its checked state to match the "Select All" checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = document.getElementById("selectAllCheckbox").checked;
+        });
+    });
+</script>
+
+{%endblock%}
+
 {% endblock %}
