@@ -15,54 +15,53 @@
                 <h6 class="m-0 font-weight-bold text-primary">Payroll Report</h6>
             </div>
             <!-- HTML -->
-                <div class="card-body py-2 row">
-                        <div class="mr-auto d-flex align-items-center ml-4">
-                            <label for="entries" class="mr-2">Show</label>
-                            <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
-                                <option value="5">5</option>
-                                <option value="10" selected>10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <label for="entries" class="mr-4">Entries</label>
-                            {% if month == current_month and year == current_year %}
-                                <form method="post" class = "form">
-                                    <button type="submit" class="btn btn-danger btn-sm mr-2" style="width: 100px;" name="savepayroll" value="savepayroll">save</button>
-                                </form>
-                            {% endif %}
-                            <div class="card-body">
-                                <form method="post" class = "form">
+            <div class="card-body py-2 row">
+                
+            <form method="post">
+                    <div  class="d-flex align-items-center ">
+                    <label for="entries" class="ml-3 mb-0 mr-2">Show</label>
+                    <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
+                        <option value="2">2</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <label for="entries" class="mb-0 mr-4">entries</label>
 
-                                    <div class="form-group mb-1">
-                                        <label >Select year</label>
-                                        <select class="form-control" id="year" name="year">
-                                            <option value="{{ year }}">{{ year }}</option>
-                                            {% for year in range(1900, 2101) %}
-                                            <option value="{{ year }}">{{ year }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <label >Select month</label>
-                                        <select class="form-control" id="month" name="month">
-                                            <option value="{{ month }}">{{ month }}</option>
-                                            {% for month in range(1, 12) %}
-                                            <option value="{{ month }}">{{ month }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <button type="submit" name="yearform" value="yearform" class="btn btn-primary float-right">Submit</button>
-                                    </div>
-                                </form>
-                            </div>
-                            
-                        </div>
-                        <div class="search-container ml-auto mr-4">
-                            <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
-                        </div>
-                    </div>
+                    <label for="year" class="mb-0 mr-1" style="width: 185px;">Year - Month:</label>
+                    <select id="year" name="year" class="custom-select mr-2">
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% for year in range(1900, 2101) %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="month" name="month" class="custom-select mr-2">
+                        <option value="{{ month }}">{{ month }}</option>
+                        {% for month in range(1, 12) %}
+                        <option value="{{ month }}">{{ month }}</option>
+                        {% endfor %}
+                    </select>
+                    <!-- <label  for="fillter"   class="btn btn-primary btn-sm   mr-2">Filter</label> -->
+                    <button type="submit" name="yearform" value="yearform" class="btn btn-primary   mr-2"> Submit</button>
+                </div>
+                
+            </form>
             
+            <label type="button"  for="exportexcels"   class="btn btn-success mr-2"><i class="fas fa-file-excel" ></i> Export to Excel</label>
+            <label type="button" for="exportpdf"    class="btn btn-warning"><i class="fa-solid fa-file-pdf" ></i> Export to PDF</label>
+            {% if month == current_month and year == current_year %}
+            <form method="post">
+                <button type="submit" class="btn btn-primary ml-2 mr-2" style="width: 100px;" name="savepayroll" value="savepayroll">save</button>
+            </form>
+            {% endif %}
+         
+        <div class="search-container ml-auto mr-3">
+            <input class="rounded-input form-control" id="myInput" onkeyup="search('all')" placeholder="Searching...">
+        </div>
+            
+    </div>
             <div class="card-body"  >
                 <div class="text-center" >
                     <table id="myTable"  width="100%" cellspacing="0">
@@ -86,12 +85,12 @@
                             </tr>
                         </thead>
                         
-
+                        
                         
                         <tbody >
                             <form method="post" class = "form">
-                                <button type="submit" name="exportexcels" value="exportexcels" > export excel</button>
-                                <button type="submit" name="exportpdf" value="exportpdf" > export pdf</button>
+                                <button type="submit" id="exportexcels" name="exportexcels" value="exportexcels" hidden > export excel</button>
+                                <button type="submit" id="exportpdf" name="exportpdf" value="exportpdf" hidden> export pdf</button>
                         {% for g in tempsumsalary %}
                             <tr>
                                 

@@ -29,8 +29,8 @@
         <div id="accountTable"  style="display: none;">
                   <!-- HTML -->
                   <div class="card-body py-2 row">
-                    <div class="mr-auto d-flex align-items-center ml-4">
-                        <label for="entries" class="mr-2">Show</label>
+                    <div class="d-flex align-items-center ml-3">
+                        <label for="entries" class="mb-0 mr-2">Show</label>
                         <select id="entriesaccount" onchange="changeEntries()" class="mr-2 custom-select">
                             <option value="5">5</option>
                             <option value="10" selected>10</option>
@@ -38,11 +38,11 @@
                             <option value="50">50</option>
                             <option value="100">100</option>
                         </select>
-                        <label for="entriesaccount" class="mr-4">Entries</label>
+                        <label for="entriesaccount" class="mb-0 mr-4">Entries</label>
                         <button class="mr-1 btn btn-primary" onclick="window.location.href='/adminpage/createnewrole'">Update</button>
                         <button class="btn btn-danger">Block</button>
                     </div>
-                    <div class="search-container ml-auto mr-4">
+                    <div class="search-container ml-auto mr-3">
                         <input class="rounded-input form-control" id="myInputaccount" onkeyup="search('all')" placeholder=" Searching........">
                     </div>
                 </div>
@@ -138,7 +138,7 @@
       <!-- HTML -->
       <div class="card-body py-2 row">
         <div class="mr-auto d-flex align-items-center ml-4">
-            <label for="entriesblockedUser" class="mr-2">Show</label>
+            <label for="entriesblockedUser" class="mb-0 mr-2">Show</label>
             <select id="entriesblockedUser" onchange="changeEntries()" class="mr-2 custom-select">
                 <option value="2">2</option>
                 <option value="10" selected>10</option>
@@ -146,11 +146,11 @@
                 <option value="50">50</option>
                 <option value="100">100</option>
             </select>
-            <label for="entriesblockedUser" class="mr-4">Entries</label>
+            <label for="entriesblockedUser" class="mb-0 mr-3">Entries</label>
             <button class="mr-1 btn btn-primary" >Unblock</button>
 
         </div>
-        <div class="search-container ml-auto mr-4">
+        <div class="search-container ml-auto mr-3">
             <input class="rounded-input form-control" id="myInputblockedUser" onkeyup="search('all')" placeholder=" Searching........">
         </div>
     </div>
@@ -246,18 +246,21 @@
     <div class="card-body py-2 row">
 
             <div class="d-flex align-items-center">
-                <label for="entriesuser" class="ml-4 mr-2">Show</label>
-                <select id="entriesuser" onchange="changeEntries()" class="mr-2 custom-select">
-                    <option value="2">2</option>
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-                <label for="entriesuser" class="mr-4">Entries</label>
+                
             </div>
             <form method="post">
                 <div  class="d-flex align-items-center">
+
+                    <label for="entriesuser" class="mb-0 mr-2 ml-3">Show</label>
+                        <select id="entriesuser" onchange="changeEntries()" class="mr-2 custom-select">
+                            <option value="2">2</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    <label for="entriesuser" class="mb-0 mr-4 ">Entries</label>
+
                     <select id="roletype" name="roletype" class="custom-select mr-2">
                         {% for type in roletype %}
                             <option value="{{ type }}">{{ type }}</option>
@@ -273,7 +276,7 @@
             <label for="exportpdf"    class="btn btn-warning"><i class="fa-solid fa-file-pdf" ></i> Export to PDF</label>
                 
          
-        <div class="search-container ml-auto mr-4">
+        <div class="search-container ml-auto mr-3">
             <input class="rounded-input form-control" id="myInputuser" onkeyup="search('all')" placeholder="Searching...">
         </div>
             

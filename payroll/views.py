@@ -16,6 +16,8 @@ from io import BytesIO
 import pdfkit
 import zipfile
 import io
+
+
 templates = Jinja2Templates(directory="templates")
 payroll = APIRouter()
 
@@ -66,17 +68,17 @@ def tinhluongnhanvientra(g,grosssalary):
     bhtn=0
     bhtnct=0
     if g[1]=='1':
-        bhtn=4680000*20*0.01
-        bhtnct=4680000*20*0.01
+        bhtn=4680000*20*0.01*1.07
+        bhtnct=4680000*20*0.01*1.07
     elif g[1]=='2':
-        bhtn=4160000*20*0.01
-        bhtnct=4160000*20*0.01
+        bhtn=4160000*20*0.01*1.07
+        bhtnct=4160000*20*0.01*1.07
     elif g[1]=='3':
-        bhtn=3640000*20*0.01
-        bhtnct=3640000*20*0.01
+        bhtn=3640000*20*0.01*1.07
+        bhtnct=3640000*20*0.01*1.07
     elif g[1]=='4':
-        bhtn=3250000*20*0.01
-        bhtnct=3250000*20*0.01
+        bhtn=3250000*20*0.01*1.07
+        bhtnct=3250000*20*0.01*1.07
     giacanhbanthan=11000000
     giacanhnguoiphuthuoc=4400000*int(g[7])
     thunhaptruocthue=grosssalary-bhxh-bhyt-bhtn
@@ -356,10 +358,11 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 salary.append(str(round(g[4])))
                 salary.append(g[10]),
                 salary.append(amoundgrosssalary)
-              
+        
         tempsumsalary.append(salary)
     form_method=await request.form()
     if "savepayroll" in form_method and form_method.get("savepayroll")=="savepayroll":
+       
         savepayroll(tempsumsalary,month,year)
         return RedirectResponse(url=f"/payroll/{month}/{year}",status_code=status.HTTP_302_FOUND)
     if "exportexcels" in form_method and form_method.get("exportexcels")=="exportexcels":
@@ -368,36 +371,31 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
         return FileResponse(file_path, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         #return str(file_path)
     if 'exportpdf' in form_method and form_method.get("exportpdf")=="exportpdf":
-        # iduserlist=form_method.getlist("checkbox")
-       
-        # zip_buffer = BytesIO()
-        # with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
-        #     for id in iduserlist:
-        #         if(str(id)!='None'):
-                    
-        #             pdf_content = exportfilepdf(request,id,month,year)
-        #             zip_file.writestr(f'output'+id+'.pdf', pdf_content)
-        # zip_buffer.seek(0)
-        # response = Response(zip_buffer.read())
-        # response.headers["Content-Disposition"] = "attachment; filename=your_zip_file_pdf.zip"
-        # response.headers["Content-Type"] = "application/zip"
+        iduserlist=form_method.getlist("checkbox")
+        if len(iduserlist)==1:
+          
+            pdf_content = exportfilepdf(request,iduserlist[0],month,year)
+            response = Response(pdf_content)
+            filepath=f'payroll'+iduserlist[0]+'.pdf'
+            response.headers["Content-Disposition"] = f"attachment; filename={filepath}"
+            response.headers["Content-Type"] = "application/pdf"
 
-        # return response
-        #iduserlist=form_method.getlist("checkbox")
-        path_to_wkhtmltopdf = 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
-        config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
-        context={
-            "request":request       
-        }
-        html=templates.TemplateResponse("payroll/payrollpdf.html",context).body.decode("utf-8")
-        pdf=pdfkit.from_string(str(html),False,configuration=config,options={"enable-local-file-access": ""})
-        #html="<html><body><h1>hiii</h1></body></html>"
-        #pdf=pdfkit.from_string(html,False)
-        response=Response(pdf)
-        response.headers["Content-Disposition"] = "attachment; filename=hi.pdf"
-        response.headers["Content-Type"] = "application/pdf"
+            return response
+        else:
+            zip_buffer = BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
+                for id in iduserlist:
+                    if(str(id)!='None'):
+                        
+                        pdf_content = exportfilepdf(request,id,month,year)
+                        zip_file.writestr(f'payroll '+id+'.pdf', pdf_content)
+            zip_buffer.seek(0)
+            response = Response(zip_buffer.read())
+            response.headers["Content-Disposition"] = "attachment; filename=your_zip_file_pdf.zip"
+            response.headers["Content-Type"] = "application/zip"
 
-        return response
+            return response
+        
 
         
 
@@ -427,11 +425,17 @@ def exportfilepdf(request:Request,iduser,month,year):
     conn.commit()
     conn.close()
     context={
-            "request":request       
+            "request":request ,
+            "payrolldetail":export     
     }
     html=templates.TemplateResponse("payroll/payrollpdf.html",context).body.decode("utf-8")
-    pdf=pdfkit.from_string(str(html),False,options={"enable-local-file-access": ""})
+    path_to_wkhtmltopdf = 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
+    config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+    pdf=pdfkit.from_string(str(html),False,configuration=config,options={"enable-local-file-access": ""})
     return pdf 
+
+
+
 def exportexcels(iduserlist,month,year):
     datalist=[]
     priod=''
@@ -474,16 +478,16 @@ def savepayroll(salarylist,month,year):
             conn=db.connection()
             cursor=conn.cursor()
             sql="""
-    update payroll set offset=?, standardofworkingday=?,
-    actualday=?, grosssalaryincontract=?, grosssalary=?, dependants=?, bhxh=?, 
-    bhyt=?, bhtn=?, giacanhbanthan=?, giacanhnguoiphuthuoc=?, thunhaptruocthue=?, 
-    thunhapchiuthue=?, thuethunhap=?, netsalary=?, bhxhct=?, bhtnldct=?, 
-    bhytct=?, bhtnct=?, tongcongtytra=?,amoundgrosssalary=?, createdate=getdate() where iduser=? and month=? and year=?
-    """
+            update payroll set offset=?, standardofworkingday=?,
+            actualday=?, grosssalaryincontract=?, grosssalary=?, dependants=?, bhxh=?, 
+            bhyt=?, bhtn=?, giacanhbanthan=?, giacanhnguoiphuthuoc=?, thunhaptruocthue=?, 
+            thunhapchiuthue=?, thuethunhap=?, netsalary=?, bhxhct=?, bhtnldct=?, 
+            bhytct=?, bhtnct=?, tongcongtytra=?,amoundgrosssalary=?, createdate=getdate() where iduser=? and month=? and year=?
+            """
             values=(salary[20],salary[19],salary[21],salary[22],
                     salary[0],salary[18],salary[1],salary[2],salary[3],salary[4],salary[5],salary[6],
                     salary[7],salary[8],salary[9],salary[10],salary[11],salary[12],salary[13],salary[14],
-                    salary[17],salary[24],month,year)
+                    salary[24],salary[17],month,year)
             cursor.execute(sql,values)
             conn.commit()
             conn.close()
@@ -590,7 +594,7 @@ async def payrolllistemployee_get(request:Request,month,year,current_user: User 
 
 
 @payroll.post("/payrollemployee/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
-async def payrolllistemployee_(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
+async def payrolllistemployee(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
     current_month_25_str=None
     last_month_25_str=None
     current_date = datetime.now()
@@ -629,5 +633,15 @@ async def payrolllistemployee_(request:Request,month,year,current_user: User = D
     conn.commit()
     conn.close()
     form_method=await request.form()
+    if 'exportpdf' in form_method and form_method.get("exportpdf")=="exportpdf":
+        pdf_content = exportfilepdf(request,decode_id(current_user.idinformationuser),month,year)
+        response = Response(pdf_content)
+        filepath=f'payroll'+str(decode_id(current_user.idinformationuser)
+        
+        )+'.pdf'
+        response.headers["Content-Disposition"] = f"attachment; filename={filepath}"
+        response.headers["Content-Type"] = "application/pdf"
+
+        return response
     return RedirectResponse(url=f"/payrollemployee/{form_method.get("month")}/{form_method.get("year")}",status_code=status.HTTP_302_FOUND)
     
