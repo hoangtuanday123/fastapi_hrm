@@ -523,6 +523,13 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
     payrolldetail=cursor.fetchone()
     conn.commit()
     conn.close()
+    first_day_of_month = datetime(int(year), int(month), 1)
+    first_day_of_month_str=first_day_of_month.strftime('%Y-%m-%d')
+    last_day = calendar.monthrange(int(year), int(month))
+    last_day_of_month = datetime(int(year), int(month), last_day[1])
+    last_day_of_month_str=last_day_of_month.strftime('%Y-%m-%d')
+    createdate= datetime(int(year), int(month), 25)
+    createdate_str=createdate.strftime('%Y-%m-%d')
     context={
         "request":request,
         "image_path":request.cookies.get("image_path_session"),
@@ -533,7 +540,10 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
         "roleadmin":request.cookies.get("roleadmin"),
         "fullname_admin":request.cookies.get("fullname_adminsession"),
         "current_user":current_user,
-        "payrolldetail":payrolldetail
+        "payrolldetail":payrolldetail,
+        "startdate":first_day_of_month_str,
+        "enddate":last_day_of_month_str,
+        "createdate":createdate_str
     }
     return templates.TemplateResponse("payroll/payrollDetail.html",context)
 
@@ -647,4 +657,105 @@ async def payrolllistemployee(request:Request,month,year,current_user: User = De
         return response
     return RedirectResponse(url=f"/payrollemployee/{form_method.get("month")}/{form_method.get("year")}",status_code=status.HTTP_302_FOUND)
 
+@payroll.get("/createallowancemain",tags=['payroll'], response_class=HTMLResponse)
+async def createallowancemain(request:Request,current_user: User = Depends(get_current_user_from_token)):
+    current_date = datetime.now()
 
+    # Lấy tháng và năm hiện tại
+    current_month = current_date.month
+    current_year = current_date.year
+    return RedirectResponse(url=f"/createallowance/{current_month}/{current_year}",status_code=status.HTTP_302_FOUND)
+
+@payroll.get("/createallowance/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def createallowance_get(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""
+    SELECT id,email
+FROM informationUser
+WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
+    value=(month,year)
+    cursor.execute(sql,value)
+    email_temp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    emaillist=[(email[0],email[1])for email in email_temp]
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select a.*,i.Email,i.Fullname from  Allowance a join informationUser i on i.id=a.iduser where a.month=? and a.year=?"
+    value=(month,year)
+    cursor.execute(sql,value)
+    listalowance_temp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    listalowance=[(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[9],a[10])for a in listalowance_temp]
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "year":year,
+        "month":month,
+        "emaillist":emaillist,
+        "listalowance":listalowance
+        
+    }
+    return templates.TemplateResponse("payroll/createallowance.html",context)
+
+
+@payroll.post("/createallowance/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def createallowance(request:Request,month,year,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""
+    SELECT id,email
+FROM informationUser
+WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
+    value=(month,year)
+    cursor.execute(sql,value)
+    email_temp=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    emaillist=[(email[0],email[1])for email in email_temp]
+    form_method=await request.form()
+    if "yearform" in form_method and form_method.get("yearform")=="yearform":
+        return RedirectResponse(url=f"/createallowance/{form_method["month"]}/{form_method["year"]}",status_code=status.HTTP_302_FOUND)
+    elif "addallowance" in form_method and form_method.get("addallowance")=="addallowance":
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="SELECT * FROM Allowance where iduser=? and month=? and year=?"
+        value=(form_method["email"],month,year)
+        cursor.execute(sql,value)
+        temp=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        if temp:
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="""
+            update Allowance set Internet_Allowance=?,Meal_Allowance=?,Phone_Allowance=?,Transportation_Allowance=?,
+    Other_Cash_Allowance=?,Year_End_Bonus=?,Unused_Annual_Leave=? wherew iduser=? and month=? and year=?"""
+            value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
+                ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
+                form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year)
+            cursor.execute(sql,value)
+            conn.commit()
+            conn.close()
+        else:
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="""
+            insert into Allowance(Internet_Allowance,Meal_Allowance,Phone_Allowance,Transportation_Allowance,
+    Other_Cash_Allowance,Year_End_Bonus,Unused_Annual_Leave,iduser,month,year) values(?,?,?,?,?,?,?,?,?,?)"""
+            value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
+                ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
+                form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year)
+            cursor.execute(sql,value)
+            conn.commit()
+            conn.close()
+        return RedirectResponse(url=f"/createallowance/{month}/{year}",status_code=status.HTTP_302_FOUND)

@@ -1,0 +1,107 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<form method="post">
+    <label for="year" class="mb-0 mr-1" style="width: 185px;">Year - Month:</label>
+    <select id="year" name="year" class="custom-select mr-2">
+        <option value="{{ year }}">{{ year }}</option>
+        {% for year in range(1900, 2101) %}
+        <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+    </select>
+
+    <select id="month" name="month" class="custom-select mr-2">
+        <option value="{{ month }}">{{ month }}</option>
+        {% for month in range(1, 12) %}
+        <option value="{{ month }}">{{ month }}</option>
+        {% endfor %}
+    </select>
+    <!-- <label  for="fillter"   class="btn btn-primary btn-sm   mr-2">Filter</label> -->
+    <button type="submit" name="yearform" value="yearform" class="btn btn-primary   mr-2"> Submit</button>
+</form>
+<form method="post">
+    <label for="email" class="mb-0 mr-1" style="width: 185px;">Email</label>
+    <select id="email" name="email" class="custom-select mr-2">
+        {% for email in emaillist %}
+        <option value="{{ email[0] }}">{{ email[1] }}</option>
+        {% endfor %}
+    </select>
+    <div>
+        <label>Internet Allowance</label>
+        <input name="Internet_Allowance" value="0">
+    </div>
+    <div>
+        <label>Meal Allowance</label>
+        <input name="Meal_Allowance" value="0">
+    </div>
+    <div>
+        <label>Phone Allowance</label>
+        <input name="Phone_Allowance" value="0">
+    </div>
+    <div>
+        <label>Transportation Allowance</label>
+        <input name="Transportation_Allowance" value="0">
+    </div>
+    <div>
+        <label>Other Cash Allowance</label>
+        <input name="Other_Cash_Allowance" value="0">
+    </div>
+    <div>
+        <label>Year End Bonus</label>
+        <input name="Year_End_Bonus" value="0">
+    </div>
+    <div>
+        <label>Unused Annual Leave</label>
+        <input name="Unused_Annual_Leave" value="0">
+    </div>
+    <button type="submit" name="addallowance" value="addallowance" class="btn btn-primary   mr-2"> Add</button>
+</form>
+<table id="myTable"  width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th><input type="checkbox" id="selectAllCheckbox"></th>
+            <th>Email Address 
+                
+            </th>
+            <th>Full name</th>
+            <th>Internet Allowance</th>
+            <th>Meal Allowance </th>
+            <th>Phone Allowance</th>
+            <th>Transportation Allowance </th>
+            <!-- <th>Gross Salary</th>   -->
+            <th>Other Cash Allowance</th>
+            <th>Year End Bonus</th>
+            <th>Unused Annual Leave</th>
+            <th>Detail</th>
+            
+        </tr>
+    </thead>
+    
+    
+    
+    <tbody >
+    
+    {% for g in listalowance %}
+        <tr>
+            
+            <td class="text-center"><input type="checkbox" name="checkbox" value="{{g[0]}}"></td>
+            
+            <td>{{g[8]}}</td>
+            <td>{{g[9]}}</td>
+            <td class="text-center">{{g[1]}}</td>
+            <td class="text-center">{{g[2]}}</td>
+            <td class="text-center">{{g[3]}}</td>
+            <td class="text-center">{{g[4]}}</td>
+            <!-- <td class="text-center">{{g[0]}}</td> -->
+            <td class="text-center">{{g[5]}}</td>
+            <td class="text-center">{{g[6]}}</td>
+            <td class="text-center">{{g[7]}}</td>
+            <td class="text-center"></td>
+            
+            
+        </tr>
+    {% endfor %}    
+</form>
+    </tbody>
+</table>
+{% endblock %}
