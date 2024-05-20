@@ -3200,9 +3200,9 @@
   }
   
   .dropdown-item:hover, .dropdown-item:focus {
-    color: #2e2f37;
+    color: #fff;
     text-decoration: none;
-    background-color: #eaecf4;
+    background-color: #4e73df;
   }
   
   .dropdown-item.active, .dropdown-item:active {
