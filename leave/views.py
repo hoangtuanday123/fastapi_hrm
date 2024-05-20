@@ -366,16 +366,17 @@ async def annualleave_view_get(request:Request,year,current_user: User = Depends
         year==curent_year
     conn=db.connection()
     cursor=conn.cursor()
-    sql="""select d.id ,p.projectid,p.projectname,t.name,c.name,d.startdate,d.enddate,d.total,d.statustimesheet 
+    sql="""select d.id,i.Fullname ,p.projectid,p.projectname,t.name,c.name,d.startdate,d.enddate,d.total,d.statustimesheet 
 from dayofftimesheet d join project p on d.projectid=p.projectid join taskproject t on d.taskid=t.id
-LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date  where  da.Year=? """
+LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date
+join informationUser i on d.iduser=i.id  where  da.Year=? """
     values=(year)
     cursor.execute(sql,values)
     annualeave_temp=cursor.fetchall()
     conn.commit()
     conn.close()
     annualleavelist=[(project[0],project[1],project[2],project[3],project[4],
-                      project[5],project[6],project[7],project[8])for project in annualeave_temp]
+                      project[5],project[6],project[7],project[8],project[9])for project in annualeave_temp]
     context={
         "request":request,
         "current_user":current_user,

@@ -115,46 +115,47 @@ def tinhluongnhanvientra(g,grosssalary):
 def dayoffinmonth(id,last_month_25_str,current_month_25_str):
     last_month_25=datetime.strptime(last_month_25_str, '%Y-%m-%d').date()
     current_month_25=datetime.strptime(current_month_25_str, '%Y-%m-%d').date()
+    current_date = last_month_25
+    listdate_30=[]
+    while current_date<=current_month_25:
+        listdate_30.append(current_date.strftime('%Y-%m-%d'))
+        current_date += timedelta(days=1)
+    
     conn=db.connection()
     cursor=conn.cursor()
+#     sql="""
+#      select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date,d.WeekNumber,w.iduser
+#  from weeklytimesheet w join project p on w.projectid=p.projectid join
+#  projecttype pt on pt.projecttypeid=p.projecttypeid LEFT JOIN componentproject c on w.componentid =c.id join 
+#  taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where d.Year=2024 and 
+#  d.date BETWEEN ? AND ? and w.iduser=? and w.status=1 and w.statustimesheet='approval' and pt.Name='Non-Project' and t.name='unpaid days off'
+#  """
+#     value=(last_month_25_str,current_month_25_str,id)
     sql="""
-     select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date,d.WeekNumber,w.iduser
- from weeklytimesheet w join project p on w.projectid=p.projectid join
- projecttype pt on pt.projecttypeid=p.projecttypeid LEFT JOIN componentproject c on w.componentid =c.id join 
- taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where d.Year=2024 and 
- d.date BETWEEN ? AND ? and w.iduser=? and w.status=1 and w.statustimesheet='approval' and pt.Name='Non-Project' and t.name='unpaid days off'
- """
-    value=(last_month_25_str,current_month_25_str,id)
-    cursor.execute(sql,value)
+    select d.* from dayofftimesheet d join date da on d.startdate=da.Date join date da1 on da1.Date=d.enddate 
+where d.iduser=? and d.startdate BETWEEN ? AND ? or d.iduser=? and d.enddate BETWEEN ? AND ?
+"""
+    values=(id,last_month_25,current_month_25,id,last_month_25,current_month_25)
+    cursor.execute(sql,values)
     temp=cursor.fetchall()
     conn.commit()
     conn.close()
     dayoff=0
+    listdate=[]
     for d in temp:
-        start_of_week = d[16] - timedelta(days=d[16].weekday())
-        array=[]
-        # In ra các ngày từ thứ 2 đến thứ 7
-        for i in range(1, 8):
-            day = start_of_week + timedelta(days=i)
-            day=datetime.strptime(day.strftime('%Y-%m-%d'), '%Y-%m-%d').date()
-            
-            if last_month_25<= day<=current_month_25:
-                if i==1:
-                    dayoff=dayoff + int(d[5])
-                elif i==2:
-                    dayoff=dayoff + int(d[6])
-                elif i==3:
-                    dayoff=dayoff + int(d[7])
-                elif i==4:
-                    dayoff=dayoff + int(d[8])
-                elif i==5:
-                    dayoff=dayoff + int(d[9])
-                elif i==6:
-                    dayoff=dayoff + int(d[10])
-                elif i==7:
-                    dayoff=dayoff + int(d[11])
-    dayoff=dayoff/8
+        startdate=datetime.strptime(str(d[5]), '%Y-%m-%d').date()
+        enddate=datetime.strptime(str(d[6]), '%Y-%m-%d').date()
+        current_date = startdate
+        while current_date<=enddate:
+            listdate.append(current_date.strftime('%Y-%m-%d'))
+            current_date += timedelta(days=1)
+        for date in listdate:
+            if date in listdate_30:
+                dayoff=dayoff+1
+        listdate.clear()
     return dayoff
+        
+    
        
 @payroll.get("/payrollmanagement",tags=['payroll'], response_class=HTMLResponse)
 async def payrollmanagement(request:Request,current_user: User = Depends(get_current_user_from_token)):
@@ -216,6 +217,7 @@ async def payrolllist_get(request:Request,month,year,current_user: User = Depend
     dayofflist=[]
     for id in idtemp:
         dayoff=dayoffinmonth(id[0],last_month_25_str,current_month_25_str)
+        
         id_dayoff=[id[0],dayoff,id[1]]
         dayofflist.append(id_dayoff)
 
