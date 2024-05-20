@@ -7,7 +7,7 @@
 	<div class="col-md-6 offset-md-3">
 		<div class="card card-outline-secondary">
 			<div class="card-header">
-				<h3 class="mb-0">Add New Task</h3>
+				<h3 class="mb-0">Apply Leave</h3>
 			</div>
 			<div class="card-body">
 				<form role="form" method="post" action="" class = "form">
@@ -38,16 +38,19 @@
               {% endfor %}
             </select>
 					</div>
+                    
                     <div class="form-group">
                         <label>Start date</label>
-                        <input type="date" id="startdate" name="startdate" >
+                        <input type="date" id="startdate" name="startdate" class="form-control">
                     </div>
+                    
                     <div class="form-group">
                         <label>End date</label>
-                        <input type="date" id="enddate" name="enddate" >
+                        <input type="date" id="enddate" name="enddate" class="form-control">
                     </div>
+
 					<div class="form-group">
-						<button type="submit" class="btn btn-success btn-lg float-right">Add</button>
+						<button type="submit" class="btn btn-success float-right">Add</button>
 					</div>
 				</form>
 			</div>

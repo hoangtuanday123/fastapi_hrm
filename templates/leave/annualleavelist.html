@@ -1,163 +1,111 @@
 {% extends "_base.html" %}
 
 {% block content %}
-    <style>
-        .grid-container {
-          display: grid;
-          /* grid-template-columns: auto auto auto; */
-          background-color: rgba(255, 255, 255, 0.8);;
-          padding: 10px;
-          height: 100vh;
-          overflow: auto;
-        }
-        .grid-item {
-          background-color: rgba(255, 255, 255, 0.8);
-          border: 1px solid rgba(0, 0, 0, 0.8);
-          padding: 20px;
-          /* font-size: 30px; */
-          /* text-align: center; */
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        </style>
-    <div class="grid-container" style="grid-template-columns: 30% 30% 40%;">
-        <div class="grid-item"  >
-            <div>
-                <div class="row">
-                    <div class="col-md offset-md">
-                        <div class="card card-outline-secondary">
-                            
-                            <div class="card-body">
-                                <form method="post" class = "form">
-
-                                    <div class="form-group mb-1">
-                                        <label >Select calender</label>
-                                            <select class="form-control" id="year" name="year">
-                                                <option value="{{ year }}">{{ year }}</option>
-                                                {% for year in range(1900, 2101) %}
-                                                <option value="{{ year }}">{{ year }}</option>
-                                                {% endfor %}
-                                            </select>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <button type="submit" name="yearform" value="yearform" class="btn btn-primary float-right">Submit</button>
-                                    </div>
-                                </form>
-                            </div>
+<body style="background-color: #ccc;">
+    <div class="container-fluid my-4">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4 class="font-weight-bold">Annual Leave</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-3 ml-auto">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <label for="year" class="mr-2 font-weight-bold">Year:</label>
+                            <select id="year" name="year" class="custom-select mr-2">
+                                <option value="{{ year }}">2024</option>
+                                {% for year in range(2023, 2000, -1) %}
+                                <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" name="yearform" value="yearform" class="btn btn-primary btn-sm">Submit</button>
                         </div>
                     </div>
                 </div>
-                
-            </div>
-            <div class="grid-container" style="grid-template-columns: repeat(3, 1fr);grid-template-rows: repeat(20, 1fr);">
-                {% for week in weeks_in_year %}
-                <button class="btn btn-outline-info" onclick="location.href='/WeeklyTimesheet/{{iduser}}/{{year}}/{{week.week_number}}'">week {{week.week_number}} </button>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="grid-item" style="grid-column: 2 / span 2;">
-            <div class="grid-container" style="grid-template-rows: 10% 10% 10% 10% 50% 10%; grid-template-columns: 50% 50% ; " >
-                <div class="grid-item" style="grid-column: 1/span 2;grid-row: 1; text-align: center;"> Weekly Timesheet</div>
-                <div class="grid-item" style="grid-column: 1; grid-row: 2;">
-                    <div>Weekly Num: </div>
-                    <!-- <div>w{{weeknum}}</div> -->
-                </div>
-                <div class="grid-item" style="grid-column: 2; grid-row: 2;">
-                    <div>Timesheet Status: </div>
-                    <!-- <div>{{timesheetstatus}}</div> -->
-                </div>
-                <div class="grid-item" style="grid-column: 1; grid-row: 3;">
-                    <!-- <div>User: </div>
-                    <div>alex</div> -->
-                </div>
-                <div class="grid-item" style="grid-column: 2; grid-row: 3;">
-                    <!-- <div>Effort filled this week: </div>
-                    <div>{{percent}} %</div> -->
-                </div>
-                
-                    <!-- <div class="grid-item" style="grid-column: 1/span 2; grid-row: 4;">
-                        <button>Copy From Previous WTS</button>
-                        <button onclick="location.href='/WeeklyTimesheet/addtask/{{year}}/{{weeknum}}'">Add Tasks</button>
-                        <button type="submit" name="removetasks" value="removetasks" class="btn btn-success">Remove Tasks</button>
-                        <button>Reset values</button>
-                        
-                    </div> -->
-                    <div  style="grid-column: 1/span 2; grid-row: 5;">
-                        <table>
-                            <tr>
-                                <th><input type="checkbox" id="selectAll"></th>
-                                <th>Project Num</th>
-                                <th>Project </th>
-                                <th>Task</th>
-                                <th>Component</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Total</th>
-                                <th>Status timesheet</th>
-                            </tr>
-                            <form method="post">
-                                <div class="grid-item">
-                                    <!-- <button class="btn btn-primary btn-sm" type="submit" name="copytasks" value="copytasks" >Copy From Previous WTS</button> -->
-                                    <button class="btn btn-primary btn-sm" type="submit" name="addtasks" value="addtasks">Add Tasks</button>
-                                    <button class="btn btn-primary btn-sm" type="submit" name="removetasks" value="removetasks" class="btn btn-success">Remove Tasks</button>
-                                    <!-- <button class="btn btn-primary btn-sm" type="submit" name="resetvaluetasks" value="resetvaluetasks">Reset values</button> -->
-                                    
-                                </div>
-                                {% for project in annualleavelist %}
-                                <tr>
-                                    <td><input type="checkbox" name="checkbox" value="{{project[0]}}"></td>
-                                    <td>{{project[1]}}</td>
-                                    <td>{{project[2]}}</td>
-                                    <td>{{project[3]}}</td>
-                                    <td>{{project[4]}}</td>
-                                    <td>{{project[5]}}</td>
-                                    <td>{{project[6]}}</td>
-                                    <td>{{project[7]}}</td>
-                                    <td>{{project[8]}}</td>
-                                </tr>
-                                {% endfor %}
-                                <div class="grid-item" >
-                                    <button class="btn btn-primary btn-sm" type="submit" name="recalltasks" value="recalltasks">Recall</button>
-                                    <button class="btn btn-primary btn-sm" type="submit" name="savetasks" value="savetasks">Save</button>
-                                    <button class="btn btn-primary btn-sm" type="submit" name="submittasks" value="submittasks">Submit</button>
-                                </div>
-                            </form>
-                        </table>
-                        
-            
-                        <script>
-                            const selectAllCheckbox = document.getElementById("selectAll");
-                            const checkboxes = document.querySelectorAll("table input[type='checkbox']");
-                    
-                            selectAllCheckbox.addEventListener("change", () => {
-                                checkboxes.forEach((checkbox) => {
-                                    checkbox.checked = selectAllCheckbox.checked;
-                                });
-                            });
-                        </script>
+                <hr>
+                <div class="row  mb-3">
+                    <div class="col-sm-4">
+                        <label for="entire" class="font-weight-bold">Entire:</label>
+                        <span id="entire">12</span> days
                     </div>
-            
-                <!-- <div class="grid-item" style="grid-column: 1/span 2; grid-row: 6;">
-                    <button>Recall</button>
-                    <button>Save</button>
-                    <button>Submit</button>
-                </div> -->
-            
+                    <div class="col-sm-4">
+                        <label for="used" class="font-weight-bold">Used:</label>
+                        <span id="used">4</span> days
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="remaining" class="font-weight-bold">Remaining:</label>
+                        <span id="remaining">8</span> days
+                    </div>
+                </div>
+                <hr>
+                <div class=" mb-3">
+                    <label type="button" for="addtasks" class="btn btn-success btn-sm mr-1" style="width: 100px;">Add</label> 
+                    <label type="button" for="removetasks" class="btn btn-danger btn-sm" style="width: 100px;">Delete</label>
+                    <label type="button" for="recalltasks" class="btn btn-primary btn-sm mr-1" style="width: 100px;">Recall</label>
+                    <label type="button" for="savetasks" class="btn btn-primary btn-sm mr-1" style="width: 100px;">Save</label>
+                    <label type="button" for="submittasks" class="btn btn-primary btn-sm mr-1" style="width: 100px;">Submit</label>
+                </div>
+                <hr>
+                <p class="font-weight-bold text-center">List of Annual Leave Days</p>
+                <table id="mytable" class="table table-bordered table-hover "  >
+                    <thead style="background-color: #ccc;table-layout: fixed;" class="text-center ">
+                        <tr>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th>Project Code </th>
+                            <th>Project Name </th>
+                            <th>Task</th>
+                            <th>Component</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Days</th>
+                            <th>Status</th>
+                            <th>Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <form method="post">
+                            <button id="addtasks"  type="submit" name="addtasks" value="addtasks" hidden>Add Tasks</button>
+                            <button id="removetasks"  type="submit" name="removetasks" value="removetasks" hidden>Remove Tasks</button>
+                            {% for project in annualleavelist %}
+                                <tr>
+                                    <td class="text-center"><input type="checkbox" name="checkbox" value="{{project[0]}}"></td>
+                                    <td class="text-center">{{project[1]}}</td>
+                                    <td>{{project[2]}}</td>
+                                    <td class="text-center">{{project[3]}}</td>
+                                    <td class="text-center">{{project[4]}}</td>
+                                    <td class="text-center">{{project[5]}}</td>
+                                    <td class="text-center">{{project[6]}}</td>
+                                    <td >{{project[7]}}</td>
+                                    <td> {{project[8]}}</td>
+                                    <td>...</td>
+                                    <!-- <td class="text-center">
+                                        <a href="#" style="color:#858796" >
+                                        <i class="fas fa-edit"></i> 
+                                        </a>
+                                    </td> -->
+                                </tr>
+                            {% endfor %}
+                            <button  type="submit" id="recalltasks" name="recalltasks" value="recalltasks" hidden>Recall</button>
+                            <button  type="submit" id="savetasks" name="savetasks" value="savetasks" hidden>Save</button>
+                            <button  type="submit" id="submittasks" name="submittasks" value="submittasks" hidden>Submit</button>
+                        </form>
+                    </tbody>
+                </table>
+                <!-- end card body -->
             </div>
+            <!-- end card -->
         </div>
-            
-      </div>
+        <!-- end container -->
+    </div>
+</body>
+<script>
+    const selectAllCheckbox = document.getElementById("selectAll");
+    const checkboxes = document.querySelectorAll("table input[type='checkbox']");
 
-
+    selectAllCheckbox.addEventListener("change", () => {
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    });
+</script>
 {% endblock %}
