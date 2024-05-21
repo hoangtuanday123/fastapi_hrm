@@ -24,7 +24,7 @@ async def exception_get(request: Request,current_user: User = Depends(get_curren
         "fullname_admin":request.cookies.get("fullname_adminsession"),
         "roleuser":request.cookies.get("roleuser"),
         "current_user":current_user,
-        "exception":excep
+        "excep":excep
     }
     return templates.TemplateResponse("exception/exception.html",context)
 

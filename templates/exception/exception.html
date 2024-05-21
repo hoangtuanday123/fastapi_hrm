@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <form method="post">
+        <div>
+            <label>Basic Salary</label>
+            <input name="basicsalary" value="{{excep[1]}}">
+        </div>
+        <div>
+            <label>Company site code 1</label>
+            <input name="companysitecode1" value="{{excep[2]}}">
+        </div>
+        <div>
+            <label>Company site code 2</label>
+            <input name="companysitecode2" value="{{excep[3]}}">
+        </div>
+        <div>
+            <label>Company site code 3</label>
+            <input name="companysitecode3" value="{{excep[4]}}">
+        </div>
+        <div>
+            <label>Company site code 4</label>
+            <input name="companysitecode4" value="{{excep[5]}}">
+        </div>
+        <div>
+            <label>Personal Deduction</label>
+            <input name="PersonalDeduction" value="{{excep[6]}}">
+        </div>
+        <div>
+            <label> Dependents Deduction</label>
+            <input name="DependentsDeduction" value="{{excep[7]}}">
+        </div>
+        <button type="submit">Update</button>
+    </form>
+</div>
+
+
+{% endblock %}
