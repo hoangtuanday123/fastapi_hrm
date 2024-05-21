@@ -61,7 +61,7 @@ def calculate_pit(taxable_income):
 
     return tax
 
-def tinhluongnhanvientra(g,grosssalary):
+def tinhluongnhanvientra(g,grosssalary,MealAllowance):
     #nhan vien
     bhxh=1800000*20*0.08
     bhyt=1800000*20*0.015
@@ -81,23 +81,10 @@ def tinhluongnhanvientra(g,grosssalary):
         bhtnct=3250000*20*0.01*1.07
     giacanhbanthan=11000000
     giacanhnguoiphuthuoc=4400000*int(g[7])
-    thunhaptruocthue=grosssalary-bhxh-bhyt-bhtn
+    thunhaptruocthue=grosssalary-bhxh-bhyt-bhtn-MealAllowance
     thunhapchiuthue=thunhaptruocthue-giacanhbanthan-giacanhnguoiphuthuoc
     thuethunhap=calculate_pit(thunhapchiuthue)
-    # if int(thunhapchiuthue<=5000000):
-    #     thuethunhap=thunhapchiuthue*0.05
-    # elif int(thunhapchiuthue>5000000 and thunhapchiuthue<=10000000 ):
-    #     thuethunhap=thunhapchiuthue*0.1
-    # elif int(thunhapchiuthue>10000000 and thunhapchiuthue<=18000000 ):
-    #     thuethunhap=thunhapchiuthue*0.15
-    # elif int(thunhapchiuthue>18000000 and thunhapchiuthue<=32000000 ):
-    #     thuethunhap=thunhapchiuthue*0.2   
-    # elif int(thunhapchiuthue>32000000 and thunhapchiuthue<=52000000 ):
-    #     thuethunhap=thunhapchiuthue*0.25
-    # elif int(thunhapchiuthue>52000000 and thunhapchiuthue<=80000000 ):
-    #     thuethunhap=thunhapchiuthue*0.30
-    # elif int(thunhapchiuthue>80000000):
-    #     thuethunhap=thunhapchiuthue*0.35
+    return thuethunhap
     netsalary=thunhaptruocthue-thuethunhap
     #congty
     bhxhct=1800000*20*0.17
@@ -243,14 +230,25 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
     for g in gross:
         for d in dayofflist:
             if d[0]==g[9]:
+                conn=db.connection()
+                cursor=conn.cursor()
+                sql="select * from Allowance where iduser=? and month=? and year=?"
+                values=(g[9],month,year)
+                cursor.execute(sql,values)
+                allowance_temp=cursor.fetchone()
+                conn.commit()
+                conn.close()
                 
                 weekdays_count= count_weekdays(last_month_25,current_month_25)
                 offset=int(d[1])
                 actualday=weekdays_count-offset
                 percentworkinmonth=actualday/weekdays_count
                 amoundgrosssalary=round(int(g[4])*percentworkinmonth)
-                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])
-                salary=tinhluongnhanvientra(g,totalincome)
+                allowance=allowance_temp[1]+allowance_temp[2]+allowance_temp[3]+allowance_temp[4]+allowance_temp[5]+allowance_temp[6]+allowance_temp[7]
+                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])+allowance
+             
+                salary=tinhluongnhanvientra(g,totalincome,allowance_temp[2])
+                return str(salary)
                 salary.append(g[8])
                 salary.append(round(d[1]))
                 salary.append(round(g[9]))
@@ -259,7 +257,7 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 salary.append(str(offset))
                 salary.append(str(actualday))
                 salary.append(str(round(g[4])))
-                salary.append(g[10]),
+                salary.append(g[10])
                 salary.append(amoundgrosssalary)
         tempsumsalary.append(salary)
     context={
@@ -343,13 +341,24 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
     for g in gross:
         for d in dayofflist:
             if d[0]==g[9]:
+                conn=db.connection()
+                cursor=conn.cursor()
+                sql="select * from Allowance where iduser=? and month=? and year=?"
+                values=(g[9],month,year)
+                cursor.execute(sql,values)
+                allowance_temp=cursor.fetchone()
+                conn.commit()
+                conn.close()
+                
                 weekdays_count= count_weekdays(last_month_25,current_month_25)
                 offset=int(d[1])
                 actualday=weekdays_count-offset
                 percentworkinmonth=actualday/weekdays_count
-                amoundgrosssalary=int(g[4])*percentworkinmonth
-                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])
-                salary=tinhluongnhanvientra(g,totalincome)
+                amoundgrosssalary=round(int(g[4])*percentworkinmonth)
+                allowance=allowance_temp[1]+allowance_temp[2]+allowance_temp[3]+allowance_temp[4]+allowance_temp[5]+allowance_temp[6]+allowance_temp[7]
+                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])+allowance
+             
+                salary=tinhluongnhanvientra(g,totalincome,allowance_temp[2])
                 salary.append(g[8])
                 salary.append(round(d[1]))
                 salary.append(round(g[9]))
@@ -358,13 +367,11 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 salary.append(str(offset))
                 salary.append(str(actualday))
                 salary.append(str(round(g[4])))
-                salary.append(g[10]),
+                salary.append(g[10])
                 salary.append(amoundgrosssalary)
-        
         tempsumsalary.append(salary)
     form_method=await request.form()
     if "savepayroll" in form_method and form_method.get("savepayroll")=="savepayroll":
-       
         savepayroll(tempsumsalary,month,year)
         return RedirectResponse(url=f"/payroll/{month}/{year}",status_code=status.HTTP_302_FOUND)
     if "exportexcels" in form_method and form_method.get("exportexcels")=="exportexcels":
@@ -468,6 +475,7 @@ def exportexcels(iduserlist,month,year):
 
 def savepayroll(salarylist,month,year):
     for salary in salarylist:
+       
         conn=db.connection()
         cursor=conn.cursor()
         sql="select * from payroll where iduser=? and month=? and year=?"
@@ -530,6 +538,16 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
     last_day_of_month_str=last_day_of_month.strftime('%Y-%m-%d')
     createdate= datetime(int(year), int(month), 25)
     createdate_str=createdate.strftime('%Y-%m-%d')
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from Allowance where iduser=? and month=? and year=?"
+    values=(iduser,month,year)
+    cursor.execute(sql,values)
+    allowancedetail=cursor.fetchone()
+    conn.commit()
+    conn.close()
+
     context={
         "request":request,
         "image_path":request.cookies.get("image_path_session"),
@@ -543,7 +561,10 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
         "payrolldetail":payrolldetail,
         "startdate":first_day_of_month_str,
         "enddate":last_day_of_month_str,
-        "createdate":createdate_str
+        "createdate":createdate_str,
+        "allowancedetail":allowancedetail,
+        "thunhapchiuthue":payrolldetail[8]-allowancedetail[2],
+        "giamtruockhitinhthue":payrolldetail[13]+payrolldetail[14]+payrolldetail[10]+payrolldetail[11]+payrolldetail[12]
     }
     return templates.TemplateResponse("payroll/payrollDetail.html",context)
 
