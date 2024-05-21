@@ -238,6 +238,15 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 allowance_temp=cursor.fetchone()
                 conn.commit()
                 conn.close()
+
+                conn=db.connection()
+                cursor=conn.cursor()
+                sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
+                values=(g[9],month,year)
+                cursor.execute(sql,values)
+                phucloichiuthuethunhapcanhan_temp=cursor.fetchone()
+                conn.commit()
+                conn.close()
                 
                 weekdays_count= count_weekdays(last_month_25,current_month_25)
                 offset=int(d[1])
@@ -245,7 +254,7 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 percentworkinmonth=actualday/weekdays_count
                 amoundgrosssalary=round(int(g[4])*percentworkinmonth)
                 allowance=allowance_temp[1]+allowance_temp[2]+allowance_temp[3]+allowance_temp[4]+allowance_temp[5]+allowance_temp[6]+allowance_temp[7]
-                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])+allowance
+                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])+allowance+phucloichiuthuethunhapcanhan_temp[1]
              
                 salary=tinhluongnhanvientra(g,totalincome,allowance_temp[2])
                 salary.append(g[8])
@@ -348,6 +357,15 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 allowance_temp=cursor.fetchone()
                 conn.commit()
                 conn.close()
+
+                conn=db.connection()
+                cursor=conn.cursor()
+                sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
+                values=(g[9],month,year)
+                cursor.execute(sql,values)
+                phucloichiuthuethunhapcanhan_temp=cursor.fetchone()
+                conn.commit()
+                conn.close()
                 
                 weekdays_count= count_weekdays(last_month_25,current_month_25)
                 offset=int(d[1])
@@ -355,7 +373,7 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 percentworkinmonth=actualday/weekdays_count
                 amoundgrosssalary=round(int(g[4])*percentworkinmonth)
                 allowance=allowance_temp[1]+allowance_temp[2]+allowance_temp[3]+allowance_temp[4]+allowance_temp[5]+allowance_temp[6]+allowance_temp[7]
-                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])+allowance
+                totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])+allowance+phucloichiuthuethunhapcanhan_temp[1]
              
                 salary=tinhluongnhanvientra(g,totalincome,allowance_temp[2])
                 salary.append(g[8])
@@ -426,15 +444,48 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
 def exportfilepdf(request:Request,iduser,month,year):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select p.*,l.Position from payroll p join informationUser i on p.iduser=i.id join informationUserJob ij on i.id=ij.idinformationuser join laborContract l on l.idinformationUserJob=ij.id where p.iduser=? and p.month=? and p.year=?"
+    sql="select * from payroll where iduser=? and month=? and year=?"
     values=(iduser,month,year)
     cursor.execute(sql,values)
-    export=cursor.fetchone()
+    payrolldetail=cursor.fetchone()
     conn.commit()
     conn.close()
+    first_day_of_month = datetime(int(year), int(month), 1)
+    first_day_of_month_str=first_day_of_month.strftime('%Y-%m-%d')
+    last_day = calendar.monthrange(int(year), int(month))
+    last_day_of_month = datetime(int(year), int(month), last_day[1])
+    last_day_of_month_str=last_day_of_month.strftime('%Y-%m-%d')
+    createdate= datetime(int(year), int(month), 25)
+    createdate_str=createdate.strftime('%Y-%m-%d')
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from Allowance where iduser=? and month=? and year=?"
+    values=(iduser,month,year)
+    cursor.execute(sql,values)
+    allowancedetail=cursor.fetchone()
+    conn.commit()
+    conn.close()
+
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
+    values=(iduser,month,year)
+    cursor.execute(sql,values)
+    phucloichiuthueTNCN=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    
     context={
-            "request":request ,
-            "payrolldetail":export     
+        "request":request ,
+        "payrolldetail":payrolldetail,
+        "startdate":first_day_of_month_str,
+        "enddate":last_day_of_month_str,
+        "createdate":createdate_str,
+        "allowancedetail":allowancedetail,
+        "phucloichiuthueTNCN":phucloichiuthueTNCN[1],
+        "thunhapchiuthue":payrolldetail[8]-allowancedetail[2],
+        "giamtruockhitinhthue":payrolldetail[13]+payrolldetail[14]+payrolldetail[10]+payrolldetail[11]+payrolldetail[12]
     }
     html=templates.TemplateResponse("payroll/payrollpdf.html",context).body.decode("utf-8")
     path_to_wkhtmltopdf = 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
@@ -456,9 +507,28 @@ def exportexcels(iduserlist,month,year):
         export=cursor.fetchone()
         conn.commit()
         conn.close()
+
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select * from Allowance where iduser=? and month=? and year=?"
+        values=(id,month,year)
+        cursor.execute(sql,values)
+        allowance_temp=cursor.fetchone()
+        conn.commit()
+        conn.close()
+
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
+        values=(id,month,year)
+        cursor.execute(sql,values)
+        phucloichiuthueTNCN=cursor.fetchone()
+        conn.commit()
+        conn.close()
         priod=str(export[26])+"-"+str(export[27])
-        data=[priod,export[1],export[3],export[28],0,export[7],0,0,0,0,export[6],export[24],0,0,0,0,0,0,export[8],export[16],
-              0,export[9],0,export[16],0,0,export[18],export[19],export[21],export[22],
+        data=[priod,export[1],export[3],export[28],export[7],export[8],allowance_temp[4],allowance_temp[2],allowance_temp[1],allowance_temp[3],export[6],export[24],allowance_temp[4],allowance_temp[2]
+              ,allowance_temp[1],allowance_temp[3],allowance_temp[5],allowance_temp[6],export[8],export[16],
+              0,export[9],0,export[16],phucloichiuthueTNCN[1],0,export[18],export[19],export[21],export[22],
               export[10],export[11],export[12],export[23],0]
         datalist.append(data)
     df = pd.DataFrame(datalist, columns=['Priod', 'Emp.No MSNV', 'Full Name', 'Position','Basic salary','Monthly salary','Transportation allowance','Meal allowance','Internet Allowance','phone Allowance'
@@ -547,6 +617,15 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
     conn.commit()
     conn.close()
 
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
+    values=(iduser,month,year)
+    cursor.execute(sql,values)
+    phucloichiuthueTNCN=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    
     context={
         "request":request,
         "image_path":request.cookies.get("image_path_session"),
@@ -562,6 +641,7 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
         "enddate":last_day_of_month_str,
         "createdate":createdate_str,
         "allowancedetail":allowancedetail,
+        "phucloichiuthueTNCN":phucloichiuthueTNCN[1],
         "thunhapchiuthue":payrolldetail[8]-allowancedetail[2],
         "giamtruockhitinhthue":payrolldetail[13]+payrolldetail[14]+payrolldetail[10]+payrolldetail[11]+payrolldetail[12]
     }
@@ -703,13 +783,15 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select a.*,i.Email,i.Fullname from  Allowance a join informationUser i on i.id=a.iduser where a.month=? and a.year=?"
+    sql="""
+select a.*,i.Email,i.Fullname,p.Premium_Insurance from  Allowance a join informationUser i on i.id=a.iduser 
+join phucloichiuthueTNCN p on p.iduser=i.id where a.month=? and a.year=?"""
     value=(month,year)
     cursor.execute(sql,value)
     listalowance_temp=cursor.fetchall()
     conn.commit()
     conn.close()
-    listalowance=[(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[11],a[12])for a in listalowance_temp]
+    listalowance=[(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[11],a[12],a[13])for a in listalowance_temp]
     context={
         "request":request,
         "current_user":current_user,
@@ -766,6 +848,14 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
+
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="update phucloichiuthueTNCN set Premium_Insurance=? where iduser=? and month=? and year=?"
+            value=(form_method["Premium_Insurance"],form_method["email"],month,year)
+            cursor.execute(sql,value)
+            conn.commit()
+            conn.close()
         else:
             conn=db.connection()
             cursor=conn.cursor()
@@ -775,6 +865,14 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
             value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
                 ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
                 form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year)
+            cursor.execute(sql,value)
+            conn.commit()
+            conn.close()
+
+            conn=db.connection()
+            cursor=conn.cursor()
+            sql="insert into phucloichiuthueTNCN(Premium_Insurance,iduser,month,year) values(?,?,?,?)"
+            value=(form_method["Premium_Insurance"],form_method["email"],month,year)
             cursor.execute(sql,value)
             conn.commit()
             conn.close()

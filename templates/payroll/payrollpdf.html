@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="row">
-                   
+                    
                     <div class="col-md-2 ml-4 lh-1 mb-2">
                         <h4 class="font-weight-bold ">Payslip/Phiếu lương</h4>
                     </div>
@@ -26,13 +26,13 @@
                                 <div><span class="fw-bolder">Month/Tháng (MM/DD/YYYY)</span></div>
                             </div>
                             <div class="col-md-2">
-                                <div><span class="fw-bolder">{{payrolldetail[26]}}</span></div>
+                                <div><span class="fw-bolder">{{createdate}}</span></div>
                             </div>
                             <div class="col-md-3">
                                 <div><span class="fw-bolder">Start Date/Từ ngày (MM/DD/YYYY)</span></div>
                             </div>
                             <div class="col-md-3">
-                                <div><span class="fw-bolder">0</span></div>
+                                <div><span class="fw-bolder">{{startdate}}</span></div>
                             </div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                                 <div><span class="fw-bolder">End Date/Đến ngày (MM/DD/YYYY)</span></div>
                             </div>
                             <div class="col-md-3">
-                                <div><span class="fw-bolder">0</span></div>
+                                <div><span class="fw-bolder">{{enddate}}</span></div>
                             </div>
                         </div>
                     </div>
@@ -160,7 +160,7 @@
                         <div><span class="fw-bolder">Actual Salary/Lương ngày công thực tế</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{payrolldetail[24]}}</span></div>
                     </div>
                 </div>
     
@@ -169,7 +169,7 @@
                         <div><span class="fw-bolder">Internet Allowance</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[1]}}</span></div>
                     </div>
                 </div>
     
@@ -178,7 +178,7 @@
                         <div><span class="fw-bolder">Meal Allowance</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[2]}}</span></div>
                     </div>
                 </div>
     
@@ -187,7 +187,7 @@
                         <div><span class="fw-bolder">Phone Allowance</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[3]}}</span></div>
                     </div>
                 </div>
     
@@ -196,7 +196,7 @@
                         <div><span class="fw-bolder">Transportation Allowance</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[4]}}</span></div>
                     </div>
                 </div>
     
@@ -205,7 +205,7 @@
                         <div><span class="fw-bolder">Other Cash Allowance</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[5]}}</span></div>
                     </div>
                 </div>
     
@@ -214,7 +214,7 @@
                         <div><span class="fw-bolder">Year End Bonus</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[6]}}</span></div>
                     </div>
                 </div>
     
@@ -223,7 +223,7 @@
                         <div><span class="fw-bolder">Unused Annual Leave</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[7]}}</span></div>
                     </div>
                 </div>
     
@@ -232,7 +232,7 @@
                         <div><span class="font-weight-bold ">(C) Benefit For Tax Purpose/Phúc lợi chịu thuế TNCN</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{phucloichiuthueTNCN}}</span></div>
                     </div>
                 </div>
     
@@ -241,7 +241,7 @@
                         <div><span class="fw-bolder">Premium Insurance</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{phucloichiuthueTNCN}}</span></div>
                     </div>
                 </div>
     
@@ -250,7 +250,7 @@
                         <div><span class="font-weight-bold ">(D) Tax Exemption/Thu nhập miễn thuế</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[2]}}</span></div>
                     </div>
                 </div>
     
@@ -259,7 +259,7 @@
                         <div><span class="fw-bolder">Meal Allowance</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{allowancedetail[2]}}</span></div>
                     </div>
                 </div>
     
@@ -268,7 +268,7 @@
                         <div><span class="font-weight-bold ">(E) Taxable Income/Thu nhập chịu thuế (B+C-D)</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">{{payrolldetail[16]}}</span></div>
+                        <div><span class="fw-bolder">{{thunhapchiuthue}}</span></div>
                     </div>
                 </div>
     
@@ -277,7 +277,7 @@
                         <div><span class="font-weight-bold ">(F) Tax Deduction/Giảm trước khi tính thuế</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">0</span></div>
+                        <div><span class="fw-bolder">{{giamtruockhitinhthue}}</span></div>
                     </div>
                 </div>
     
@@ -304,7 +304,7 @@
                         <div><span class="fw-bolder">3. Social Insurance/SI (8% of max SI salary)</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">{{payrolldetail[19]}}</span></div>
+                        <div><span class="fw-bolder">{{payrolldetail[10]}}</span></div>
                     </div>
                 </div>
     
@@ -313,7 +313,7 @@
                         <div><span class="fw-bolder">4. Health Insurance/HI (1.5% of max SI salary)</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">{{payrolldetail[21]}}</span></div>
+                        <div><span class="fw-bolder">{{payrolldetail[11]}}</span></div>
                     </div>
                 </div>
     
@@ -322,7 +322,7 @@
                         <div><span class="fw-bolder">5. Unemployment Insurance/UI (1% of min salary of zone)</span></div>
                     </div>
                     <div class="col-md-3">
-                        <div><span class="fw-bolder">{{payrolldetail[20]}}</span></div>
+                        <div><span class="fw-bolder">{{payrolldetail[12]}}</span></div>
                     </div>
                 </div>
     
@@ -414,6 +414,5 @@
             
         </div>
     </div>
-    
 </body>
 </html>
