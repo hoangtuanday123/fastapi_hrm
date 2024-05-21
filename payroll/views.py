@@ -805,7 +805,7 @@ join phucloichiuthueTNCN p on p.iduser=i.id where a.month=? and a.year=?"""
     listalowance_temp=cursor.fetchall()
     conn.commit()
     conn.close()
-    listalowance=[(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[11],a[12],a[13])for a in listalowance_temp]
+    listalowance=[(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[11],a[12],a[13],a[8])for a in listalowance_temp]
     context={
         "request":request,
         "current_user":current_user,
@@ -818,7 +818,8 @@ join phucloichiuthueTNCN p on p.iduser=i.id where a.month=? and a.year=?"""
         "year":year,
         "month":month,
         "emaillist":emaillist,
-        "listalowance":listalowance
+        "listalowance":listalowance,
+        
         
     }
     return templates.TemplateResponse("payroll/createallowance.html",context)
@@ -855,7 +856,7 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
             cursor=conn.cursor()
             sql="""
             update Allowance set Internet_Allowance=?,Meal_Allowance=?,Phone_Allowance=?,Transportation_Allowance=?,
-    Other_Cash_Allowance=?,Year_End_Bonus=?,Unused_Annual_Leave=? wherew iduser=? and month=? and year=?"""
+    Other_Cash_Allowance=?,Year_End_Bonus=?,Unused_Annual_Leave=? where iduser=? and month=? and year=?"""
             value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
                 ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
                 form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year)
@@ -891,3 +892,49 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
             conn.commit()
             conn.close()
         return RedirectResponse(url=f"/createallowance/{month}/{year}",status_code=status.HTTP_302_FOUND)
+    
+@payroll.get("/updateallowance/{iduser}/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def updateallowance_get(request:Request,iduser,month,year,current_user: User = Depends(get_current_user_from_token)):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""select a.*,p.Premium_Insurance from  Allowance a join informationUser i on i.id=a.iduser 
+join phucloichiuthueTNCN p on p.iduser=i.id where a.iduser=? and a.month=? and a.year=?"""
+    value=(iduser,month,year)
+    cursor.execute(sql,value)
+    allowance=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "year":year,
+        "month":month,
+        "allowance":allowance,
+        "iduser":iduser
+        
+    }
+    return templates.TemplateResponse("payroll/updateallowance.html",context)
+
+@payroll.post("/updateallowance/{iduser}/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
+async def updateallowance(request:Request,iduser,month,year,current_user: User = Depends(get_current_user_from_token)):
+    form_method=await request.form()
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="""update Allowance set Internet_Allowance=?,Meal_Allowance=?,Phone_Allowance=?,Transportation_Allowance=?,
+    Other_Cash_Allowance=?,Year_End_Bonus=?,Unused_Annual_Leave=? where iduser=? and month=? and year=?
+    update phucloichiuthueTNCN set Premium_Insurance=? where iduser=? and month=? and year=?
+    """
+    value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
+                ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
+                form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],iduser,month,year,
+                form_method["Premium_Insurance"],iduser,month,year)
+    cursor.execute(sql,value)
+    conn.commit()
+    conn.close()
+    return RedirectResponse(url=f"/createallowance/{month}/{year}",status_code=status.HTTP_302_FOUND)
