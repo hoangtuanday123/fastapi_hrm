@@ -2,49 +2,63 @@
 
 {% block content %}
 
-<div class="container-fluid">
-    <form method="post">
-        <div class="form-group">
-            <label>Internet Allowance</label>
-            <input name="Internet_Allowance"  value="{{allowance[1]}}" class="form-control">
+<div class="row" style="color: black;">
+    <div class="col-sm-6 offset-md-3">
+        <div class="card card-outline-secondary">
+            <div class="card-header">
+                <h5 class="mb-0 font-weight-bold">Update Allowance</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label>Internet Allowance</label>
+                        <input name="Internet_Allowance"  value="{{allowance[1]}}" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Meal Allowance</label>
+                        <input name="Meal_Allowance" value="{{allowance[2]}}" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Phone Allowance</label>
+                        <input name="Phone_Allowance" value="{{allowance[3]}}" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Transportation Allowance</label>
+                        <input name="Transportation_Allowance" value="{{allowance[4]}}" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Other Cash Allowance</label>
+                        <input name="Other_Cash_Allowance" value="{{allowance[5]}}" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Year End Bonus</label>
+                        <input name="Year_End_Bonus" value="{{allowance[6]}}" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Unused Annual Leave</label>
+                        <input name="Unused_Annual_Leave" value="{{allowance[7]}}" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Premium Insurance</label>
+                        <input name="Premium_Insurance" value="{{allowance[11]}}" class="form-control">
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class=" btn btn-primary">Update</button>
+                    </div>
+                    
+                </form>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label>Meal Allowance</label>
-            <input name="Meal_Allowance" value="{{allowance[2]}}" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label>Phone Allowance</label>
-            <input name="Phone_Allowance" value="{{allowance[3]}}" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label>Transportation Allowance</label>
-            <input name="Transportation_Allowance" value="{{allowance[4]}}" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label>Other Cash Allowance</label>
-            <input name="Other_Cash_Allowance" value="{{allowance[5]}}" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label>Year End Bonus</label>
-            <input name="Year_End_Bonus" value="{{allowance[6]}}" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label>Unused Annual Leave</label>
-            <input name="Unused_Annual_Leave" value="{{allowance[7]}}" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label>Premium Insurance</label>
-            <input name="Premium_Insurance" value="{{allowance[11]}}" class="form-control">
-        </div>
-        <button type="submit">Update</button>
-    </form>
+        
+    </div>
+    
 </div>
 
 

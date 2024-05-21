@@ -2,39 +2,52 @@
 
 {% block content %}
 
-<div class="container-fluid">
-    <form method="post">
-        <div>
-            <label>Basic Salary</label>
-            <input name="basicsalary" value="{{excep[1]}}">
+<div class="row" style="color: black;">
+    <div class="col-md-6 offset-md-3">
+        <div class="card card-outline-secondary">
+            <div class="card-header">
+                <p class="mb-0 font-weight-bold">Adjusting</p>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="basicsalary">Basic Salary</label>
+                        <input type="text" class="form-control" id="basicsalary" name="basicsalary" value="{{excep[1]}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="companysitecode1">Company site code 1</label>
+                        <input type="text" class="form-control" id="companysitecode1" name="companysitecode1" value="{{excep[2]}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="companysitecode2">Company site code 2</label>
+                        <input type="text" class="form-control" id="companysitecode2" name="companysitecode2" value="{{excep[3]}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="companysitecode3">Company site code 3</label>
+                        <input type="text" class="form-control" id="companysitecode3" name="companysitecode3" value="{{excep[4]}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="companysitecode4">Company site code 4</label>
+                        <input type="text" class="form-control" id="companysitecode4" name="companysitecode4" value="{{excep[5]}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="PersonalDeduction">Personal Deduction</label>
+                        <input type="text" class="form-control" id="PersonalDeduction" name="PersonalDeduction" value="{{excep[6]}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="DependentsDeduction">Dependents Deduction</label>
+                        <input type="text" class="form-control" id="DependentsDeduction" name="DependentsDeduction" value="{{excep[7]}}">
+                    </div>
+                    <hr>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                    
+                </form>
+            </div>
+            
         </div>
-        <div>
-            <label>Company site code 1</label>
-            <input name="companysitecode1" value="{{excep[2]}}">
-        </div>
-        <div>
-            <label>Company site code 2</label>
-            <input name="companysitecode2" value="{{excep[3]}}">
-        </div>
-        <div>
-            <label>Company site code 3</label>
-            <input name="companysitecode3" value="{{excep[4]}}">
-        </div>
-        <div>
-            <label>Company site code 4</label>
-            <input name="companysitecode4" value="{{excep[5]}}">
-        </div>
-        <div>
-            <label>Personal Deduction</label>
-            <input name="PersonalDeduction" value="{{excep[6]}}">
-        </div>
-        <div>
-            <label> Dependents Deduction</label>
-            <input name="DependentsDeduction" value="{{excep[7]}}">
-        </div>
-        <button type="submit">Update</button>
-    </form>
+    </div>
 </div>
-
 
 {% endblock %}
