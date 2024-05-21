@@ -44,18 +44,18 @@
                         {% endfor %}
                     </select>
                     <!-- <label  for="fillter"   class="btn btn-primary btn-sm   mr-2">Filter</label> -->
-                    <button type="submit" name="yearform" value="yearform" class="btn btn-primary   mr-2"> Submit</button>
+                    <button type="submit" name="yearform" value="yearform" class="btn btn-primary "> Filter</button>
                 </div>
                 
             </form>
-            
-            <label type="button"  for="exportexcels"   class="btn btn-success mr-2"><i class="fas fa-file-excel" ></i> Export to Excel</label>
-            <label type="button" for="exportpdf"    class="btn btn-warning"><i class="fa-solid fa-file-pdf" ></i> Export to PDF</label>
             {% if month == current_month and year == current_year %}
             <form method="post">
-                <button type="submit" class="btn btn-primary ml-2 mr-2" style="width: 100px;" name="savepayroll" value="savepayroll">save</button>
+                <button type="submit" class="btn btn-primary ml-1 mr-1" style="width: 100px;" name="savepayroll" value="savepayroll">save</button>
             </form>
             {% endif %}
+            <label type="button"  for="exportexcels"   class="btn btn-success mr-1"><i class="fas fa-file-excel" ></i> Export to Excel</label>
+            <label type="button" for="exportpdf"    class="btn btn-warning"><i class="fa-solid fa-file-pdf" ></i> Export to PDF</label>
+            
          
         <div class="search-container ml-auto mr-3">
             <input class="rounded-input form-control" id="myInput" onkeyup="search('all')" placeholder="Searching...">

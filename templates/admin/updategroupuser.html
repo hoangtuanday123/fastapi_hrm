@@ -35,7 +35,7 @@
                     {% if rolegroup =="admin" or rolegroup =="manager" %}
                     <div class="input-group-append">
                         <button name="deletegroup" value="deletegroup" type="submit" class="btn btn-danger ml-auto mr-2"> Delete</button>
-                        <button name="updategroup" value="updategroup" type="submit" class="btn btn-success"> Save</button>
+                        <button name="updategroup" value="updategroup" type="submit" class="btn btn-primary"> Save</button>
                         
                     </div>
                     {% endif %}
@@ -63,7 +63,7 @@
                                         </select>
                                         <label for="entries" class="mr-4">Entries</label>
                                         
-                                        <button class="btn btn-danger mr-2">Remove</button>
+                                        <button class="btn btn-danger mr-2">Delete</button>
                                         {% if rolegroup =="admin" or rolegroup =="manager" %}  
                                         <form role="form" method="post" action="">
                                             {{ form.csrf_token }}
@@ -141,9 +141,9 @@
                                             <td class="text-center"><input type="checkbox"></td>
                                             <td>{{user[1]}}</td>
                                             <td class="text-center">{{user[3]}}</td>
-                                            <td >{{user[2]}}
+                                            <td class="text-center">{{user[2]}}
                                             </td>
-                                            <td> {{user[4]}}</td>
+                                            <td class="text-center"> {{user[4]}}</td>
                                             {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client"%}
                                             <td class="text-center">
                                                 <a href="/userinformation/{{user[5]}}" style="color:#858796" >

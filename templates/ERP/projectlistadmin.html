@@ -1,7 +1,7 @@
 {% extends "admin/adminpage.html" %}
 {% block content %}
 
-<div class="row">
+<div class="container-fluid row">
     <div class="col-md-12">
         <div class="card card-outline-secondary">
             <div class="card-header py-3">
@@ -11,7 +11,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="d-flex align-items-center">
-                            <label for="entries" class="mr-2">Show</label>
+                            <label for="entries" class="mr-2 ml-2">Show</label>
                             <select id="entries" onchange="changeEntries()" class="mr-2 custom-select">
                                 <option value="5">5</option>
                                 <option value="10" selected>10</option>
@@ -24,76 +24,79 @@
                             <a href="/ERP/createproject" class="btn btn-success">New</a>
                         </div>
                     </div>
-                    <div class="search-container ml-auto mr-4">
+                    <div class="search-container ml-auto mr-3">
                         <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
                     </div>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table" id="myTable">
-                        <thead>
-                            <tr>
-                                <th class="text-center"><input type="checkbox" id="selectAllCheckbox"></th>
-                                <th class="text-center">Project ID</th>
-                                <th class="text-center">Project Name</th>
-                                <th class="text-center">Project Type</th>
-                                <th class="text-center">Manager</th>
-                                <th class="text-center">Teams</th>
-                                <th class="text-center">Start Date</th>
-                                <th class="text-center">End Date</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Update</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project in projects %}
-                            <tr>
-                                <td class="text-center"><input type="checkbox"></td>
-                                <td>{{ project[0] }}</td>
-                                <td>{{ project[1] }}</td>
-                                <td>{{ project[2] }}</td>
-                                <td>{{ project[3] }}</td>
-                                <td>{{ project[4] }}</td>
-                                <td>{{ project[5] }}</td>
-                                <td>{{ project[6] }}</td>
-                                <td style="text-align: center;">{{ project[7] }}</td>
-                                <td style="text-align: center;">
-                                    <a href="/ERP/updateproject/{{project[0]}}" style="color:#858796" >
-                                        <i class="fas fa-edit"></i> 
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}    
-                        </tbody>
-                    </table>
-                </div>
-                <div class="row" >
-                    <p class="mr-auto ml-3" >
-                        Showing <span id="startEntry"></span> to <span id="endEntry"></span> of <span id="totalEntries"></span> entries
-
-                    </p>
-                    <p class="ml-auto">
-                        <div class="pagination mr-3">
-                            <!-- Button with double chevron left -->
-                            <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
-                            <!-- Button with single chevron left -->
-                            <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
-                            <!-- Pagination container for page numbers -->
-                            <div id="paginationContainer" class="pagination-container">
-                                <!-- Page numbers will be dynamically added here -->
+                <div class="container-fluid">
+                    <div >
+                        <table class="table" id="myTable">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><input type="checkbox" id="selectAllCheckbox"></th>
+                                    <th class="text-center">Project ID</th>
+                                    <th class="text-center">Project Name</th>
+                                    <th class="text-center">Project Type</th>
+                                    <th class="text-center">Manager</th>
+                                    <th class="text-center">Teams</th>
+                                    <th class="text-center">Start Date</th>
+                                    <th class="text-center">End Date</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Update</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in projects %}
+                                <tr>
+                                    <td class="text-center"><input type="checkbox"></td>
+                                    <td>{{ project[0] }}</td>
+                                    <td>{{ project[1] }}</td>
+                                    <td>{{ project[2] }}</td>
+                                    <td>{{ project[3] }}</td>
+                                    <td>{{ project[4] }}</td>
+                                    <td>{{ project[5] }}</td>
+                                    <td>{{ project[6] }}</td>
+                                    <td style="text-align: center;">{{ project[7] }}</td>
+                                    <td style="text-align: center;">
+                                        <a href="/ERP/updateproject/{{project[0]}}" style="color:#858796" >
+                                            <i class="fas fa-edit"></i> 
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}    
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" >
+                        <p class="mr-auto ml-3" >
+                            Showing <span id="startEntry"></span> to <span id="endEntry"></span> of <span id="totalEntries"></span> entries
+    
+                        </p>
+                        <p class="ml-auto">
+                            <div class="pagination mr-3">
+                                <!-- Button with double chevron left -->
+                                <!-- <button><i class="fas fa-chevron-double-left"></i></button> -->
+                                <!-- Button with single chevron left -->
+                                <button onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                                <!-- Pagination container for page numbers -->
+                                <div id="paginationContainer" class="pagination-container">
+                                    <!-- Page numbers will be dynamically added here -->
+                                </div>
+                                <!-- Button with single chevron right -->
+                                <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                                <!-- Button with double chevron right -->
+                                <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
                             </div>
-                            <!-- Button with single chevron right -->
-                            <button onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
-                            <!-- Button with double chevron right -->
-                            <!-- <button><i class="fas fa-chevron-double-right"></i></button> -->
-                        </div>
-                        <!-- Hidden div for displaying current page and total pages -->
-                        <div style="display: none;">
-                            Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
-                        </div>
-                    </p>
-                    
+                            <!-- Hidden div for displaying current page and total pages -->
+                            <div style="display: none;">
+                                Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+                            </div>
+                        </p>
+                        
+                    </div>
                 </div>
+                
                 
             </div>
                   </div>

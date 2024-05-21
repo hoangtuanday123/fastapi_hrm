@@ -3,101 +3,35 @@
 {% block content %}
 
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
-            <form method="post">
-                <label for="year" class="mb-0 mr-1" style="width: 100px;">Year - Month:</label>
-                <select id="year" name="year" class="custom-select mr-2">
-                    <option value="{{ year }}">{{ year }}</option>
-                    {% for year in range(1900, 2101) %}
-                    <option value="{{ year }}">{{ year }}</option>
-                    {% endfor %}
-                </select>
-            
-                <select id="month" name="month" class="custom-select mr-2">
-                    <option value="{{ month }}">{{ month }}</option>
-                    {% for month in range(1, 12) %}
-                    <option value="{{ month }}">{{ month }}</option>
-                    {% endfor %}
-                </select>
-               
-                <button type="submit" name="yearform" value="yearform" class="btn btn-primary"> Filter</button>
-            </form>
-        </div>
-    </div>
-    
-
-    <div class="row pt-3">
-        <div class="col-md-3 bg-light">
-            <div class="card card-outline-secondary">
-                <div class="card-header">
-                    <p class=" font-weight-bold "> Adjust Allowance</p>
-                </div>
-                <div class="card-body">
-                    <form  method="post" class = "form">
-                        <div class="form-group">
-                            <label for="email" >Email</label>
-                            <select class="form-control" id="email" name="email">
-                                {% for email in emaillist %}
-                                <option value="{{ email[0] }}">{{ email[1] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Internet Allowance</label>
-                            <input name="Internet_Allowance" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Meal Allowance</label>
-                            <input name="Meal_Allowance" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Phone Allowance</label>
-                            <input name="Phone_Allowance" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Transportation Allowance</label>
-                            <input name="Transportation_Allowance" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Other Cash Allowance</label>
-                            <input name="Other_Cash_Allowance" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Year End Bonus</label>
-                            <input name="Year_End_Bonus" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Unused Annual Leave</label>
-                            <input name="Unused_Annual_Leave" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Premium Insurance</label>
-                            <input name="Premium_Insurance" value="0" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <button type="submit" name="addallowance" value="addallowance" class="btn btn-success float-right ">Add</button>
-                        </div>
-                    </form>
-                </div>     
-            </div>
-        </div>
-
-    <div class="col-md-9 bg-lightblue">
+    <div >
         <div >
             <div class="card card-outline-secondary">
-                <div class="card-header">
-                    <p class=" font-weight-bold ">Allowance Management</p>
+
+                
+                <div class="card text-right">
+                    <div class="card-body">
+                        <form method="post">
+                            <label for="year" class="mb-0 mr-1" style="width: 100px;">Year - Month:</label>
+                            <select id="year" name="year" class="custom-select mr-2">
+                                <option value="{{ year }}">{{ year }}</option>
+                                {% for year in range(1900, 2101) %}
+                                <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        
+                            <select id="month" name="month" class="custom-select mr-2">
+                                <option value="{{ month }}">{{ month }}</option>
+                                {% for month in range(1, 13) %}
+                                <option value="{{ month }}">{{ month }}</option>
+                                {% endfor %}
+                            </select>
+                           
+                            <button type="submit" name="yearform" value="yearform" class="btn btn-primary"> Filter</button>
+                        </form>
+                    </div>
                 </div>
+
+                
                 <div class="card-body py-2 row pt-3">
                     <div class="mr-auto d-flex align-items-center ml-3">
                         <label for="entries" class="mr-2">Show</label>
@@ -109,7 +43,83 @@
                             <option value="100">100</option>
                         </select>
                         <label for="entries" class="mr-4">Entries</label>
+                        <button  class="btn btn-primary" style="width: 100px;" data-toggle="modal" data-target="#exampleModal" >Add</button>
                         </div>
+                        
+
+                        <!-- modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Allowance Adjust</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form  method="post" class = "form">
+                                <div class="modal-body">
+                                    <div class="card-body">
+
+                                            <div class="form-group">
+                                                <label for="email" >Email</label>
+                                                <select class="form-control" id="email" name="email">
+                                                    {% for email in emaillist %}
+                                                    <option value="{{ email[0] }}">{{ email[1] }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Internet Allowance</label>
+                                                <input name="Internet_Allowance"  placeholder="0" class="form-control">
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Meal Allowance</label>
+                                                <input name="Meal_Allowance" placeholder="0" class="form-control">
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Phone Allowance</label>
+                                                <input name="Phone_Allowance" placeholder="0" class="form-control">
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Transportation Allowance</label>
+                                                <input name="Transportation_Allowance" placeholder="0" class="form-control">
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Other Cash Allowance</label>
+                                                <input name="Other_Cash_Allowance" placeholder="0" class="form-control">
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Year End Bonus</label>
+                                                <input name="Year_End_Bonus" placeholder="0" class="form-control">
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Unused Annual Leave</label>
+                                                <input name="Unused_Annual_Leave" placeholder="0" class="form-control">
+                                            </div>
+                    
+                                            <div class="form-group">
+                                                <label>Premium Insurance</label>
+                                                <input name="Premium_Insurance" placeholder="0" class="form-control">
+                                            </div>
+                                    </div>     
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="submit" name="addallowance" value="addallowance" class="btn btn-success mr-4">Add</button>
+                                </div>
+                            </form>
+                              </div>
+                            </div>
+                          </div>
+
                         <div class="search-container ml-auto mr-3">
                             <input class="rounded-input form-control" id="myInput" onkeyup="search(1)" placeholder=" Searching........">
                         </div>
@@ -131,7 +141,7 @@
                                     <th>Year End Bonus</th>
                                     <th>Unused Annual Leave</th>
                                     <th>Premium Insurance</th>
-                                    <th>Detail</th>
+                                    <th>Update</th>
                                 </tr>
                             </thead>
     
@@ -149,7 +159,8 @@
                                     <td class="text-center">{{g[6]}}</td>
                                     <td class="text-center">{{g[7]}}</td>
                                     <td class="text-center">{{g[10]}}</td>
-                                    <td class="text-center"><a href="#">View</a></td>
+                                    <td class="text-center"><a href="#" style="color:#858796" >
+                                        <i class="fas fa-edit"></i> </td>
                                 </tr>
                             {% endfor %}    
                             </tbody>

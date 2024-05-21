@@ -71,16 +71,16 @@
                             <form method="post">
                                 {% for project in annualleavelist%}
                                 <tr>
-                                    <td><input type="checkbox" name="checkbox" value="{{project[0]}}"></td>
+                                    <td class="text-center"><input type="checkbox" name="checkbox" value="{{project[0]}}"></td>
                                     <td>{{project[1]}}</td>
-                                    <td>{{project[2]}}</td>
-                                    <td>{{project[3]}}</td>
-                                    <td>{{project[4]}}</td>
-                                    <td>{{project[5]}}</td>
-                                    <td>{{project[6]}}</td>
-                                    <td>{{project[7]}}</td>
-                                    <td>{{project[8]}}</td>
-                                    <td>{{project[9]}}</td>
+                                    <td class="text-center">{{project[2]}}</td>
+                                    <td class="text-center">{{project[3]}}</td>
+                                    <td class="text-center">{{project[4]}}</td>
+                                    <td class="text-center">{{project[5]}}</td>
+                                    <td class="text-center">{{project[6]}}</td>
+                                    <td class="text-center">{{project[7]}}</td>
+                                    <td class="text-center">{{project[8]}}</td>
+                                    <td class="text-center">{{project[9]}}</td>
                                 </tr>
                                 {% endfor %}    
                                 <button type="submit" id="approvals" name="approvals" value="approvals" hidden >Aproval</button>
