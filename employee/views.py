@@ -24,7 +24,7 @@ employee = APIRouter()
 
 @employee.get("/employeepage/{image_path}/{fullname}",tags=['employee'], response_class=HTMLResponse)
 async def employeepage(request:Request,response:Response,image_path,fullname,current_user: User = Depends(get_current_user_from_token)):
-   
+
     conn=db.connection()
     cursor=conn.cursor()
     sql="select * from informationUser where id_useraccount=?  "
@@ -36,6 +36,7 @@ async def employeepage(request:Request,response:Response,image_path,fullname,cur
     #response.set_cookie(key="image_path_session", value=image_path) 
     #response.set_cookie(key="fullname_session", value=fullname)
     print("fullname is: " + str(request.cookies.get("fullname_session")))
+    
     context={
         "request":request,
         "roleuser":"employee",

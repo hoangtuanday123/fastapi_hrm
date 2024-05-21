@@ -24,7 +24,6 @@ admin=APIRouter()
 @admin.get('/adminpage/{image_path_admin}/{fullname_admin}',tags=['user managerment'], response_class=HTMLResponse)
 async def adminpage_get(request: Request,response:Response,image_path_admin, fullname_admin,current_user: User = Depends(get_current_user_from_token)):
     
- 
     context={
         "request":request,
         "image_path_admin":request.cookies.get("image_path_adminsession"),
@@ -820,28 +819,66 @@ def info(idaccount,response:Response,current_user: User = Depends(get_current_us
     conn=db.connection()
     cursor=conn.cursor()
     sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
-    value=(decode_id(idaccount_encode))
+    value=(decode_id(current_user.id))
     cursor.execute(sql,value)
-    user_role=cursor.fetchone()
-    response=RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
-    #session['roleuser']=user_role[0]
-    response.set_cookie(key="roleuser", value=user_role[0]) 
-    response.set_cookie(key="roleadmin", value="admin")
-    response.set_cookie(key="idaccountadminmanager", value=idaccount)
+    temp=cursor.fetchone()
 
-    conn=db.connection()
-    cursor=conn.cursor()
-    sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
-    value=(decode_id(idaccount))
-    cursor.execute(sql,value)
-    user_temp=cursor.fetchone()
-    conn.commit()
-    conn.close()
-    found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
-    response.set_cookie(key="image_path_session", value=found_avatar[2])
-    response.set_cookie(key="fullname_session", value=user_temp[1])
-   
-    return response
+    if temp[0]=="admin":
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
+        value=(decode_id(idaccount_encode))
+        cursor.execute(sql,value)
+        user_role=cursor.fetchone()
+        response=RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
+        #session['roleuser']=user_role[0]
+        response.set_cookie(key="roleuser", value=user_role[0]) 
+        response.set_cookie(key="roleadmin", value="admin")
+        response.set_cookie(key="idaccountadminmanager", value=idaccount)
+
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
+        value=(decode_id(idaccount))
+        cursor.execute(sql,value)
+        user_temp=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
+        if not found_avatar:
+            found_avatar=file_path_default
+        response.set_cookie(key="image_path_session", value=found_avatar[2])
+        response.set_cookie(key="fullname_session", value=user_temp[1])
+    
+        return response
+    else:
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
+        value=(decode_id(idaccount_encode))
+        cursor.execute(sql,value)
+        user_role=cursor.fetchone()
+        response=RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
+        #session['roleuser']=user_role[0]
+        response.set_cookie(key="roleuser", value=user_role[0]) 
+        # response.set_cookie(key="roleadmin", value="admin")
+        response.set_cookie(key="idaccountadminmanager", value=idaccount)
+
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
+        value=(decode_id(idaccount))
+        cursor.execute(sql,value)
+        user_temp=cursor.fetchone()
+        conn.commit()
+        conn.close()
+        found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
+        if not found_avatar:
+            found_avatar=file_path_default
+        response.set_cookie(key="image_path_session", value=found_avatar[2])
+        response.set_cookie(key="fullname_session", value=user_temp[1])
+    
+        return response
 
 def readrights_func(rolegroup,response:Response):
     if rolegroup=="manager" or rolegroup=="admin":
@@ -987,11 +1024,13 @@ async def updategropuser_get(request:Request,response:Response,idgroup,rolegroup
     form.email=group[5]
     form.url=group[6]
     form.description=group[7]
+    
     context={
         "request":request,
         "current_user":current_user,
         "idgroup":idgroup,
-        "image_path":file_path_default,
+        "image_path":request.cookies.get("image_path_session"),
+        "fullname":request.cookies.get("fullname_session"),
         "roleuser":request.cookies.get("roleuser"),
         "usersSelect":usersSelect,
         "grouprole":grouprole,

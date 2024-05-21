@@ -22,7 +22,6 @@ from globalvariable import is_admin,roleuser,rolegroup,readrights,writerights,id
 from admin.forms import groupuserForm
 import pyotp
 from authentication.models import verifyPassword
-from globalvariable import verify_password,messages,fullname_adminsession,image_path_adminsession,roleadmin,front_cccd_session,back_cccd_session
 from .forms import CCCDForm,AvatarForm,HCCForm,EducationForm,QualificationForm,EditForm
 from validation.forms import informationUserForm,latestEmploymentForm,usercccdForm
 import asyncio
@@ -139,6 +138,7 @@ async def authorizationUser(request:Request,response:Response, current_user: Use
         response.set_cookie(key="image_path_session", value=image_path_value)
         fullname=request.cookies.get("fullname_session")
         response.set_cookie(key="fullname_session", value=fullname_value)
+        response.set_cookie(key="roleadmin", value=None)
         return response
         
         
@@ -211,49 +211,27 @@ def startPage(request: Request):
 def logout_get():
     response = RedirectResponse(url="/")
     response.delete_cookie(settings.COOKIE_NAME)
-    # is_admin.value=None
-    # roleuser.value=None
-    # rolegroup.value=None
-    # request.cookies.get("readrights")=None
-    # writerights.value=None
-    # verify_password.value=None
-    # messages.data=None
-    # id_useraccount.value=None
-    # request.cookies.get("idaccountadminmanager")=None
-    # selectionItem.value=None
-    # tablesession.value=None
-    # image_path_adminsession.value=None
-    # fullname_adminsession.value=None
-    # roleadmin.value=None
-    # image_path_session.value=None
-    # fullname_session.value=None
-    # front_cccd_session.value=None
-    # back_cccd_session.value=None
+    response.delete_cookie('is_admin')
+    response.delete_cookie('roleuser')
+    response.delete_cookie('rolegroup')
+    response.delete_cookie('readrights')
+    response.delete_cookie('writerights')
+    response.delete_cookie('verify_password')
+    response.delete_cookie('messages')
+    response.delete_cookie('id_useraccount')
+    response.delete_cookie('idaccountadminmanager')
+    response.delete_cookie('selectionItem')
+    response.delete_cookie('tablesession')
+    response.delete_cookie('image_path_adminsession')
+    response.delete_cookie('fullname_adminsession')
+    response.delete_cookie('image_path_session')
+    response.delete_cookie('fullname_session')
+    response.delete_cookie('back_cccd_session')
+    response.delete_cookie('front_cccd_session')
+    
     return response
 
-@core_bp.post("/logout",tags=['user'], response_class=HTMLResponse)
-def logout():
-    response = RedirectResponse(url="/")
-    response.delete_cookie(settings.COOKIE_NAME)
-    # is_admin.value=None
-    # roleuser.value=None
-    # rolegroup.value=None
-    # request.cookies.get("readrights")=None
-    # writerights.value=None
-    # verify_password.value=None
-    # messages.data=None
-    # id_useraccount.value=None
-    # request.cookies.get("idaccountadminmanager")=None
-    # selectionItem.value=None
-    # tablesession.value=None
-    # image_path_adminsession.value=None
-    # fullname_adminsession.value=None
-    # roleadmin.value=None
-    # image_path_session.value=None
-    # fullname_session.value=None
-    # front_cccd_session.value=None
-    # back_cccd_session.value=None
-    return response
+
 
 @core_bp.get("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
 def getcodechangepassword_get(response:Response,request:Request,current_user: User = Depends(get_current_user_from_token)):

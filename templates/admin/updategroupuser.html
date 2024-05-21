@@ -63,7 +63,7 @@
                                         </select>
                                         <label for="entries" class="mr-4">Entries</label>
                                         
-                                        <button class="btn btn-danger mr-2">Delete</button>
+                                        <!-- <button class="btn btn-danger mr-2">Delete</button> -->
                                         {% if rolegroup =="admin" or rolegroup =="manager" %}  
                                         <form role="form" method="post" action="">
                                             {{ form.csrf_token }}
@@ -146,7 +146,7 @@
                                             <td class="text-center"> {{user[4]}}</td>
                                             {% if rolegroup =="admin" or rolegroup =="manager" or rolegroup=="leader" or rolegroup=="client"%}
                                             <td class="text-center">
-                                                <a href="/userinformation/{{user[5]}}" style="color:#858796" >
+                                                <a href="/adminpage/usersmanager/lookinformationuser/{{user[5]}}" style="color:#858796" >
                                                     View
                                                 </a></td>
                                             {% endif %}
