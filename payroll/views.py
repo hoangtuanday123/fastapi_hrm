@@ -84,7 +84,7 @@ def tinhluongnhanvientra(g,grosssalary,MealAllowance):
     thunhaptruocthue=grosssalary-bhxh-bhyt-bhtn-MealAllowance
     thunhapchiuthue=thunhaptruocthue-giacanhbanthan-giacanhnguoiphuthuoc
     thuethunhap=calculate_pit(thunhapchiuthue)
-    return thuethunhap
+ 
     netsalary=thunhaptruocthue-thuethunhap
     #congty
     bhxhct=1800000*20*0.17
@@ -248,7 +248,6 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
                 totalincome=int(g[3])+amoundgrosssalary+int(g[5])+int(g[6])+allowance
              
                 salary=tinhluongnhanvientra(g,totalincome,allowance_temp[2])
-                return str(salary)
                 salary.append(g[8])
                 salary.append(round(d[1]))
                 salary.append(round(g[9]))
