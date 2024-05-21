@@ -72,42 +72,42 @@
                     
                                             <div class="form-group">
                                                 <label>Internet Allowance</label>
-                                                <input name="Internet_Allowance"  placeholder="0" class="form-control">
+                                                <input name="Internet_Allowance"  value="0" class="form-control">
                                             </div>
                     
                                             <div class="form-group">
                                                 <label>Meal Allowance</label>
-                                                <input name="Meal_Allowance" placeholder="0" class="form-control">
+                                                <input name="Meal_Allowance" value="0" class="form-control">
                                             </div>
                     
                                             <div class="form-group">
                                                 <label>Phone Allowance</label>
-                                                <input name="Phone_Allowance" placeholder="0" class="form-control">
+                                                <input name="Phone_Allowance" value="0" class="form-control">
                                             </div>
                     
                                             <div class="form-group">
                                                 <label>Transportation Allowance</label>
-                                                <input name="Transportation_Allowance" placeholder="0" class="form-control">
+                                                <input name="Transportation_Allowance" value="0" class="form-control">
                                             </div>
                     
                                             <div class="form-group">
                                                 <label>Other Cash Allowance</label>
-                                                <input name="Other_Cash_Allowance" placeholder="0" class="form-control">
+                                                <input name="Other_Cash_Allowance" value="0" class="form-control">
                                             </div>
                     
                                             <div class="form-group">
                                                 <label>Year End Bonus</label>
-                                                <input name="Year_End_Bonus" placeholder="0" class="form-control">
+                                                <input name="Year_End_Bonus" value="0" class="form-control">
                                             </div>
                     
                                             <div class="form-group">
                                                 <label>Unused Annual Leave</label>
-                                                <input name="Unused_Annual_Leave" placeholder="0" class="form-control">
+                                                <input name="Unused_Annual_Leave" value="0" class="form-control">
                                             </div>
                     
                                             <div class="form-group">
                                                 <label>Premium Insurance</label>
-                                                <input name="Premium_Insurance" placeholder="0" class="form-control">
+                                                <input name="Premium_Insurance" value="0" class="form-control">
                                             </div>
                                     </div>     
                                 </div>
@@ -148,7 +148,7 @@
                             <tbody >
                                 {% for g in listalowance %}
                                 <tr>
-                                    <td class="text-center"><input type="checkbox" name="checkbox" value="{{g[0]}}"></td>
+                                    <td class="text-center"><input type="checkbox" name="checkbox" value="{{g[11]}}"></td>
                                     <td>{{g[8]}}</td>
                                     <td>{{g[9]}}</td>
                                     <td class="text-center">{{g[1]}}</td>
@@ -159,7 +159,7 @@
                                     <td class="text-center">{{g[6]}}</td>
                                     <td class="text-center">{{g[7]}}</td>
                                     <td class="text-center">{{g[10]}}</td>
-                                    <td class="text-center"><a href="#" style="color:#858796" >
+                                    <td class="text-center"><a href="/updateallowance/{{g[11]}}/{{month}}/{{year}}" style="color:#858796" >
                                         <i class="fas fa-edit"></i> </td>
                                 </tr>
                             {% endfor %}    
