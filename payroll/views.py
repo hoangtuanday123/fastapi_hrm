@@ -62,34 +62,48 @@ def calculate_pit(taxable_income):
     return tax
 
 def tinhluongnhanvientra(g,grosssalary,MealAllowance):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from Exception"
+    cursor.execute(sql)
+    exception=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    luongcoso=exception[1]
+    vung1=exception[2]
+    vung2=exception[3]
+    vung3=exception[4]
+    vung4=exception[5]
+    giacanhbanthan=exception[6]
+    giacanhnguoiphuthuoc=exception[7]
     #nhan vien
-    bhxh=1800000*20*0.08
-    bhyt=1800000*20*0.015
+    bhxh=luongcoso*20*0.08
+    bhyt=luongcoso*20*0.015
     bhtn=0
     bhtnct=0
     if g[1]=='1':
-        bhtn=4680000*20*0.01*1.07
-        bhtnct=4680000*20*0.01*1.07
+        bhtn=vung1*20*0.01*1.07
+        bhtnct=vung1*20*0.01*1.07
     elif g[1]=='2':
-        bhtn=4160000*20*0.01*1.07
-        bhtnct=4160000*20*0.01*1.07
+        bhtn=vung2*20*0.01*1.07
+        bhtnct=vung2*20*0.01*1.07
     elif g[1]=='3':
-        bhtn=3640000*20*0.01*1.07
-        bhtnct=3640000*20*0.01*1.07
+        bhtn=vung3*20*0.01*1.07
+        bhtnct=vung3*20*0.01*1.07
     elif g[1]=='4':
-        bhtn=3250000*20*0.01*1.07
-        bhtnct=3250000*20*0.01*1.07
-    giacanhbanthan=11000000
-    giacanhnguoiphuthuoc=4400000*int(g[7])
+        bhtn=vung4*20*0.01*1.07
+        bhtnct=vung4*20*0.01*1.07
+    giacanhbanthan=giacanhbanthan
+    giacanhnguoiphuthuoc=giacanhnguoiphuthuoc*int(g[7])
     thunhaptruocthue=grosssalary-bhxh-bhyt-bhtn-MealAllowance
     thunhapchiuthue=thunhaptruocthue-giacanhbanthan-giacanhnguoiphuthuoc
     thuethunhap=calculate_pit(thunhapchiuthue)
  
     netsalary=thunhaptruocthue-thuethunhap
     #congty
-    bhxhct=1800000*20*0.17
-    bhtnldct=1800000*20*0.005
-    bhytct=1800000*20*0.03
+    bhxhct=luongcoso*20*0.17
+    bhtnldct=luongcoso*20*0.005
+    bhytct=luongcoso*20*0.03
     tongcongcongtytra=grosssalary+bhxhct+bhtnct+bhytct+bhtnldct
     sumsalary=[round(grosssalary),bhxh,bhyt,bhtn,giacanhbanthan,giacanhnguoiphuthuoc
                ,round(thunhaptruocthue),round(thunhapchiuthue),round(thuethunhap),round(netsalary),
