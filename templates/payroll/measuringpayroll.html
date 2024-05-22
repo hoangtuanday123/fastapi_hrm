@@ -1,0 +1,72 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <form  method="post" class = "form">
+        <div class="form-group"></div>
+            <label for="companysitecode" class="mb-0 mr-1" style="width: 185px;">company site code:</label>
+            <select id="companysitecode" name="companysitecode" class="custom-select mr-2">
+                {% for companysitecode in range(1, 5) %}
+                <option value="{{ companysitecode }}">{{ companysitecode }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>exchange rate</label>
+            <input name="exchangerate"  value="1" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>Salary In Contract</label>
+            <input name="salaryincontract"  value="0" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>Dependents</label>
+            <input name="Dependents"  value="0" class="form-control">
+        </div>
+            <div class="form-group">
+                <label>Internet Allowance</label>
+                <input name="Internet_Allowance"  value="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Meal Allowance</label>
+                <input name="Meal_Allowance" value="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Phone Allowance</label>
+                <input name="Phone_Allowance" value="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Transportation Allowance</label>
+                <input name="Transportation_Allowance" value="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Other Cash Allowance</label>
+                <input name="Other_Cash_Allowance" value="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Year End Bonus</label>
+                <input name="Year_End_Bonus" value="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Unused Annual Leave</label>
+                <input name="Unused_Annual_Leave" value="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Premium Insurance</label>
+                <input name="Premium_Insurance" value="0" class="form-control">
+            </div>
+      
+        <button type="submit">GROSS->NET</button>
+    </form>
+</div>
+
+
+{% endblock %}

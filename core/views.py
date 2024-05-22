@@ -235,8 +235,8 @@ def logout_get():
 
 @core_bp.get("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
 def getcodechangepassword_get(response:Response,request:Request,current_user: User = Depends(get_current_user_from_token)):
-        messages.categorary=None
-        messages.message=None
+        # #messages.categorary=None
+        # #messages.message=None
         conn=db.connection()
         cursor=conn.cursor()
         sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
@@ -252,22 +252,22 @@ def getcodechangepassword_get(response:Response,request:Request,current_user: Us
             #session['verify_password']=verify
             #verify_password.value=verify
             response.set_cookie(key="verify_password", value=verify)
-            messages.categorary="success"
-            messages.message="A confirmation email has been sent via email."
+            #messages.categorary="success"
+            #messages.message="A confirmation email has been sent via email."
             #flash("A confirmation email has been sent via email.", "success")
             return RedirectResponse("/verifypassword")
             #return redirect(url_for("authentication.verifypassword"))
         else:
-            messages.categorary="info"
-            messages.message="account have not set password"
+            #messages.categorary="info"
+            #messages.message="account have not set password"
             #flash("account have not set password")
             return RedirectResponse(url="/startPage")
             #return redirect(url_for("core.startPage"))
 
 @core_bp.post("/getcodechangepassword",tags=['authentication'], response_class=HTMLResponse)
 def getcodechangepassword(response:Response,request:Request,current_user: User = Depends(get_current_user_from_token)):
-        messages.categorary=None
-        messages.message=None
+        #messages.categorary=None
+        #messages.message=None
         conn=db.connection()
         cursor=conn.cursor()
         sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
@@ -283,14 +283,14 @@ def getcodechangepassword(response:Response,request:Request,current_user: User =
             #session['verify_password']=verify
             #verify_password.value=verify
             response.set_cookie(key="verify_password", value=verify)
-            messages.categorary="success"
-            messages.message="A confirmation email has been sent via email."
+            #messages.categorary="success"
+            #messages.message="A confirmation email has been sent via email."
             #flash("A confirmation email has been sent via email.", "success")
             return RedirectResponse("/verifypassword")
             #return redirect(url_for("authentication.verifypassword"))
         else:
-            messages.categorary="info"
-            messages.message="account have not set password"
+            #messages.categorary="info"
+            #messages.message="account have not set password"
             #flash("account have not set password")
             return RedirectResponse(url="/startPage")
             #return redirect(url_for("core.startPage"))
@@ -950,8 +950,8 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
         return RedirectResponse(f'/usercccd/{informationuserid}')
       
     else:
-        messages.categorary="danger"
-        messages.message='Allowed media types are - png, jpg, jpeg, gif'
+        #messages.categorary="danger"
+        #messages.message='Allowed media types are - png, jpg, jpeg, gif'
         context = {
            "request":request,
             "current_user":current_user,
@@ -965,8 +965,8 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
             "fullname_admin":request.cookies.get("fullname_adminsession"),
             "readrights":request.cookies.get("readrights"),
             "front_cccd": "",
-            "back_cccd": "",
-            "messages":messages.message_array(),
+            "back_cccd": ""
+            #"messages":#messages.message_array(),
         }
     return templates.TemplateResponse("core/user_cccd.html",context)
 
@@ -1004,8 +1004,8 @@ async def update_avatar(request:Request,informationuserid,idaccount,current_user
             idaccount= idaccount
             return RedirectResponse(f'/userinformation/{idaccount}')
     else:
-        messages.categorary="danger"
-        messages.message='Allowed media types are - png, jpg, jpeg, gif'
+        #messages.categorary="danger"
+        #messages.message='Allowed media types are - png, jpg, jpeg, gif'
         context = {
         "request":request,
             "current_user":current_user,
@@ -1019,8 +1019,8 @@ async def update_avatar(request:Request,informationuserid,idaccount,current_user
             "fullname_admin":request.cookies.get("fullname_adminsession"),
             "readrights":request.cookies.get("readrights"),
             "front_cccd": "",
-            "back_cccd": "",
-            "messages":messages.message_array(),
+            "back_cccd": ""
+            #"messages":#messages.message_array(),
         }
         return templates.TemplateResponse("core/user_information.html",context)
 @core_bp.get('/remove_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)

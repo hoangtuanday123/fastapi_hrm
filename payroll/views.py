@@ -15,6 +15,7 @@ import pandas as pd
 from io import BytesIO
 import pdfkit
 import zipfile
+import ast
 import io
 
 
@@ -77,33 +78,63 @@ def tinhluongnhanvientra(g,grosssalary,MealAllowance):
     giacanhbanthan=exception[6]
     giacanhnguoiphuthuoc=exception[7]
     #nhan vien
-    bhxh=luongcoso*20*0.08
-    bhyt=luongcoso*20*0.015
+    luong=grosssalary-MealAllowance
+    if luong>(luongcoso*20):
+        bhxh=luongcoso*20*0.08
+        bhyt=luongcoso*20*0.015
+        #congty
+        bhxhct=luongcoso*20*0.17
+        bhytct=luongcoso*20*0.03
+        bhtnldct=luongcoso*20*0.005
+    else:
+        bhxh=luong*0.08
+        bhyt=luong*0.015
+        #congty
+        bhxhct=luong*0.17
+        bhytct=luong*0.03
+        bhtnldct=luong*0.005
     bhtn=0
     bhtnct=0
     if g[1]=='1':
-        bhtn=vung1*20*0.01*1.07
-        bhtnct=vung1*20*0.01*1.07
+        if luong>(luongcoso*20):
+            bhtn=vung1*20*0.01*1.07
+            bhtnct=vung1*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
     elif g[1]=='2':
-        bhtn=vung2*20*0.01*1.07
-        bhtnct=vung2*20*0.01*1.07
+        if luong>(luongcoso*20):
+            bhtn=vung2*20*0.01*1.07
+            bhtnct=vung2*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
     elif g[1]=='3':
-        bhtn=vung3*20*0.01*1.07
-        bhtnct=vung3*20*0.01*1.07
+        if luong>(luongcoso*20):
+            bhtn=vung3*20*0.01*1.07
+            bhtnct=vung3*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
     elif g[1]=='4':
-        bhtn=vung4*20*0.01*1.07
-        bhtnct=vung4*20*0.01*1.07
+        if luong>(luongcoso*20):
+            bhtn=vung4*20*0.01*1.07
+            bhtnct=vung4*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
     giacanhbanthan=giacanhbanthan
     giacanhnguoiphuthuoc=giacanhnguoiphuthuoc*int(g[7])
     thunhaptruocthue=grosssalary-bhxh-bhyt-bhtn-MealAllowance
     thunhapchiuthue=thunhaptruocthue-giacanhbanthan-giacanhnguoiphuthuoc
-    thuethunhap=calculate_pit(thunhapchiuthue)
+    thuethunhap=0
+    if thunhapchiuthue>0:
+        thuethunhap=calculate_pit(thunhapchiuthue)
+    else:
+        thunhapchiuthue=0
  
-    netsalary=thunhaptruocthue-thuethunhap
+    netsalary=grosssalary-thuethunhap-bhxh-bhyt-bhtn
     #congty
-    bhxhct=luongcoso*20*0.17
-    bhtnldct=luongcoso*20*0.005
-    bhytct=luongcoso*20*0.03
     tongcongcongtytra=grosssalary+bhxhct+bhtnct+bhytct+bhtnldct
     sumsalary=[round(grosssalary),bhxh,bhyt,bhtn,giacanhbanthan,giacanhnguoiphuthuoc
                ,round(thunhaptruocthue),round(thunhapchiuthue),round(thuethunhap),round(netsalary),
@@ -938,3 +969,137 @@ async def updateallowance(request:Request,iduser,month,year,current_user: User =
     conn.commit()
     conn.close()
     return RedirectResponse(url=f"/createallowance/{month}/{year}",status_code=status.HTTP_302_FOUND)
+
+@payroll.get("/measuringpayroll",tags=['payroll'], response_class=HTMLResponse)
+async def measuringpayroll_get(request:Request,current_user: User = Depends(get_current_user_from_token)):
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        
+    }
+    return templates.TemplateResponse("payroll/measuringpayroll.html",context)
+
+@payroll.post("/measuringpayroll",tags=['payroll'], response_class=HTMLResponse)
+async def measuringpayroll(request:Request,current_user: User = Depends(get_current_user_from_token)):
+    form_method=await request.form()
+    allowance=int(form_method["Internet_Allowance"])+int(form_method["Meal_Allowance"])+int(form_method["Phone_Allowance"])+int(form_method["Transportation_Allowance"])
+    +int(form_method["Other_Cash_Allowance"])+int(form_method["Year_End_Bonus"])+int(form_method["Unused_Annual_Leave"])
+    totalincome=(int(form_method["salaryincontract"])*int(form_method["exchangerate"]))+allowance+int(form_method["Premium_Insurance"])
+    amoundgrosssalary=int(form_method["salaryincontract"])*int(form_method["exchangerate"])
+    salary=measuringluong(int(form_method["companysitecode"]),totalincome,int(form_method["Meal_Allowance"]),int(form_method["Dependents"]))
+    salary.append(amoundgrosssalary)
+    salary.append(form_method["Internet_Allowance"])
+    salary.append(form_method["Meal_Allowance"])
+    salary.append(form_method["Phone_Allowance"])
+    salary.append(form_method["Transportation_Allowance"])
+    salary.append(form_method["Other_Cash_Allowance"])
+    salary.append(form_method["Year_End_Bonus"])
+    salary.append(form_method["Unused_Annual_Leave"])
+    salary.append(form_method["Premium_Insurance"])
+
+    
+    return RedirectResponse(url=f"/detailmeasuringpayroll/{salary}",status_code=status.HTTP_302_FOUND)
+
+
+def measuringluong(companysitecode,totalincome,MealAllowance,Dependents):
+    conn=db.connection()
+    cursor=conn.cursor()
+    sql="select * from Exception"
+    cursor.execute(sql)
+    exception=cursor.fetchone()
+    conn.commit()
+    conn.close()
+    luongcoso=exception[1]
+    vung1=exception[2]
+    vung2=exception[3]
+    vung3=exception[4]
+    vung4=exception[5]
+    giacanhbanthan=exception[6]
+    giacanhnguoiphuthuoc=exception[7]
+    #nhan vien
+    luong=totalincome-MealAllowance
+    if luong>(luongcoso*20):
+        bhxh=luongcoso*20*0.08
+        bhyt=luongcoso*20*0.015
+        #congty
+        bhxhct=luongcoso*20*0.17
+        bhytct=luongcoso*20*0.03
+        bhtnldct=luongcoso*20*0.005
+    else:
+        bhxh=luong*0.08
+        bhyt=luong*0.015
+        #congty
+        bhxhct=luong*0.17
+        bhytct=luong*0.03
+        bhtnldct=luong*0.005
+    bhtn=0
+    bhtnct=0
+    if companysitecode==1:
+        if luong>(luongcoso*20):
+            bhtn=vung1*20*0.01*1.07
+            bhtnct=vung1*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
+    elif companysitecode==2:
+        if luong>(luongcoso*20):
+            bhtn=vung2*20*0.01*1.07
+            bhtnct=vung2*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
+    elif companysitecode==3:
+        if luong>(luongcoso*20):
+            bhtn=vung3*20*0.01*1.07
+            bhtnct=vung3*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
+    elif companysitecode==4:
+        if luong>(luongcoso*20):
+            bhtn=vung4*20*0.01*1.07
+            bhtnct=vung4*20*0.01*1.07
+        else:
+            bhtn=luong*0.01*1.07
+            bhtnct=luong*0.01*1.07
+    giacanhbanthan=giacanhbanthan
+    giacanhnguoiphuthuoc=giacanhnguoiphuthuoc*int(Dependents)
+    thunhapchiuthue=totalincome-MealAllowance
+    giamtruockhitinhthue=giacanhbanthan+giacanhnguoiphuthuoc+bhxh+bhyt+bhtn
+    thunhaptinhthue=0
+    thuethunhap=0
+    if thunhapchiuthue>giamtruockhitinhthue:
+        thunhaptinhthue=thunhapchiuthue-giamtruockhitinhthue
+        thuethunhap=calculate_pit(thunhaptinhthue)
+ 
+    netsalary=totalincome-thuethunhap-bhxh-bhyt-bhtn
+    #congty
+    
+    tongcongcongtytra=totalincome+bhxhct+bhtnct+bhytct+bhtnldct
+    sumsalary=[round(totalincome),bhxh,bhyt,bhtn,giacanhbanthan,giacanhnguoiphuthuoc,
+               round(thunhapchiuthue),round(giamtruockhitinhthue),round(thunhaptinhthue),round(thuethunhap),round(netsalary),
+               bhxhct,bhtnldct,bhytct,bhtnct,round(tongcongcongtytra)]
+    return sumsalary
+
+@payroll.get("/detailmeasuringpayroll/{salary}",tags=['payroll'], response_class=HTMLResponse)
+async def detailmeasuringpayroll(request:Request,salary,current_user: User = Depends(get_current_user_from_token)):
+    payroll = ast.literal_eval(salary)
+    context={
+        "request":request,
+        "current_user":current_user,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession"),
+        "payroll":payroll
+        
+    }
+    return templates.TemplateResponse("payroll/detailmeasuringpayroll.html",context)
