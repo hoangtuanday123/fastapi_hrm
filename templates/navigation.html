@@ -1,492 +1,315 @@
- <!-- Content Wrapper -->
- <div id="content-wrapper" class="d-flex flex-column ">
-
-    <!-- Main Content -->
-    <div id="content">
-
-        <!-- Topbar -->
-        <nav class="navbar navbar-expand fixed-top navbar-black bg-white topbar mb-4 static-top shadow ">
-            <img class="img" style="object-fit: contain; max-width: 100%;height: 90%;" src="{{ url_for('static', path='source/logo_company.png') }}">
-            <!-- <p>role user: {{roleuser}} ; role admin: {{roleadimin}}</p> -->
-            {%if current_user.is_authenticated and roleadmin == "admin" and roleuser == "admin" or  current_user.is_authenticated and roleadmin == "admin" and roleuser != "admin" %}
-            {%if roleuser != "admin" and roleuser%}
-            <ul class="navbar-nav  mr-auto">
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle btn-lg" href="/home" role="button" onclick="resetLocalStorage()"
-                       aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-4 d-none d-lg-inline text-gray-1000 btn-lg">
-                            <i class="fa-regular fa-square-caret-left fa-2x"></i>
-                            
-                        </span>
-                    </a>
-                </li>
-                
-
-            </ul>
-
-                 <!-- avatar -->
-
-                <ul class="navbar-nav ml-auto">
-                    <!-- Nav Item - User Information -->
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('My Profile', 1)"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            
-                            <img class="img-profile rounded-circle mr-3"
-                                src="{{ url_for('static', path='source/' + image_path_admin) }}">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{fullname_admin }}</span>
-                            
-                        </a>
-                        <!-- Dropdown - User Information -->
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                            aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
-                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Profile
-                            </a>
-                            <a class="dropdown-item" href="\getcodechangepassword">
-                                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Change Password
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Activity Log
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <p class="dropdown-item">
-                                <a  href="/logout" onclick="resetLocalStorage()">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </p>
-                </div>
-                    </li>
-                </ul>
-                
-            {%else%}
-            <ul class="navbar-nav  mr-auto">
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
-                        aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                        
-                    </a>
-                </li>
-                 <!-- Nav Item - User Management -->
-                 <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="combinationFunction('Users Management', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Users Management
-                    </a>
-                    <!-- Dropdown - User Management -->
-                    <div class="dropdown-menu shadow animated--grow-in"
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/adminpage/usersmanager" onclick="updatePath('Users', 2)">
-                            
-                            Users
-                        </a>
-
-                        <a class="dropdown-item" href="/adminpage/roles" onclick="updatePath('Role', 2)">
-                            
-                            Role
-                        </a>
-
-                        <a class="dropdown-item" href="/adminpage/groupuserpage" onclick="updatePath('Group User', 2)">
-                            
-                            Groups User
-                        </a>
-
-                    </div>
-                </li>
-
-                 <!-- Nav Item -ERP Management -->
-                 <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('ERP Management', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        ERP Management  <span>         </span>              
-                    </a>
-                    <!-- Dropdown - ERP Management -->
-                    <div class="dropdown-menu shadow animated--grow-in" 
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/ERP/projectlist" onclick="updatePath('Project', 2)">
-                            
-                            Projects
-                        </a>
-                        <a class="dropdown-item" href="/ERP/weeklytimesheetview" onclick="updatePath('Weeklytimesheet View', 2)">
-                            
-                            Weeklytimesheet view
-                        </a>
-
-                    </div>
-                </li>
-
-                 <!-- Nav Item - Annual Leave Management -->
-                 <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Annual Leave Management', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Leave Management
-                    </a>
-                    <!-- Dropdown - Annual Leave Management -->
-                    <div class="dropdown-menu shadow animated--grow-in"
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/LeaveManagement/leaveList" onclick="updatePath('Leave Management', 2)">
-                            
-                            Leave Management
-                        </a>
-                        <a class="dropdown-item" href="/annualleaveadmin_view" onclick="updatePath('Anual Leave View', 2)">
-                            
-                            Annual Leave View
-                        </a>
-
-                    </div>
-                </li>
-
-                 <!-- Nav Item - Annual Leave Management -->
-                 <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Timesheet Management', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Timesheet Management
-                    </a>
-                    <!-- Dropdown - Annual Leave Management -->
-                    <div class="dropdown-menu shadow animated--grow-in"
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="#" onclick="updatePath('Weekly Timesheet', 2)">
-                            
-                            Weekly Timesheet
-                        </a>
-                        <a class="dropdown-item" href="" onclick="updatePath('Project', 2)">
-                            
-                            Role
-                        </a>
-
-                    </div>
-                </li>
-
-                <!-- Nav Item - Annual Leave Management -->
-                <!-- Nav Item - Annual Leave Management -->
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Payroll Management', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Payroll Management
-                    </a>
-                    <!-- Dropdown - Annual Leave Management -->
-                    <div class="dropdown-menu shadow animated--grow-in"
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/payrollmanagement" onclick="updatePath('Payroll Report', 2)">
-                            
-                            Payroll Report
-                        </a>
-                        
-    
-                    </div>
-                </li>
-
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Payroll Management', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Additional Management
-                    </a>
-                    <!-- Dropdown - additional -->
-                    <div class="dropdown-menu shadow animated--grow-in"
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/exception" onclick="updatePath('Exception', 2)">
-                            
-                            Exception
-                        </a>    
-                        <a class="dropdown-item" href='/createallowancemain' onclick="updatePath('Allowance', 2)"> 
-                            
-                            Create Allowance
-                        </a>
-    
-                    </div>
-                </li>
-                </ul>
-
-                 <!-- avatar -->
-
-                <ul class="navbar-nav ml-auto">
-                    <!-- Nav Item - User Information -->
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('My Profile', 1)"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            
-                            <img class="img-profile rounded-circle mr-3"
-                                src="{{ url_for('static', path='source/' + image_path_admin) }}">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{fullname_admin }}</span>
-                            
-                        </a>
-                        <!-- Dropdown - User Information -->
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                            aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
-                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Profile
-                            </a>
-                            <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
-                                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Change Password
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Activity Log
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <p class="dropdown-item">
-                                <a  href="/logout" onclick="resetLocalStorage()">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </p>
-                </div>
-                    </li>
-                </ul>
-                
-            {%endif %}
-            {% elif current_user.is_authenticated and roleuser == "employee" %}
-            
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle btn-lg"  href="/home" role="button" onclick="resetLocalStorage()"
-                        aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                        
-                    </a>
-                </li>
-                <!-- Nav Item - User Management -->
-                <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Users', 1)"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                       Users
-                   </a>
-                   <!-- Dropdown - User Management -->
-                   <div class="dropdown-menu shadow animated--grow-in"
-                       aria-labelledby="userDropdown">
-                       
-
-                       <a class="dropdown-item" href="/groupuserpage/{{idinformationuser}}" onclick="updatePath('Groups User', 2)">
-                           
-                           Groups User
-                       </a>
-
-                   </div>
-               </li>
-
-                <!-- Nav Item -ERP Management -->
-                <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('ERP', 1)"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                       ERP
-                   </a>
-                   <!-- Dropdown - ERP Management -->
-                   <div class="dropdown-menu shadow animated--grow-in"
-                       aria-labelledby="userDropdown">
-                       <a class="dropdown-item" href="/WeeklyTimesheet/{{idinformationuser}}" onclick="updatePath('Weekly Timesheet', 1)">
-                           
-                           Weekly Timesheet
-                       </a>
-                       <a class="dropdown-item" href="#" onclick="updatePath('Project', 2)">
-                           
-                           Role
-                       </a>
-
-                   </div>
-               </li>
-
-                <!-- Nav Item - Annual Leave Management -->
-                <li class="nav-item dropdown no-arrow">
-                   <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('Annual Leave', 1)"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                       Annual Leave
-                   </a>
-                   <!-- Dropdown - Annual Leave Management -->
-                   <div class="dropdown-menu shadow animated--grow-in"
-                       aria-labelledby="userDropdown">
-                       <a class="dropdown-item" href="/annualLeaveemployee" onclick="updatePath('Anunual Leave', 2)">
-                           
-                           Anunual Leave
-                       </a>
-                       
-
-                   </div>
-               </li>
-               </ul>
-
-               <!-- avatar -->
-
-               <ul class="navbar-nav ml-auto">
-                <!-- Nav Item - User Information -->
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" onclick="updatePath('My Profile', 1)"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        
-                        <img class="img-profile rounded-circle"
-                            src="{{ url_for('static', path='source/' + image_path) }}">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{fullname }}</span>
-                        
-                    </a>
-                    <!-- Dropdown - User Information -->
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                        aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
-                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Profile
-                        </a>
-                        <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
-                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Change Password
-                        </a>
-                        <a class="dropdown-item" href="\logout">
-                            <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Activity Log
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <p class="dropdown-item">
-                            <a  href="\logout" onclick="resetLocalStorage()">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                Logout
-                            </a>
-                        </p>
-                        
-                    </div>
-                </li>
-
-            </ul>
-
-            
-            {% else %}
-            <!-- <ul class="navbar-nav  mr-auto">
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="/home" role="button"
-                        aria-haspopup="true" aria-expanded="false">
-    
-                        <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                        
-                    </a>
-                </li>
-            </ul> -->
-           
-            <ul class="navbar-nav ml-auto">
-                <!-- Nav Item - User Information -->
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="/home" role="button"
-                        aria-haspopup="true" aria-expanded="false">
-    
-                        <span class="mr-2 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                        
-                    </a>
-                </li>
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                        aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">ABOUT</span>
-                        
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="/signin" role="button"
-                         aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">SIGN IN</span>
-                        
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="/register" role="button"
-                         aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">REGISTER</span>
-                        
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                         aria-haspopup="true" aria-expanded="false">
-
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">CONTACT</span>
-                        
-                    </a>
-                </li>
-            </ul>
-        {% endif %}
-
-        </nav>
-        
-        <div  style="padding-top: 70px;">
-            {% if current_user.is_authenticated and (fullname or fullname_admin) %}
-            <div class="card-header row py-1 text-dark">
-                <p class="ml-3 mb-0" id="pathDisplay"></p>
-            </div>
-            {% endif %}
-        </div>
-        
-        </div>
-        <!-- Page Wrapper -->
-        <!-- display path -->
-
-        <script>
-            window.onload = function() {
-                if (window.location.pathname === '/signin') {
-                    resetLocalStorage();
-                }
-            };
-
-            // Hàm reset dữ liệu trong localStorage
-            function resetLocalStorage() {
-                let path = ["Home"];
-                let lastLevelClicked = 1;
-                localStorage.setItem('path', JSON.stringify(path));
-                localStorage.setItem('lastLevelClicked', JSON.stringify(lastLevelClicked));
-                localStorage.setItem('isReloaded', 'true');
+<style>
+    /* Ensure the navbar items have left margin when the screen is small */
+    @media (max-width: 767.98px) {
+      .navbar-nav .nav-item {
+        margin-left: 10px;
+      }
     }
-            let path = JSON.parse(localStorage.getItem('path')) || ["Home"];
-            let lastLevelClicked = JSON.parse(localStorage.getItem('lastLevelClicked')) || 1;
+    </style>
+  
+  <nav class="navbar navbar-expand-lg  ml-auto fixed-top p-1" style="background-color: #4e73df;">
+      
+  
+    <a class="navbar-brand text-white" href="/home">
+      <img class="img" style="object-fit: cover; max-width: 100%; height: 50px;" src="{{ url_for('static', path='source/logo_company.png') }}">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"><i class="fa-solid fa-bars"></i></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      {%if current_user.is_authenticated and roleadmin == "admin" and roleuser == "admin" or  current_user.is_authenticated and roleadmin == "admin" and roleuser != "admin" %}
+      {%if roleuser != "admin" and roleuser%}
+      <ul class="navbar-nav mr-auto ml-2">
+        
+        <li class="nav-item dropdown">
+            <a class="nav-link  text-white"  href="/home" role="button" aria-haspopup="true" aria-expanded="false" onclick="resetLocalStorage()">
+              <span class="mr-4 d-none d-lg-inline text-gray-1000 btn-lg">
+                <i class="fa-regular fa-square-caret-left fa-2x"></i>
+            </span>
+            </a>
             
-            function updatePath(subPath, level) {
-                if (subPath === "Home") {
-                    path = ["Home"];
-                    lastLevelClicked = 1;   
-                } else {
-                    if (level <= lastLevelClicked) {
-                        path = ["Home"];
-                        lastLevelClicked = level;
-                    }
+        </li>
+        </ul>
+      <ul class="navbar-nav ml-auto ml-2">
         
-                    if (path[path.length - 1] === subPath) return;
+        <!-- <li class="nav-item dropdown">
+            <a class="nav-link  text-white"  href="/home" role="button" aria-haspopup="true" aria-expanded="false" onclick="resetLocalStorage()">
+              <span class="mr-4 d-none d-lg-inline text-gray-1000 btn-lg">
+                <i class="fa-regular fa-square-caret-left fa-2x"></i>
+            </span>
+            </a>
+            
+        </li> -->
+
+        <li class="nav-item dropdown ml-2 mr-2">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="updatePath('My Profile', 1)"> 
+            <img class="mr-1 d-inline" style="width: 30px; height: 30px; border-radius: 50%;" src="{{ url_for('static', path='source/' + image_path_admin) }}">
+            {{ fullname_admin }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right dropdown-menu-custom" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
+              <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              Profile
+            </a>
+            <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
+              <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+              Change Password
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout" onclick="resetLocalStorage()">
+              <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+              Logout
+            </a>
+          </div>
+        </li>
         
-                    let index = path.indexOf(subPath);
-                    if (index !== -1) path.splice(index + 1);
-                    else path.push(subPath);
-                    lastLevelClicked = level;
-                }
-                localStorage.setItem('path', JSON.stringify(path));
-                localStorage.setItem('lastLevelClicked', JSON.stringify(lastLevelClicked));
-                localStorage.setItem('isReloaded', 'true'); 
+      </ul>
+      {%else%}
+      <ul class="navbar-nav ml-auto ml-2">
+        
+        <li class="nav-item dropdown">
+            <a class="nav-link  text-white"  href="/home" role="button" aria-haspopup="true" aria-expanded="false" onclick="resetLocalStorage()">
+              <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+            </a>
+            
+        </li>
+  
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="combinationFunction('Users Management', 1)">Users Management</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item " href="/adminpage/usersmanager" onclick="updatePath('Users', 2)">Users</a>
+              <a class="dropdown-item " href="/adminpage/roles" onclick="updatePath('Role', 2)">Role</a>
+              <a class="dropdown-item " href="/adminpage/groupuserpage" onclick="updatePath('Group User', 2)">Groups User</a>
+            </div>
+            
+        </li>
+  
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('ERP Management', 1)">ERP Management</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item " href="/ERP/projectlist" onclick="updatePath('Projects', 2)">Projects</a>
+            <a class="dropdown-item " href="/ERP/weeklytimesheetview" onclick="updatePath('Weeklytimesheet View', 2)">Weeklytimesheet view</a>
+          </div>
+        </li>
+  
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle  text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('Leave Management', 1)">Leave Management</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item " href="/LeaveManagement/leaveList" onclick="updatePath('Leave', 2)">Leave</a>
+            <a class="dropdown-item " href="/annualleaveadmin_view" onclick="updatePath('Leave View', 2)">Leave View</a>
+          </div>
+        </li>
+  
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle  text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('Timesheet Management', 1)">Timesheet Management</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item " href="/adminpage/usersmanager" onclick="updatePath('Weekly Timesheet', 2)">Weekly Timesheet</a>
+          </div>
+        </li>
+  
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle  text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('Payroll Management', 1)">Payroll Management</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item " href="/payrollmanagement" onclick="updatePath('Payroll Report', 2)">Payroll Report</a>
+          </div>
+        </li>
+  
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle  text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('Additional Management', 1)">Additional Management</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item " href="/exception" onclick="updatePath('Exception', 2)">Exception</a>
+            <a class="dropdown-item " href="/createallowancemain" onclick="updatePath('Allowance', 2)">Create Allowance</a>
+            
+          </div>
+        </li>
+        <div class="dropdown-divider"></div>
+        <li class="nav-item dropdown ml-2 mr-2">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="updatePath('My Profile', 1)"> 
+            <img class="mr-1 d-inline" style="width: 30px; height: 30px; border-radius: 50%;" src="{{ url_for('static', path='source/' + image_path_admin) }}">
+            {{ fullname_admin }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right dropdown-menu-custom" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
+              <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              Profile
+            </a>
+            <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
+              <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+              Change Password
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout" onclick="resetLocalStorage()">
+              <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+              Logout
+            </a>
+          </div>
+        </li>
+        
+      </ul>
+      {%endif%}
+
+      {% elif current_user.is_authenticated and roleuser == "employee" %}
+      <ul class="navbar-nav ml-auto ml-2">
+        
+        <li class="nav-item dropdown">
+            <a class="nav-link  text-white"  href="/home" role="button" aria-haspopup="true" aria-expanded="false" onclick="resetLocalStorage()">
+              <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+            </a>
+            
+        </li>
+  
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('Users', 1)">User</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item " href="/groupuserpage/{{idinformationuser}}" onclick="updatePath('Groups User', 2)">Groups User</a>
+            </div>
+            
+        </li>
+  
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('ERP', 1)">ERP</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item " href="/WeeklyTimesheet/{{idinformationuser}}" onclick="updatePath('Weekly Timesheet', 1)"></a>>Weekly Timesheet</a>
+          </div>
+        </li>
+  
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle  text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('Leave', 1)">Leave</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item " href="/annualLeaveemployee" onclick="updatePath('Leave', 2)">Leave</a>
+          </div>
+        </li>
+        <div class="dropdown-divider"></div>
+        <li class="nav-item dropdown ml-2 mr-2">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="updatePath('My Profile', 1)">
+            <img class="mr-1 d-inline" style="width: 30px; height: 30px; border-radius: 50%;" src="{{ url_for('static', path='source/' + image_path) }}">
+            {{ fullname }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right dropdown-menu-custom" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
+              <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              Profile
+            </a>
+            <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
+              <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+              Change Password
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout" onclick="resetLocalStorage()">
+              <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+              Logout
+            </a>
+          </div>
+        </li>
+      </ul>
+      {% else %}
+      <ul class="navbar-nav ml-auto ml-2">
+        
+                <li class="nav-item dropdown">
+                    <a class="nav-link  text-white"  href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                      <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
+                    </a> 
+                </li>
+  
+                <li class="nav-item dropdown">
+                  <a class="nav-link  text-white"  href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-4 d-none d-lg-inline text-gray-1000">ABOUT</span>
+                  </a> 
+              </li>
+  
+              <li class="nav-item dropdown">
+                <a class="nav-link  text-white"  href="/signin" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span class="mr-4 d-none d-lg-inline text-gray-1000">SIGN IN</span>
+                </a> 
+            </li>
+  
+            <li class="nav-item dropdown">
+              <a class="nav-link  text-white"  href="/register" role="button" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-4 d-none d-lg-inline text-gray-1000">REGISTER</span>
+              </a> 
+          </li>
+  
+          <li class="nav-item dropdown">
+            <a class="nav-link  text-white"  href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <span class="mr-4 d-none d-lg-inline text-gray-1000">CONTACT</span>
+            </a> 
+          </li>
+      </ul>
+      {% endif %}
+  
+  
+      
+    </div>
+  </nav>
+  
+  
+  <div  style="padding-top: 70px;">
+    {% if current_user.is_authenticated and (fullname or fullname_admin) %}
+    <div class="card-header row py-1 text-dark">
+        <p class="ml-3 mb-0" id="pathDisplay"></p>
+    </div>
+    {% endif %}
+  </div>
+  
+  <script>
+    window.onload = function() {
+        if (window.location.pathname === '/signin') {
+            resetLocalStorage();
+        }
+    };
+  
+    // Hàm reset dữ liệu trong localStorage
+    function resetLocalStorage() {
+        let path = ["Home"];
+        let lastLevelClicked = 1;
+        localStorage.setItem('path', JSON.stringify(path));
+        localStorage.setItem('lastLevelClicked', JSON.stringify(lastLevelClicked));
+        localStorage.setItem('isReloaded', 'true');
+  }
+    let path = JSON.parse(localStorage.getItem('path')) || ["Home"];
+    let lastLevelClicked = JSON.parse(localStorage.getItem('lastLevelClicked')) || 1;
+    
+    function updatePath(subPath, level) {
+        if (subPath === "Home") {
+            path = ["Home"];
+            lastLevelClicked = 1;   
+        } else {
+            if (level <= lastLevelClicked) {
+                path = ["Home"];
+                lastLevelClicked = level;
             }
-            document.getElementById('pathDisplay').textContent = path.join(" / ");
-        </script>
-        
-        <script>
-            function resetLocalStorage() {
-    // Xóa toàn bộ dữ liệu trong localStorage
-                localStorage.clear();
-}
-function combinationFunction(subPath, level) {
-    updatePath(subPath, level);        
-    localStorage.setItem('tableName', "");
-    localStorage.setItem('tailUpdate', "");
-
-    // Lấy giá trị tableName và tailUpdate từ localStorage
-    var tableName = localStorage.getItem('tableName');
-    var tailUpdate = localStorage.getItem('tailUpdate');
-
-    // Hiển thị giá trị trong console
-    console.log("Table Name:", tableName);
-    console.log("Tail Update:", tailUpdate);
-}
-
-        </script>
-        
+  
+            if (path[path.length - 1] === subPath) return;
+  
+            let index = path.indexOf(subPath);
+            if (index !== -1) path.splice(index + 1);
+            else path.push(subPath);
+            lastLevelClicked = level;
+        }
+        localStorage.setItem('path', JSON.stringify(path));
+        localStorage.setItem('lastLevelClicked', JSON.stringify(lastLevelClicked));
+        localStorage.setItem('isReloaded', 'true'); 
+    }
+    document.getElementById('pathDisplay').textContent = path.join(" / ");
+  </script>
+  
+  <script>
+    function resetLocalStorage() {
+  // Xóa toàn bộ dữ liệu trong localStorage
+        localStorage.clear();
+  }
+  function combinationFunction(subPath, level) {
+  updatePath(subPath, level);        
+  localStorage.setItem('tableName', "");
+  localStorage.setItem('tailUpdate', "");
+  
+  // Lấy giá trị tableName và tailUpdate từ localStorage
+  var tableName = localStorage.getItem('tableName');
+  var tailUpdate = localStorage.getItem('tailUpdate');
+  
+  // Hiển thị giá trị trong console
+  console.log("Table Name:", tableName);
+  console.log("Tail Update:", tailUpdate);
+  }
+  
+  </script>
