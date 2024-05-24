@@ -87,8 +87,8 @@ async def displayRoles(request:Request,current_user: User = Depends(get_current_
     if await form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into role_user values(?)"
-        value=(form.role)
+        sql="insert into role_user values(%s)"
+        value=(form.role,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -111,8 +111,8 @@ def rolepage_get(request:Request,idrole,current_user: User = Depends(get_current
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select role_name from role_user where id=?"
-    value=(idrole)
+    sql="select role_name from role_user where id=%s"
+    value=(idrole,)
     cursor.execute(sql,value)
     rolename=cursor.fetchone()
     conn.commit()
@@ -135,8 +135,8 @@ async def rolepage(request:Request,idrole,current_user: User = Depends(get_curre
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select role_name from role_user where id=?"
-    value=(idrole)
+    sql="select role_name from role_user where id=%s"
+    value=(idrole,)
     cursor.execute(sql,value)
     rolename=cursor.fetchone()
     conn.commit()
@@ -146,8 +146,8 @@ async def rolepage(request:Request,idrole,current_user: User = Depends(get_curre
         new_role_name = form["user_role"]
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update role_user set role_name=? where id=?"
-        value=(new_role_name,idrole)
+        sql="update role_user set role_name=$s where id=%s"
+        value=(new_role_name,idrole,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -169,8 +169,8 @@ def deleterole(idrole):
     conn=db.connection()
     cursor=conn.cursor()
     sql="""SET NOCOUNT ON;
-            EXEC deleteRole @role_id=?"""
-    value=(idrole)
+            EXEC deleteRole @role_id=%s"""
+    value=(idrole,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -464,8 +464,8 @@ def exportfileexcel(typerole,request:Request,current_user: User = Depends(get_cu
                     
                     conn=db.connection()
                     cursor=conn.cursor()
-                    sql="select i.*,l.* from informationUser i join latestEmployment l on l.idinformationuser=i.id join user_account u on i.id_useraccount=u.id where i.id=?"
-                    cursor.execute(sql,str(id))
+                    sql="select i.*,l.* from informationUser i join latestEmployment l on l.idinformationuser=i.id join user_account u on i.id_useraccount=u.id where i.id=%s"
+                    cursor.execute(sql,(str(id),))
                     user=cursor.fetchone()
                     conn.commit()
                     conn.close()
@@ -500,8 +500,8 @@ def exportfileexcel(typerole,request:Request,current_user: User = Depends(get_cu
                     
                     conn=db.connection()
                     cursor=conn.cursor()
-                    sql="select i.*,l.* from informationUser i join latestEmployment l on l.idinformationuser=i.id join user_account u on i.id_useraccount=u.id join role_user r on u.role_id=r.id where r.role_name='candidate' and i.id=?"
-                    cursor.execute(sql,str(id))
+                    sql="select i.*,l.* from informationUser i join latestEmployment l on l.idinformationuser=i.id join user_account u on i.id_useraccount=u.id join role_user r on u.role_id=r.id where r.role_name='candidate' and i.id=%s"
+                    cursor.execute(sql,(str(id),))
                     user=cursor.fetchone()
                     conn.commit()
                     conn.close()
@@ -538,8 +538,8 @@ def exportfileexcel(typerole,request:Request,current_user: User = Depends(get_cu
                     cursor=conn.cursor()
                     sql="""select i.*,ij.*,l.*,f.*,ft.type,r.role_name from  informationUser i join informationUserJob ij on i.id=ij.idinformationuser join laborContract l on
                         ij.id=l.idinformationUserJob join forexSalary f on ij.id=f.idinformationUserJob join forextype ft on ft.id=f.forextypeid join user_account u on i.id_useraccount=u.id
-                        join role_user r on u.role_id=r.id where r.role_name='employee' and ij.is_active=1 and l.is_active=1 and f.is_active=1 and i.id=?"""
-                    cursor.execute(sql,str(id))
+                        join role_user r on u.role_id=r.id where r.role_name='employee' and ij.is_active=1 and l.is_active=1 and f.is_active=1 and i.id=%s"""
+                    cursor.execute(sql,(str(id),))
                     user=cursor.fetchone()
                     conn.commit()
                     conn.close()
@@ -584,9 +584,9 @@ def exportfilepdf(request:Request,idinformationuser,type):
         cursor=conn.cursor()
         sql="""select i.*,l.*,r.role_name from informationUser i join latestEmployment l on 
         i.id=l.idinformationuser join user_account u on u.id=i.id_useraccount 
-        join role_user r on r.id=u.role_id and r.role_name='candidate'  where i.id=?
+        join role_user r on r.id=u.role_id and r.role_name='candidate'  where i.id=%s
         """
-        value=(idinformationuser)
+        value=(idinformationuser,)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -613,9 +613,9 @@ def exportfilepdf(request:Request,idinformationuser,type):
         cursor=conn.cursor()
         sql="""select i.*,l.*,r.role_name from informationUser i join latestEmployment l on 
         i.id=l.idinformationuser join user_account u on u.id=i.id_useraccount 
-        join role_user r on r.id=u.role_id and r.role_name='employee'  where i.id=?
+        join role_user r on r.id=u.role_id and r.role_name='employee'  where i.id=%s
         """
-        value=(idinformationuser)
+        value=(idinformationuser,)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -642,9 +642,9 @@ def exportfilepdf(request:Request,idinformationuser,type):
         cursor=conn.cursor()
         sql="""select i.*,l.*,r.role_name from informationUser i join latestEmployment l on 
         i.id=l.idinformationuser join user_account u on u.id=i.id_useraccount 
-        join role_user r on r.id=u.role_id   where i.id=?
+        join role_user r on r.id=u.role_id   where i.id=%s
         """
-        value=(idinformationuser)
+        value=(idinformationuser,)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -670,8 +670,8 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    value=(decode_id(idaccount))
+    sql="select id from informationUser where id_useraccount=%s"
+    value=(decode_id(idaccount),)
     cursor.execute(sql,value)
     idinformation_temp=cursor.fetchone()
     conn.commit()
@@ -689,8 +689,8 @@ def assignrole_get(request:Request,idaccount,userrole,current_user: User = Depen
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select  i.email from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
-    value=decode_id(idaccount)
+    sql="select  i.email from informationUser i join user_account u on i.id_useraccount=u.id where u.id=%s"
+    value=(decode_id(idaccount),)
     cursor.execute(sql,value)
     email=cursor.fetchall()
     conn.commit()
@@ -717,8 +717,8 @@ async def assignrole(request:Request,response:Response,idaccount,userrole,curren
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    value=(decode_id(idaccount))
+    sql="select id from informationUser where id_useraccount=%s"
+    value=(decode_id(idaccount),)
     cursor.execute(sql,value)
     idinformation_temp=cursor.fetchone()
     conn.commit()
@@ -736,8 +736,8 @@ async def assignrole(request:Request,response:Response,idaccount,userrole,curren
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select  i.email from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
-    value=decode_id(idaccount)
+    sql="select  i.email from informationUser i join user_account u on i.id_useraccount=u.id where u.id=%s"
+    value=(decode_id(idaccount),)
     cursor.execute(sql,value)
     email=cursor.fetchall()
     conn.commit()
@@ -754,8 +754,8 @@ async def assignrole(request:Request,response:Response,idaccount,userrole,curren
                 break
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from informationUserJob ij join informationUser i on ij.idinformationuser=i.id where id_useraccount=?"
-        values=(decode_id(idaccount))
+        sql="select * from informationUserJob ij join informationUser i on ij.idinformationuser=i.id where id_useraccount=%s"
+        values=(decode_id(idaccount),)
         cursor.execute(sql,values)
         validate=cursor.fetchone()
         conn.commit()
@@ -766,8 +766,8 @@ async def assignrole(request:Request,response:Response,idaccount,userrole,curren
         else:
             conn=db.connection()
             cursor=conn.cursor()
-            sql="update user_account set role_id=? where id=?"
-            values=(a,decode_id(idaccount))
+            sql="update user_account set role_id=%s where id=%s"
+            values=(a,decode_id(idaccount),)
             cursor.execute(sql,values)
             conn.commit()
             conn.close()
@@ -792,8 +792,8 @@ async def assignrole(request:Request,response:Response,idaccount,userrole,curren
 def blockaccount(idaccount,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update user_account set is_active=0 where id=?"
-    values=(decode_id(idaccount))
+    sql="update user_account set is_active=0 where id=%s"
+    values=(decode_id(idaccount),)
     cursor.execute(sql,values)
     conn.commit()
     conn.close()
@@ -804,8 +804,8 @@ def blockaccount(idaccount,current_user: User = Depends(get_current_user_from_to
 def openblock(idaccount,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update user_account set is_active=1 where id=?"
-    values=(decode_id(idaccount))
+    sql="update user_account set is_active=1 where id=%s"
+    values=(decode_id(idaccount),)
     cursor.execute(sql,values)
     conn.commit()
     conn.close()
@@ -818,16 +818,16 @@ def info(idaccount,response:Response,current_user: User = Depends(get_current_us
     idaccount_encode=idaccount
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
-    value=(decode_id(current_user.id))
+    sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=%s"
+    value=(decode_id(current_user.id),)
     cursor.execute(sql,value)
     temp=cursor.fetchone()
 
     if temp[0]=="admin":
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
-        value=(decode_id(idaccount_encode))
+        sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=%s"
+        value=(decode_id(idaccount_encode),)
         cursor.execute(sql,value)
         user_role=cursor.fetchone()
         response=RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
@@ -838,8 +838,8 @@ def info(idaccount,response:Response,current_user: User = Depends(get_current_us
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
-        value=(decode_id(idaccount))
+        sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= %s and i.id_useraccount=u.id and u.role_id = r.id"
+        value=(decode_id(idaccount),)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -854,8 +854,8 @@ def info(idaccount,response:Response,current_user: User = Depends(get_current_us
     else:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=?"
-        value=(decode_id(idaccount_encode))
+        sql="select r.role_name from user_account u join role_user r on u.role_id=r.id where u.id=%s"
+        value=(decode_id(idaccount_encode),)
         cursor.execute(sql,value)
         user_role=cursor.fetchone()
         response=RedirectResponse(url=f"/userinformation/{idaccount_encode}", status_code=status.HTTP_302_FOUND)
@@ -866,8 +866,8 @@ def info(idaccount,response:Response,current_user: User = Depends(get_current_us
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
-        value=(decode_id(idaccount))
+        sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= %s and i.id_useraccount=u.id and u.role_id = r.id"
+        value=(decode_id(idaccount),)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -940,7 +940,7 @@ async def groupuserpage(request:Request,response:Response,current_user: User = D
         cursor=conn.cursor()
         sql="""SET NOCOUNT ON;
                 DECLARE @id int;
-                insert into groupuser(name,createddate) values(?,GETDATE())
+                insert into groupuser(name,createddate) values($s,GETDATE())
                 SET @id = SCOPE_IDENTITY();            
                 SELECT @id AS the_output;"""
         value=(form.group)
@@ -977,8 +977,8 @@ async def updategropuser_get(request:Request,response:Response,idgroup,rolegroup
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from groupuser where id=?"
-    value=(idgroup)
+    sql="select * from groupuser where id=%s"
+    value=(idgroup,)
     cursor.execute(sql,value)
     group=cursor.fetchone()
     conn.commit()
@@ -1012,8 +1012,8 @@ async def updategropuser_get(request:Request,response:Response,idgroup,rolegroup
     conn=db.connection()
     cursor=conn.cursor()
     sql="""select gd.id, i.Fullname,r.rolename,g.name,gd.createddate,u.id from groupuserdetail gd join informationUser i on i.id=gd.iduser join rolegroupuser r on gd.idrolegroupuser=r.id
-            join groupuser g on gd.idgroupuser=g.id join user_account u on u.id=i.id_useraccount where g.id=?"""
-    value=(idgroup)
+            join groupuser g on gd.idgroupuser=g.id join user_account u on u.id=i.id_useraccount where g.id=%s"""
+    value=(idgroup,)
     cursor.execute(sql,value)
     userstemp=cursor.fetchall()
     conn.commit()
@@ -1069,8 +1069,8 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
     form =groupuserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from groupuser where id=?"
-    value=(idgroup)
+    sql="select * from groupuser where id=%s"
+    value=(idgroup,)
     cursor.execute(sql,value)
     group=cursor.fetchone()
     conn.commit()
@@ -1104,8 +1104,8 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
     conn=db.connection()
     cursor=conn.cursor()
     sql="""select gd.id, i.Fullname,r.rolename,g.name,gd.createddate,u.id from groupuserdetail gd join informationUser i on i.id=gd.iduser join rolegroupuser r on gd.idrolegroupuser=r.id
-            join groupuser g on gd.idgroupuser=g.id join user_account u on u.id=i.id_useraccount where g.id=?"""
-    value=(idgroup)
+            join groupuser g on gd.idgroupuser=g.id join user_account u on u.id=i.id_useraccount where g.id=%s"""
+    value=(idgroup,)
     cursor.execute(sql,value)
     userstemp=cursor.fetchall()
     conn.commit()
@@ -1119,8 +1119,8 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
         conn=db.connection()
         cursor=conn.cursor()
         sql="""select i.Email,r.rolename,g.name from groupuserdetail gd join informationUser i on i.id=gd.iduser join rolegroupuser r on gd.idrolegroupuser=r.id
-                join groupuser g on gd.idgroupuser=g.id where g.id=?"""
-        value=(idgroup)
+                join groupuser g on gd.idgroupuser=g.id where g.id=%s"""
+        value=(idgroup,)
         cursor.execute(sql,value)
         notifyemail=cursor.fetchall()
         conn.commit()
@@ -1128,9 +1128,9 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update groupuser set name=?,alias=?,email=?,url=?,description=? where id=?"
+        sql="update groupuser set name=%s,alias=%s,email=%s,url=%s,description=%s where id=%s"
         value=(groupuser,form.alias,form.email,
-                form.url,form.description,idgroup)
+                form.url,form.description,idgroup,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -1162,11 +1162,11 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
             sql="""
             SET NOCOUNT ON;
             DECLARE @id int;
-            insert into groupuserdetail(iduser,idrolegroupuser,idgroupuser,createddate) values(?,?,?,GETDATE())
+            insert into groupuserdetail(iduser,idrolegroupuser,idgroupuser,createddate) values(%s,%s,%s,GETDATE())
             SET @id = SCOPE_IDENTITY();            
             SELECT @id AS the_output;
             """
-            value=(usersSelect,grouprole,idgroup)
+            value=(usersSelect,grouprole,idgroup,)
             cursor.execute(sql,value)
             idgroupuserdetail=cursor.fetchone()
             conn.commit()
@@ -1176,8 +1176,8 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
             conn=db.connection()
             cursor=conn.cursor()
             sql="""select i.Email,r.rolename,g.name from groupuserdetail gd join informationUser i on i.id=gd.iduser join rolegroupuser r on gd.idrolegroupuser=r.id
-                    join groupuser g on gd.idgroupuser=g.id where gd.id=?"""
-            value=(idgroupuserdetail[0])
+                    join groupuser g on gd.idgroupuser=g.id where gd.id=%s"""
+            value=(idgroupuserdetail[0],)
             cursor.execute(sql,value)
             notifyemail=cursor.fetchone()
             conn.commit()
@@ -1240,8 +1240,8 @@ def deleteuser(idgroupuserdetail,idgroup,rolegroupvalue,current_user: User = Dep
     conn=db.connection()
     cursor=conn.cursor()
     sql="""select i.Email,r.rolename,g.name from groupuserdetail gd join informationUser i on i.id=gd.iduser join rolegroupuser r on gd.idrolegroupuser=r.id
-            join groupuser g on gd.idgroupuser=g.id where gd.id=?"""
-    value=(idgroupuserdetail)
+            join groupuser g on gd.idgroupuser=g.id where gd.id=%s"""
+    value=(idgroupuserdetail,)
     cursor.execute(sql,value)
     notifyemail=cursor.fetchone()
     conn.commit()
@@ -1249,8 +1249,8 @@ def deleteuser(idgroupuserdetail,idgroup,rolegroupvalue,current_user: User = Dep
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="delete groupuserdetail where id=?"
-    value=(idgroupuserdetail)
+    sql="delete groupuserdetail where id=%s"
+    value=(idgroupuserdetail,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -1268,8 +1268,8 @@ def deletegroupuser(idgroup,current_user: User = Depends(get_current_user_from_t
     conn=db.connection()
     cursor=conn.cursor()
     sql="""select i.Email,r.rolename,g.name from groupuserdetail gd join informationUser i on i.id=gd.iduser join rolegroupuser r on gd.idrolegroupuser=r.id
-            join groupuser g on gd.idgroupuser=g.id where g.id=?"""
-    value=(idgroup)
+            join groupuser g on gd.idgroupuser=g.id where g.id=%s"""
+    value=(idgroup,)
     cursor.execute(sql,value)
     notifyemail=cursor.fetchall()
     conn.commit()
@@ -1278,10 +1278,10 @@ def deletegroupuser(idgroup,current_user: User = Depends(get_current_user_from_t
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-            update project set projectteamid=null where projectteamid=?
-            delete groupuserdetail where idgroupuser=?
-            delete groupuser where id=?"""
-    value=(idgroup,idgroup,idgroup)
+            update project set projectteamid=null where projectteamid=%s
+            delete groupuserdetail where idgroupuser=%s
+            delete groupuser where id=%s"""
+    value=(idgroup,idgroup,idgroup,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -1298,8 +1298,8 @@ def deletegroupuser(idgroup,current_user: User = Depends(get_current_user_from_t
 async def createemployeeinfor_get(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from informationUserJob where idinformationuser=? and is_active=1"
-    value=(decode_id(idinformation))
+    sql="select * from informationUserJob where idinformationuser=%s and is_active=1"
+    value=(decode_id(idinformation),)
     cursor.execute(sql,value)
     informationjob=cursor.fetchone()
     conn.close()
@@ -1323,8 +1323,8 @@ async def createemployeeinfor_get(request:Request,idinformation,current_user: Us
         conn=db.connection()
         cursor=conn.cursor()
         sql="""select * from laborContract l join  informationUserJob ij on l.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
-        where i.id=? and l.is_active=1 and ij.is_active=1"""
-        value=(decode_id(idinformation))
+        where i.id=%s and l.is_active=1 and ij.is_active=1"""
+        value=(decode_id(idinformation),)
         cursor.execute(sql,value)
         labor=cursor.fetchone()  
         conn.close() 
@@ -1334,8 +1334,8 @@ async def createemployeeinfor_get(request:Request,idinformation,current_user: Us
             conn=db.connection()
             cursor=conn.cursor()
             sql="""select * from forexSalary f join  informationUserJob ij on f.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
-            where i.id=? and f.is_active=1 and ij.is_active=1"""
-            value=(decode_id(idinformation))
+            where i.id=%s and f.is_active=1 and ij.is_active=1"""
+            value=(decode_id(idinformation),)
             cursor.execute(sql,value)
             forex=cursor.fetchone()  
             conn.close()
@@ -1367,8 +1367,8 @@ async def createemployeeinfor_get(request:Request,idinformation,current_user: Us
 async def createemployeeinfor(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from informationUserJob where idinformationuser=? and is_active=1"
-    value=(decode_id(idinformation))
+    sql="select * from informationUserJob where idinformationuser=%s and is_active=1"
+    value=(decode_id(idinformation),)
     cursor.execute(sql,value)
     informationjob=cursor.fetchone()
     conn.close()
@@ -1394,7 +1394,7 @@ async def createemployeeinfor(request:Request,idinformation,current_user: User =
             code=form_method['companysitecode']
             conn=db.connection()
             cursor=conn.cursor()
-            sql="insert into informationUserJob values(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            sql="insert into informationUserJob values($s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s)"
             value=(code,form.department,form.directmanager,
                 form.workfortype,form.Bankaccount,form.bankname,form.Taxcode,
                 form.Socialinsurancecode,form.Healthinsurancecardcode,form.Registeredhospitalname,
@@ -1407,7 +1407,7 @@ async def createemployeeinfor(request:Request,idinformation,current_user: User =
         conn=db.connection()
         cursor=conn.cursor()
         sql="""select * from laborContract l join  informationUserJob ij on l.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
-        where i.id=? and l.is_active=1 and ij.is_active=1"""
+        where i.id=$s and l.is_active=1 and ij.is_active=1"""
         value=(decode_id(idinformation))
         cursor.execute(sql,value)
         labor=cursor.fetchone()  
@@ -1418,7 +1418,7 @@ async def createemployeeinfor(request:Request,idinformation,current_user: User =
             conn=db.connection()
             cursor=conn.cursor()
             sql="""select * from forexSalary f join  informationUserJob ij on f.idinformationUserJob=ij.id join informationUser i on ij.idinformationuser=i.id 
-            where i.id=? and f.is_active=1 and ij.is_active=1"""
+            where i.id=$s and f.is_active=1 and ij.is_active=1"""
             value=(decode_id(idinformation))
             cursor.execute(sql,value)
             forex=cursor.fetchone()  
@@ -1436,7 +1436,7 @@ async def createlaborcontract_get(request:Request,idinformation,current_user: Us
     form=laborcontractForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUserJob where idinformationuser=? and is_active=1"
+    sql="select id from informationUserJob where idinformationuser=$s and is_active=1"
     value=(decode_id(idinformation))
     cursor.execute(sql,value)
     idinformationuserjob=cursor.fetchone()
@@ -1461,7 +1461,7 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
     form=laborcontractForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUserJob where idinformationuser=? and is_active=1"
+    sql="select id from informationUserJob where idinformationuser=$s and is_active=1"
     value=(decode_id(idinformation))
     cursor.execute(sql,value)
     idinformationuserjob=cursor.fetchone()
@@ -1474,7 +1474,7 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
         sql="""
         SET NOCOUNT ON;
         DECLARE @id int;
-        insert into laborContract values(null,?,?,?,?,?,?,?,?)
+        insert into laborContract values(null,$s,$s,$s,$s,$s,$s,$s,$s)
         SET @id = SCOPE_IDENTITY();            
         SELECT @id AS the_output;
         """
@@ -1489,7 +1489,7 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into dayoffincontract values(?,?,?)"
+        sql="insert into dayoffincontract values($s,$s,$s)"
         value=(idcontract[0],form.dayoff,current_year)
         cursor.execute(sql,value)
         conn.commit()
@@ -1513,7 +1513,7 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
 async def createforexsalary_get(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id,companysitecode from informationUserJob where idinformationuser=? and is_active=1"
+    sql="select id,companysitecode from informationUserJob where idinformationuser=$s and is_active=1"
     value=(decode_id(idinformation))
     cursor.execute(sql,value)
     idinformationuserjob=cursor.fetchone()
@@ -1540,7 +1540,7 @@ async def createforexsalary_get(request:Request,idinformation,current_user: User
 async def createforexsalary(request:Request,idinformation,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id,companysitecode from informationUserJob where idinformationuser=? and is_active=1"
+    sql="select id,companysitecode from informationUserJob where idinformationuser=$s and is_active=1"
     value=(decode_id(idinformation))
     cursor.execute(sql,value)
     idinformationuserjob=cursor.fetchone()
@@ -1552,7 +1552,7 @@ async def createforexsalary(request:Request,idinformation,current_user: User = D
     if await form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into forexSalary values(?,?,?,?,?,?,?,1)"
+        sql="insert into forexSalary values($s,$s,$s,$s,$s,$s,$s,1)"
         value=(form.forextype,form.Annualsalary,form.Monthlysalary,
                form.Monthlysalaryincontract,form.Quaterlybonustarget,form.Annualbonustarget,idinformationuserjob[0])
         cursor.execute(sql,value)
@@ -1561,7 +1561,7 @@ async def createforexsalary(request:Request,idinformation,current_user: User = D
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select u.id from user_account u join informationUser i on u.id=i.id_useraccount where i.id=?"
+        sql="select u.id from user_account u join informationUser i on u.id=i.id_useraccount where i.id=$s"
         value=(decode_id(idinformation))
         cursor.execute(sql,value)
         idaccount=cursor.fetchone()
@@ -1570,7 +1570,7 @@ async def createforexsalary(request:Request,idinformation,current_user: User = D
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update user_account set role_id =1 where id=?"
+        sql="update user_account set role_id =1 where id=$s"
         value=(idaccount[0])
         cursor.execute(sql,value)
         conn.commit()

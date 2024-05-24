@@ -56,8 +56,9 @@ class user_avatar():
         cursor=conn.cursor()
 
         # Tìm kiếm theo informationuserid
-        sql = "select* from user_avatar where idinformationuser=?"
-        cursor.execute(sql,informationuserid)
+        sql = "select* from user_avatar where idinformationuser=%s"
+        value=(informationuserid,)
+        cursor.execute(sql,value)
         user_avatar = cursor.fetchone()
         conn.commit()
 
@@ -73,8 +74,8 @@ class user_avatar():
         cursor=conn.cursor()
 
         # Cập nhật tài liệu dựa trên username
-        sql = "update user_avatar set pic_name = ? where idinformationuser =?"
-        cursor.execute(sql,new_pic_name,informationuserid)
+        sql = "update user_avatar set pic_name = %s where idinformationuser =%s"
+        cursor.execute(sql,(new_pic_name,informationuserid))
         conn.commit()
 
         # Đóng kết nối
@@ -100,8 +101,8 @@ class user_cccd():
         cursor=conn.cursor()
 
         # insert data
-        sql = "insert into user_cccd values(?,?,?)"
-        cursor.execute(sql,self.informationuserid,self.front_pic_name, self.back_pic_name)
+        sql = "insert into user_cccd values(%s,%s,%s)"
+        cursor.execute(sql,(self.informationuserid,self.front_pic_name, self.back_pic_name,))
         conn.commit()
         conn.close()     
         # Trả về ID của tài liệu đã chèn
@@ -114,8 +115,8 @@ class user_cccd():
         cursor=conn.cursor()
 
         # Tìm kiếm theo informationuserid
-        sql = "select* from user_cccd where idinformationuser=?"
-        cursor.execute(sql,informationuserid)
+        sql = "select* from user_cccd where idinformationuser=%s"
+        cursor.execute(sql,(informationuserid,))
         user_avatar = cursor.fetchone()
         conn.commit()
 
@@ -131,8 +132,8 @@ class user_cccd():
         cursor=conn.cursor()
 
         # Cập nhật tài liệu dựa trên username
-        sql = "update user_cccd set front_pic_name = ?, back_pic_name = ? where idinformationuser =?"
-        cursor.execute(sql,new_front_pic_name,new_back_pic_name,informationuserid)
+        sql = "update user_cccd set front_pic_name = %s, back_pic_name = %s where idinformationuser =%s"
+        cursor.execute(sql,(new_front_pic_name,new_back_pic_name,informationuserid,))
         conn.commit()
 
         # Đóng kết nối
@@ -172,7 +173,7 @@ class user_healthyInsurance():
 
         # Tìm kiếm theo informationuserid
         sql = "select* from user_healthyInsurance where idinformationuser=?"
-        cursor.execute(sql,informationuserid)
+        cursor.execute(sql,(informationuserid,))
         user_avatar = cursor.fetchone()
         conn.commit()
 
@@ -189,7 +190,7 @@ class user_healthyInsurance():
 
         # Cập nhật tài liệu dựa trên username
         sql = "update user_healthyInsurance set front_pic_name = ?, back_pic_name = ? where idinformationuser =?"
-        cursor.execute(sql,new_front_pic_name,new_back_pic_name,informationuserid)
+        cursor.execute(sql,(new_front_pic_name,new_back_pic_name,informationuserid,))
         conn.commit()
 
         # Đóng kết nối

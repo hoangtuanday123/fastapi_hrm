@@ -17,6 +17,7 @@ from .models import create_access_token
 from fastapi.security import OAuth2, OAuth2PasswordRequestForm
 from ultils import settings,get_b64encoded_qr_image,file_path_default,send_mail,encode_id,decode_id
 from authentication.models import get_current_user_from_cookie,get_current_user_from_token
+import mysql.connector
 import os
 import config
 from dotenv import load_dotenv
@@ -83,10 +84,10 @@ async def register(request: Request):
             sql="""
                 SET NOCOUNT ON;
                 DECLARE @out int;
-                EXEC register_user @email=?,@password=?,@created_date=?,@authenticated_by=?,@secret_token=?,@id = @out OUTPUT;
+                EXEC register_user @email=%s,@password=%s,@created_date=%s,@authenticated_by=%s,@secret_token=%s,@id = @out OUTPUT;
                 SELECT @out AS the_output;
                 """
-            value=(form.email,form.password,created_date,'normal',secret)
+            value=(form.email,form.password,created_date,'normal',secret,)
             cursor.execute(sql,value)
             id_user = cursor.fetchone()
             conn.commit()
@@ -177,8 +178,8 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
                 current_user.is_two_authentication_enabled = True
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="update user_account set enabled_authentication=1 where id=?"
-                value=(decode_id(current_user.id))
+                sql="update user_account set enabled_authentication=1 where id=%s"
+                value=(decode_id(current_user.id),)
                 cursor.execute(sql,value)
                 conn.commit()
                 conn.close()
@@ -256,27 +257,20 @@ async def login(request: Request):
     form = LoginForm(request)
     await form.load_data()
     if await form.is_valid():
-        #user = User.query.filter_by(username=form.username.data).first()
+      
         conn=db.connection()
         cursor=conn.cursor()
-        sql="""
-            SET NOCOUNT ON;
-            DECLARE @out int;
-            EXEC login_user @email=?,@password=?,@id = @out OUTPUT;
-            SELECT @out AS the_output;
-            """
-        value=(form.email,form.password)
-        cursor.execute(sql,value)
-        id_user = cursor.fetchone()
+        cursor.execute("CALL login_user(%s, %s, @output)", (form.email, form.password))
+        cursor.execute("SELECT @output;")
+        id_user =cursor.fetchone()
         conn.commit()
         conn.close()
         if id_user[0]!=0:
             
-
             conn=db.connection()
             cursor=conn.cursor()
-            sql="select * from user_account where id=?"
-            value=(id_user[0])
+            sql="select * from user_account where id=%s"
+            value=(id_user[0],)
             cursor.execute(sql,value)
             user_temp=cursor.fetchone()
             conn.commit()
@@ -339,8 +333,8 @@ async def forgotpassword(response:Response,request: Request):
     if await form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where i.Email=?"
-        value=(form.email)
+        sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where i.Email=%s"
+        value=(form.email,)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -386,10 +380,11 @@ async def verifypassword_get(request:Request):
     except:
         current_user = None
     #verify_password=session.get('verify_password')
-    verify=request.cookies.get("verify_password")
+    totp=request.cookies.get("totp")
+    email=request.cookies.get("email")
     subject = "this is otp :"
-    html=verify.totp_temp
-    send_mail(verify.email, subject, html,2)
+    html=totp
+    send_mail(email, subject, html,2)
     form = TwoFactorForm(request)
     context={
         "request":request,
@@ -408,29 +403,32 @@ async def verifypassword(response:Response,request:Request):
     except:
         current_user = None
     #verify_password=session.get('verify_password')
-    verify=request.cookies.get("verify_password")
+    totp=request.cookies.get("totp")
+    email=request.cookies.get("email")
     subject = "this is otp :"
-    html=verify.totp_temp
-    send_mail(verify.email, subject, html,2)
+    html=totp
+    send_mail(email, subject, html,2)
     form = TwoFactorForm(request)
     await form.load_data()
     if await form.is_valid():
-        if verify.totp_temp==form.otp:
+        if str(totp)==form.otp:
             if current_user is not None:
                 #session['id_useraccount']=current_user.id
-                id_useraccount.value=current_user.id
+                response=RedirectResponse(url="/changepassword",status_code=status.HTTP_302_FOUND)
+                response.set_cookie(key="id_useraccount", value=current_user.id)
             else:
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="select * from informationUser where Email=?"
-                value=(verify.email)
+                sql="select * from informationUser where Email=%s"
+                value=(email,)
                 cursor.execute(sql,value)
                 user_temp=cursor.fetchone()
                 conn.commit()
                 conn.close()
                 #session['id_useraccount']=user_temp[5]
+                response=RedirectResponse(url="/changepassword",status_code=status.HTTP_302_FOUND)
                 response.set_cookie(key="id_useraccount", value=encode_id(user_temp[5]))
-            return RedirectResponse(url="/changepassword",status_code=status.HTTP_302_FOUND)    
+            return response    
             #return redirect(url_for("authentication.changepassword"))
         else:
             messages.categorary="danger"
@@ -480,8 +478,8 @@ async def changepassword(request:Request):
     if await form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update user_account set password=? where id=?"
-        value=(form.password,id_user)
+        sql="update user_account set password=%s where id=%s"
+        value=(form.password,id_user,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()

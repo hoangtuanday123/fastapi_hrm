@@ -91,16 +91,16 @@ async def authorizationUser(request:Request,response:Response, current_user: Use
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select role_name from role_user where id=?"
-    value=(current_user.role_user)
+    sql="select role_name from role_user where id=%s"
+    value=(current_user.role_user,)
     cursor.execute(sql,value)
     user_role=cursor.fetchone()
     roleuser.value=user_role[0]
 
 
     cursor1=conn.cursor()
-    sql1="select * from informationUser where id_useraccount=?"
-    value1=(decode_id(current_user.id))
+    sql1="select * from informationUser where id_useraccount=%s"
+    value1=(decode_id(current_user.id),)
     cursor1.execute(sql1,value1)
     user_temp=cursor1.fetchone()
     roleuser.value=user_role[0]
@@ -239,8 +239,8 @@ def getcodechangepassword_get(response:Response,request:Request,current_user: Us
         # #messages.message=None
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
-        value=(decode_id(current_user.id))
+        sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where u.id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -248,14 +248,16 @@ def getcodechangepassword_get(response:Response,request:Request,current_user: Us
         if(user_temp[18]=='normal'):
             secret=pyotp.random_base32()
             totp=pyotp.TOTP(secret)
-            verify=verifyPassword(email=user_temp[15],totp_temp=totp.now())
+            #verify=verifyPassword(email=user_temp[15],totp_temp=totp.now())
             #session['verify_password']=verify
             #verify_password.value=verify
-            response.set_cookie(key="verify_password", value=verify)
+            response=RedirectResponse("/verifypassword")
+            response.set_cookie(key="totp", value=totp.now())
+            response.set_cookie(key="email", value=user_temp[15])
             #messages.categorary="success"
             #messages.message="A confirmation email has been sent via email."
             #flash("A confirmation email has been sent via email.", "success")
-            return RedirectResponse("/verifypassword")
+            return response
             #return redirect(url_for("authentication.verifypassword"))
         else:
             #messages.categorary="info"
@@ -270,8 +272,8 @@ def getcodechangepassword(response:Response,request:Request,current_user: User =
         #messages.message=None
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where u.id=?"
-        value=(decode_id(current_user.id))
+        sql="select * from informationUser i join user_account u on i.id_useraccount=u.id where u.id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -304,8 +306,8 @@ def userinformation_get(response:Response,request:Request,idaccount,current_user
     form = informationUserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
-    value=(decode_id(idaccount))
+    sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= %s and i.id_useraccount=u.id and u.role_id = r.id"
+    value=(decode_id(idaccount),)
     cursor.execute(sql,value)
     user_temp=cursor.fetchone()
     conn.commit()
@@ -353,8 +355,8 @@ def userinformation_get(response:Response,request:Request,idaccount,current_user
 def profile(response:Response,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select role_name from role_user where id=?"
-    value=(current_user.role_user)
+    sql="select role_name from role_user where id=%s"
+    value=(current_user.role_user,)
     cursor.execute(sql,value)
     temp=cursor.fetchone()
 
@@ -363,8 +365,8 @@ def profile(response:Response,current_user: User = Depends(get_current_user_from
 
     
     cursor1=conn.cursor()
-    sql1="select * from informationUser where id_useraccount=?"
-    value1=(decode_id(current_user.id))
+    sql1="select * from informationUser where id_useraccount=%s"
+    value1=(decode_id(current_user.id),)
     cursor1.execute(sql1,value1)
     user_temp=cursor1.fetchone()
     
@@ -388,8 +390,8 @@ def userinformation(response:Response,request:Request,idaccount,current_user: Us
     form = informationUserForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= ? and i.id_useraccount=u.id and u.role_id = r.id"
-    value=(decode_id(idaccount))
+    sql="select i.*, r.role_name from informationUser i, role_user r, user_account u where  i.id_useraccount= %s and i.id_useraccount=u.id and u.role_id = r.id"
+    value=(decode_id(idaccount),)
     cursor.execute(sql,value)
     user_temp=cursor.fetchone()
     conn.commit()
@@ -437,8 +439,8 @@ def userinformation(response:Response,request:Request,idaccount,current_user: Us
 async def edit_userInformation(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(current_user.id),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
@@ -447,10 +449,10 @@ async def edit_userInformation(request:Request,col,informationuserid,current_use
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE informationUser SET {col} = ? WHERE id= ?"
+        sql = f"UPDATE informationUser SET {col} = %s WHERE id= %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid),))
+        conn.commit()
         cursor.close()
         idaccount= str(current_user.id)
         return RedirectResponse(f'/userinformation/{idaccount}')
@@ -458,10 +460,10 @@ async def edit_userInformation(request:Request,col,informationuserid,current_use
     elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE informationUser SET {col} = ? WHERE id= ?"
+        sql = f"UPDATE informationUser SET {col} = %s WHERE id= %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid),))
+        conn.commit()
         cursor.close()
         idaccount= request.cookies.get("idaccountadminmanager")
         return RedirectResponse(f'/userinformation/{idaccount}')
@@ -472,8 +474,8 @@ def groupuserpage(request: Request,idinformationuser,current_user: User = Depend
     conn=db.connection()
     cursor=conn.cursor()
     sql="""select g.*,r.rolename from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser join informationUser i
-    on i.id=gd.iduser join rolegroupuser r on r.id=gd.idrolegroupuser where i.id=?"""
-    value=(str(decode_id(idinformationuser)))
+    on i.id=gd.iduser join rolegroupuser r on r.id=gd.idrolegroupuser where i.id=%s"""
+    value=(str(decode_id(idinformationuser)),)
     cursor.execute(sql,value)
     grouptemp=cursor.fetchall()
     conn.commit()
@@ -497,8 +499,8 @@ def latestEmployment_get(request:Request,informationuserid,current_user: User = 
         form = latestEmploymentForm(request)
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from latestEmployment where idinformationuser=?"
-        cursor.execute(sql,decode_id(informationuserid))
+        sql="select * from latestEmployment where idinformationuser=%s"
+        cursor.execute(sql,(decode_id(informationuserid),))
         user_temp=cursor.fetchone()
         conn.commit()
         conn.close()
@@ -543,8 +545,8 @@ def latestEmployment(request:Request,informationuserid,current_user: User = Depe
         form = latestEmploymentForm(request)
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from latestEmployment where idinformationuser=?"
-        cursor.execute(sql,decode_id(informationuserid))
+        sql="select * from latestEmployment where idinformationuser=%s"
+        cursor.execute(sql,(decode_id(informationuserid),))
         user_temp=cursor.fetchone()
         conn.commit()
         conn.close()
@@ -584,8 +586,8 @@ def usercccd_get(response:Response,request:Request,informationuserid,current_use
     form = usercccdForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from information_cccd where idinformationuser=?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql="select * from information_cccd where idinformationuser=%s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     user_temp=cursor.fetchone()
     conn.commit()
     conn.close()
@@ -641,8 +643,8 @@ def usercccd(response:Response,request:Request,informationuserid,current_user: U
     form = usercccdForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from information_cccd where idinformationuser=?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql="select * from information_cccd where idinformationuser=%s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     user_temp=cursor.fetchone()
     conn.commit()
     conn.close()
@@ -700,8 +702,8 @@ def healthCheckCertificates_get(request:Request,informationuserid,current_user: 
 
     conn = db.connection()
     cursor = conn.cursor()
-    sql = "SELECT * from healthCheckCertificates where idinformationuser = ?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql = "SELECT * from healthCheckCertificates where idinformationuser = %s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     temp = cursor.fetchall()
     df = pd.DataFrame()
     for record in temp:
@@ -733,8 +735,8 @@ def healthCheckCertificates(request:Request,informationuserid,current_user: User
 
     conn = db.connection()
     cursor = conn.cursor()
-    sql = "SELECT * from healthCheckCertificates where idinformationuser = ?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql = "SELECT * from healthCheckCertificates where idinformationuser = %s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     temp = cursor.fetchall()
     df = pd.DataFrame()
     for record in temp:
@@ -770,8 +772,8 @@ def educationbackground_get(request:Request,informationuserid,current_user: User
    
     conn = db.connection()
     cursor = conn.cursor()
-    sql = "SELECT * from educationbackground where idinformationuser = ?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql = "SELECT * from educationbackground where idinformationuser = %s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     temp = cursor.fetchall()
     df = pd.DataFrame()
     for record in temp:
@@ -802,8 +804,8 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
    
     conn = db.connection()
     cursor = conn.cursor()
-    sql = "SELECT * from educationbackground where idinformationuser = ?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql = "SELECT * from educationbackground where idinformationuser = %s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     temp = cursor.fetchall()
     df = pd.DataFrame()
     for record in temp:
@@ -830,8 +832,8 @@ def educationbackground(request:Request,informationuserid,current_user: User = D
 def qualification_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn = db.connection()
     cursor = conn.cursor()
-    sql = "SELECT * from qualification where idinformationuser = ?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql = "SELECT * from qualification where idinformationuser = %s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     temp = cursor.fetchall()
     df = pd.DataFrame()
     for record in temp:
@@ -862,8 +864,8 @@ def qualification_get(request:Request,informationuserid,current_user: User = Dep
 def qualification(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn = db.connection()
     cursor = conn.cursor()
-    sql = "SELECT * from qualification where idinformationuser = ?"
-    cursor.execute(sql,decode_id(informationuserid))
+    sql = "SELECT * from qualification where idinformationuser = %s"
+    cursor.execute(sql,(decode_id(informationuserid),))
     temp = cursor.fetchall()
     df = pd.DataFrame()
     for record in temp:
@@ -1054,8 +1056,8 @@ def display_image_get(request:Request,filename,current_user: User = Depends(get_
 async def edit_latestEmployment(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(current_user.id),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
@@ -1064,20 +1066,20 @@ async def edit_latestEmployment(request:Request,col,informationuserid,current_us
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE latestEmployment SET {col} = ? WHERE idinformationuser= ?"
+        sql = f"UPDATE latestEmployment SET {col} = %s WHERE idinformationuser= %s"
         new_value = getattr(form, col)
         print("job is:"+str(new_value))
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid),))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/latestEmployment/{informationuserid}',status_code=status.HTTP_302_FOUND)
     elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE latestEmployment SET {col} = ? WHERE idinformationuser= ?"
+        sql = f"UPDATE latestEmployment SET {col} = %s WHERE idinformationuser= %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid),))
+        conn.commit()
         cursor.close()
 
         idaccount= request.cookies.get("idaccountadminmanager")
@@ -1087,8 +1089,8 @@ async def edit_latestEmployment(request:Request,col,informationuserid,current_us
 async def edit_informationcccd(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(current_user.id),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
@@ -1099,26 +1101,26 @@ async def edit_informationcccd(request:Request,col,informationuserid,current_use
     if str(informationuserid)==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE information_cccd SET {col} = ? WHERE IdInformationUser = ?"
+        sql = f"UPDATE information_cccd SET {col} = %s WHERE IdInformationUser = %s"
         
         new_value = getattr(form, col)
         print("col value: "+ col)
         print("idinformationuser: "+ str(informationuserid) )
         print("new valueeee:" + new_value)
-        cursor.execute(sql,new_value,informationuserid)
-        cursor.commit()
+        cursor.execute(sql,(new_value,informationuserid,))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/usercccd/{encode_id(informationuserid)}',status_code=status.HTTP_302_FOUND)
     elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE information_cccd SET {col} = ? WHERE IdInformationUser = ?"
+        sql = f"UPDATE information_cccd SET {col} = %s WHERE IdInformationUser = %s"
         new_value = getattr(form, col)
         print("col value: "+ col)
         print("idinformationuser: "+ str(informationuserid) )
         print("new valueeee:" + new_value)
-        cursor.execute(sql,new_value,informationuserid)
-        cursor.commit()
+        cursor.execute(sql,(new_value,informationuserid,))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/usercccd/{encode_id(informationuserid)}',status_code=status.HTTP_302_FOUND)
     
@@ -1170,17 +1172,17 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
         _attachedFileName = filename
         conn = db.connection()
         cursor = conn.cursor()
-        sql = "SELECT * from healthCheckCertificates where idinformationuser = ?"
-        cursor.execute(sql,decode_id(informationuserid))
+        sql = "SELECT * from healthCheckCertificates where idinformationuser = %s"
+        cursor.execute(sql,(decode_id(informationuserid),))
         temp = cursor.fetchall()
         cursor1 = conn.cursor()
         sql="""
         DECLARE @out int;
-        EXEC CountHealthCheckCertificates @IdInformationUser=?,@count = @out OUTPUT;
+        EXEC CountHealthCheckCertificates @IdInformationUser=%s,@count = @out OUTPUT;
         SELECT @out AS the_output;
         """
-        cursor1.execute(sql,decode_id(informationuserid))
-        count = cursor1.fetchval()
+        cursor1.execute(sql,(decode_id(informationuserid),))
+        count = cursor1.fetchall()
         conn.commit()
         
         print("count is: " + str(count))
@@ -1191,16 +1193,16 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
                 #     flash("Documnent No and document Name are existing, please try again")
                 #     return redirect(url_for('core.healthCheckCertificates',informationuserid = informationuserid, fullname = _fullname))
             # notarized_value = 1 if request.form.get('notarized') == 'Yes' else 'No'
-            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, filename, form.notarized, _driver_file_url, decode_id(informationuserid))
-            cursor.commit() 
+            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (filename, form.notarized, _driver_file_url, decode_id(informationuserid),))
+            conn.commit() 
 
             conn.close()
             return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         elif count ==0:
-            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, filename, form.notarized, _driver_file_url, decode_id(informationuserid))
-            cursor.commit() 
+            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (filename, form.notarized, _driver_file_url, decode_id(informationuserid),))
+            conn.commit() 
 
             conn.close()
             print("HealthCheck 5")
@@ -1261,17 +1263,17 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
         _attachedFileName = filename
         conn = db.connection()
         cursor = conn.cursor()
-        sql = "SELECT * from healthCheckCertificates where idinformationuser = ?"
-        cursor.execute(sql,decode_id(informationuserid))
+        sql = "SELECT * from healthCheckCertificates where idinformationuser = %s"
+        cursor.execute(sql,(decode_id(informationuserid),))
         temp = cursor.fetchall()
         cursor1 = conn.cursor()
         sql="""
         DECLARE @out int;
-        EXEC CountHealthCheckCertificates @IdInformationUser=?,@count = @out OUTPUT;
+        EXEC CountHealthCheckCertificates @IdInformationUser=%s,@count = @out OUTPUT;
         SELECT @out AS the_output;
         """
-        cursor1.execute(sql,decode_id(informationuserid))
-        count = cursor1.fetchval()
+        cursor1.execute(sql,(decode_id(informationuserid),))
+        count = cursor1.fetchall()
         conn.commit()
         
         print("count is: " + str(count))
@@ -1282,16 +1284,16 @@ async def upload_HCC(request:Request,informationuserid,current_user: User = Depe
                 #     flash("Documnent No and document Name are existing, please try again")
                 #     return redirect(url_for('core.healthCheckCertificates',informationuserid = informationuserid, fullname = _fullname))
             # notarized_value = 1 if request.form.get('notarized') == 'Yes' else 'No'
-            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, filename, form.notarized, _driver_file_url, decode_id(informationuserid))
-            cursor.commit() 
+            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (filename, form.notarized, _driver_file_url, decode_id(informationuserid),))
+            conn.commit() 
 
             conn.close()
             return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         elif count ==0:
-            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, filename, form.notarized, _driver_file_url, decode_id(informationuserid))
-            cursor.commit() 
+            sql = 'INSERT INTO healthCheckCertificates (documentname, isnoratized, linkurl, idinformationuser) VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (filename, form.notarized, _driver_file_url, decode_id(informationuserid),))
+            conn.commit() 
 
             conn.close()
             print("HealthCheck 5")
@@ -1353,25 +1355,25 @@ async def upload_education(request:Request,informationuserid,current_user: User 
         _attachedFileName = filename
         conn = db.connection()
         cursor = conn.cursor()
-        sql = "SELECT * from educationbackground where idinformationuser = ?"
+        sql = "SELECT * from educationbackground where idinformationuser = %s"
         print("id after decode: " + str(decode_id(informationuserid)))
-        cursor.execute(sql,decode_id(informationuserid))
+        cursor.execute(sql,(decode_id(informationuserid),))
         temp = cursor.fetchall()
         cursor1 = conn.cursor()
         sql="""
         DECLARE @out int;
-        EXEC CountEducationBackground @IdInformationUser=?,@count = @out OUTPUT;
+        EXEC CountEducationBackground @IdInformationUser=%s,@count = @out OUTPUT;
         SELECT @out AS the_output;
         """
         
-        cursor1.execute(sql,decode_id(informationuserid))
-        count = cursor1.fetchval()
+        cursor1.execute(sql,(decode_id(informationuserid),))
+        count = cursor1.fetchall()
         print("Count is: " + str(count))
         conn.commit()
         if  count < 3:
-            sql = 'INSERT INTO educationbackground VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, form.type, filename, _driver_file_url, decode_id(informationuserid))
-            cursor.commit()
+            sql = 'INSERT INTO educationbackground VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (form.type, filename, _driver_file_url, decode_id(informationuserid),))
+            conn.commit()
             conn.close()
             print("save successfully")
             return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
@@ -1431,25 +1433,25 @@ async def upload_education(request:Request,informationuserid,current_user: User 
         _attachedFileName = filename
         conn = db.connection()
         cursor = conn.cursor()
-        sql = "SELECT * from educationbackground where idinformationuser = ?"
+        sql = "SELECT * from educationbackground where idinformationuser = %s"
         print("id after decode: " + str(decode_id(informationuserid)))
-        cursor.execute(sql,decode_id(informationuserid))
+        cursor.execute(sql,(decode_id(informationuserid),))
         temp = cursor.fetchall()
         cursor1 = conn.cursor()
         sql="""
         DECLARE @out int;
-        EXEC CountEducationBackground @IdInformationUser=?,@count = @out OUTPUT;
+        EXEC CountEducationBackground @IdInformationUser=%s,@count = @out OUTPUT;
         SELECT @out AS the_output;
         """
         
-        cursor1.execute(sql,decode_id(informationuserid))
-        count = cursor1.fetchval()
+        cursor1.execute(sql,(decode_id(informationuserid),))
+        count = cursor1.fetchall()
         print("Count is: " + str(count))
         conn.commit()
         if  count < 3:
-            sql = 'INSERT INTO educationbackground VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, form.type, filename, _driver_file_url, decode_id(informationuserid))
-            cursor.commit()
+            sql = 'INSERT INTO educationbackground VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (form.type, filename, _driver_file_url, decode_id(informationuserid),))
+            conn.commit()
             conn.close()
             print("save successfully")
             return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
@@ -1506,24 +1508,24 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
         _attachedFileName = filename
         conn = db.connection()
         cursor = conn.cursor()
-        sql = "SELECT * from qualification where idinformationuser = ?"
-        cursor.execute(sql,decode_id(informationuserid))
+        sql = "SELECT * from qualification where idinformationuser = %s"
+        cursor.execute(sql,(decode_id(informationuserid),))
         temp = cursor.fetchall()
         cursor1 = conn.cursor()
         sql="""
         DECLARE @out int;
-        EXEC CountQualification @IdInformationUser=?,@count = @out OUTPUT;
+        EXEC CountQualification @IdInformationUser=%s,@count = @out OUTPUT;
         SELECT @out AS the_output;
         """
         
-        cursor1.execute(sql,decode_id(informationuserid))
-        count = cursor1.fetchval()
+        cursor1.execute(sql,(decode_id(informationuserid),))
+        count = cursor1.fetchall()
         print("Count is: " + str(count))
         conn.commit()
         if  count < 3:
-            sql = 'INSERT INTO qualification VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, form.type, filename, _driver_file_url, decode_id(informationuserid))
-            cursor.commit()
+            sql = 'INSERT INTO qualification VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (form.type, filename, _driver_file_url, decode_id(informationuserid),))
+            conn.commit()
             conn.close()
             return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
@@ -1580,24 +1582,24 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
         _attachedFileName = filename
         conn = db.connection()
         cursor = conn.cursor()
-        sql = "SELECT * from qualification where idinformationuser = ?"
-        cursor.execute(sql,decode_id(informationuserid))
+        sql = "SELECT * from qualification where idinformationuser = %s"
+        cursor.execute(sql,(decode_id(informationuserid),))
         temp = cursor.fetchall()
         cursor1 = conn.cursor()
         sql="""
         DECLARE @out int;
-        EXEC CountQualification @IdInformationUser=?,@count = @out OUTPUT;
+        EXEC CountQualification @IdInformationUser=%s,@count = @out OUTPUT;
         SELECT @out AS the_output;
         """
         
-        cursor1.execute(sql,decode_id(informationuserid))
+        cursor1.execute(sql,(decode_id(informationuserid),))
         count = cursor1.fetchval()
         print("Count is: " + str(count))
         conn.commit()
         if  count < 3:
-            sql = 'INSERT INTO qualification VALUES (?, ?, ?, ?)'
-            cursor.execute(sql, form.type, filename, _driver_file_url, decode_id(informationuserid))
-            cursor.commit()
+            sql = 'INSERT INTO qualification VALUES (%s, %s, %s, %s)'
+            cursor.execute(sql, (form.type, filename, _driver_file_url, decode_id(informationuserid),))
+            conn.commit()
             conn.close()
             return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         else:
@@ -1612,28 +1614,28 @@ async def upload_qualification(request:Request,informationuserid,current_user: U
 def deleteHCC_get(request:Request,informationuserid,idhcc,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(current_user.id),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"delete healthCheckCertificates WHERE id= ? and idinformationuser = ?"
+        sql = "delete from healthCheckCertificates WHERE id= %s and idinformationuser = %s"
         new_value = idhcc
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid)))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
         
     elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"delete healthCheckCertificates WHERE id= ? and idinformationuser = ?"
+        sql = "delete from healthCheckCertificates WHERE id= %s and idinformationuser = %s"
         new_value = idhcc
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid)))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/healthCheckCertificates/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
@@ -1641,28 +1643,28 @@ def deleteHCC_get(request:Request,informationuserid,idhcc,current_user: User = D
 def deleteEducation(request:Request,informationuserid,ideducation,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(current_user.id),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"delete educationbackground WHERE id= ? and idinformationuser = ?"
+        sql = "delete from educationbackground WHERE id= %s and idinformationuser = %s"
         new_value = ideducation
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid)))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
         
     elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"delete educationbackground WHERE id= ? and idinformationuser = ?"
+        sql = "delete from educationbackground WHERE id= %s and idinformationuser = %s"
         new_value = ideducation
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid)))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/educationbackground/{informationuserid}',status_code=status.HTTP_302_FOUND)
     
@@ -1671,28 +1673,28 @@ def deleteEducation(request:Request,informationuserid,ideducation,current_user: 
 def deleteQualification(request:Request,informationuserid,idqualification,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(current_user.id),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"delete qualification WHERE id= ? and idinformationuser = ?"
+        sql = "delete from qualification WHERE id= %s and idinformationuser = %s"
         new_value = idqualification
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid)))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
         
     elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"delete qualification WHERE id= ? and idinformationuser = ?"
+        sql = "delete from qualification WHERE id= %s and idinformationuser = %s"
         new_value = idqualification
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,(new_value,decode_id(informationuserid)))
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/qualification/{informationuserid}',status_code=status.HTTP_302_FOUND)
   

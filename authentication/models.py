@@ -152,8 +152,8 @@ def get_user(id:str) -> User:
     id=decode_id(id)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from user_account where id=?"
-    value=(id)
+    sql="select * from user_account where id=%s"
+    value=(id,)
     cursor.execute(sql,value)
     user_temp=cursor.fetchone()
     conn.commit()
@@ -167,8 +167,8 @@ def get_user(id:str) -> User:
         if user.is_information_validate==True:
             conn=db.connection()
             cursor=conn.cursor()
-            sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-            value=(id)
+            sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=%s"
+            value=(id,)
             cursor.execute(sql,value)
             userinfor=cursor.fetchone()
             conn.commit()

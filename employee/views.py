@@ -27,8 +27,8 @@ async def employeepage(request:Request,response:Response,image_path,fullname,cur
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from informationUser where id_useraccount=?  "
-    value=(decode_id(current_user.id))
+    sql="select * from informationUser where id_useraccount=%s  "
+    value=(decode_id(current_user.id),)
     cursor.execute(sql,value)
     user=cursor.fetchone()
     conn.commit()

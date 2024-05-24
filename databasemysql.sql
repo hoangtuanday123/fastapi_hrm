@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `allowance`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `allowance` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `Internet_Allowance` int DEFAULT NULL,
   `Meal_Allowance` int DEFAULT NULL,
   `Phone_Allowance` int DEFAULT NULL,
@@ -58,10 +58,10 @@ DROP TABLE IF EXISTS `componentproject`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `componentproject` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(200) DEFAULT NULL,
   `createdate` date DEFAULT NULL,
-  `projectid` varchar(11) DEFAULT NULL,
+  `projectid` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -111,7 +111,7 @@ DROP TABLE IF EXISTS `dayoffincontract`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dayoffincontract` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `idcontract` int DEFAULT NULL,
   `remainingdayoff` int DEFAULT NULL,
   `year` int DEFAULT NULL,
@@ -139,9 +139,9 @@ DROP TABLE IF EXISTS `dayofftimesheet`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dayofftimesheet` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `iduser` int DEFAULT NULL,
-  `projectid` varchar(11) DEFAULT NULL,
+  `projectid` int DEFAULT NULL,
   `componentid` int DEFAULT NULL,
   `taskid` int DEFAULT NULL,
   `startdate` date DEFAULT NULL,
@@ -182,7 +182,7 @@ DROP TABLE IF EXISTS `educationbackground`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `educationbackground` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `typeDegree` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `filename` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `linkurl` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -210,7 +210,7 @@ DROP TABLE IF EXISTS `employeerelative`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employeerelative` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `Relationship` varchar(50) DEFAULT NULL,
   `phone` varchar(100) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
@@ -250,7 +250,7 @@ DROP TABLE IF EXISTS `employeerelative_informationuser`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employeerelative_informationuser` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `idemployeerelative` int NOT NULL,
   `idinformationuser` int NOT NULL,
   `col_Privateinsurance` tinyint(1) DEFAULT '0',
@@ -258,7 +258,7 @@ CREATE TABLE `employeerelative_informationuser` (
   `col_Dependant` tinyint(1) DEFAULT '0',
   `col_Emergencycontact` tinyint(1) DEFAULT '0',
   `col_Beneficiarycontact` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`idemployeerelative`,`idinformationuser`),
+  PRIMARY KEY (`id`),
   KEY `fk_employeerelativeinformationuser_informationUser` (`idinformationuser`),
   CONSTRAINT `fk_employeerelativeinformationuser_employeerelative` FOREIGN KEY (`idemployeerelative`) REFERENCES `employeerelative` (`id`),
   CONSTRAINT `fk_employeerelativeinformationuser_informationUser` FOREIGN KEY (`idinformationuser`) REFERENCES `informationuser` (`id`)
@@ -283,7 +283,7 @@ DROP TABLE IF EXISTS `exception`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `exception` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `luongcoso` int DEFAULT NULL,
   `vung1` int DEFAULT NULL,
   `vung2` int DEFAULT NULL,
@@ -314,7 +314,7 @@ DROP TABLE IF EXISTS `forexsalary`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forexsalary` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `forextypeid` int DEFAULT NULL,
   `Annualsalary` double DEFAULT NULL,
   `Monthlysalary` double DEFAULT NULL,
@@ -349,7 +349,7 @@ DROP TABLE IF EXISTS `forextype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forextype` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `type` varchar(20) DEFAULT NULL,
   `companysite` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -374,7 +374,7 @@ DROP TABLE IF EXISTS `groupuser`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `groupuser` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `createddate` varchar(50) DEFAULT NULL,
   `avatarimage` varchar(100) DEFAULT NULL,
@@ -404,7 +404,7 @@ DROP TABLE IF EXISTS `groupuserdetail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `groupuserdetail` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `iduser` int DEFAULT NULL,
   `idrolegroupuser` int DEFAULT NULL,
   `idgroupuser` int DEFAULT NULL,
@@ -437,7 +437,7 @@ DROP TABLE IF EXISTS `healthcheckcertificates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `healthcheckcertificates` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `documentno` int DEFAULT NULL,
   `documentname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `isnoratized` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -467,7 +467,7 @@ DROP TABLE IF EXISTS `information_cccd`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `information_cccd` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `No` int DEFAULT NULL,
   `FullName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `DateOfBirth` datetime DEFAULT NULL,
@@ -499,7 +499,7 @@ DROP TABLE IF EXISTS `informationuser`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `informationuser` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `Fullname` varchar(50) DEFAULT NULL,
   `Nickname` varchar(50) DEFAULT NULL,
   `Email` varchar(50) DEFAULT NULL,
@@ -536,7 +536,7 @@ DROP TABLE IF EXISTS `informationuserjob`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `informationuserjob` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `companysitecode` varchar(20) DEFAULT NULL,
   `department` varchar(50) DEFAULT NULL,
   `directmanager` varchar(50) DEFAULT NULL,
@@ -574,7 +574,7 @@ DROP TABLE IF EXISTS `laborcontract`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `laborcontract` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `LaborcontractNo` varchar(100) DEFAULT NULL,
   `Laborcontracttype` varchar(100) DEFAULT NULL,
   `Laborcontractterm` varchar(50) DEFAULT NULL,
@@ -608,7 +608,7 @@ DROP TABLE IF EXISTS `latestemployment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `latestemployment` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `Employer` varchar(255) DEFAULT NULL,
   `jobtitle` varchar(255) DEFAULT NULL,
   `annualsalary` int DEFAULT NULL,
@@ -643,7 +643,7 @@ DROP TABLE IF EXISTS `payroll`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `payroll` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `iduser` int DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
   `fullname` varchar(50) DEFAULT NULL,
@@ -693,7 +693,7 @@ DROP TABLE IF EXISTS `phucloichiuthuetncn`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `phucloichiuthuetncn` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `Premium_Insurance` int DEFAULT NULL,
   `iduser` int DEFAULT NULL,
   `month` int DEFAULT NULL,
@@ -722,9 +722,8 @@ DROP TABLE IF EXISTS `project`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `project` (
-  `id` int NOT NULL,
-  `projectid` varchar(11) NOT NULL,
-  `projecttypeid` varchar(12) DEFAULT NULL,
+  `projectid` int NOT NULL AUTO_INCREMENT,
+  `projecttypeid` int DEFAULT NULL,
   `managerid` int DEFAULT NULL,
   `startdate` date DEFAULT NULL,
   `endate` date DEFAULT NULL,
@@ -747,7 +746,7 @@ CREATE TABLE `project` (
 
 LOCK TABLES `project` WRITE;
 /*!40000 ALTER TABLE `project` DISABLE KEYS */;
-INSERT INTO `project` VALUES (1006,'P1006','PT1',2009,'2024-03-22','2024-03-30','1',NULL,'project3'),(1007,'P1007','PT2',NULL,'2024-04-14','2024-04-30','0',NULL,'test'),(2007,'P2007','PT2',2009,'2024-04-15','2024-04-17','0',NULL,'test1'),(2008,'P2008','PT1',2009,'2024-04-15','2024-04-26','1',NULL,'test'),(3007,'P3007','PT1',2009,'2024-04-19','2024-04-30','1',NULL,'project5'),(4007,'P4007','PT1',NULL,'2024-05-07','2024-05-01','1',NULL,'123'),(4008,'P4008','PT1',2009,'2024-05-07','2024-05-23','0',2005,'12345'),(4009,'P4009','PT1',2009,'2024-05-08','2024-05-25','0',2005,'test'),(4010,'P4010','PT1',2009,'2024-05-08','2024-05-08','1',2005,'project manager'),(5,'P5','PT1',2009,'2024-03-19','2024-03-21','0',NULL,'hello'),(5007,'P5007','PT1',2009,'2024-05-08','2024-05-08','1',4005,'test5'),(6,'P6','PT1',2009,'2024-03-20','2024-03-22','1',NULL,'project1'),(6007,'P6007','PT2',NULL,'2024-05-13','2024-05-31','0',NULL,'dayoff'),(6008,'P6008','PT2',2009,'2024-05-13','2024-05-22','0',2005,'dayoff'),(6011,'P6011','PT2',2009,'2024-05-15',NULL,'1',5005,'Day off'),(7,'P7','PT1',2009,'2024-03-20','2024-03-21','1',NULL,'project3');
+INSERT INTO `project` VALUES (1006,1,2009,'2024-03-22','2024-03-30','1',NULL,'project3'),(1007,2,NULL,'2024-04-14','2024-04-30','0',NULL,'test'),(2007,2,2009,'2024-04-15','2024-04-17','0',NULL,'test1'),(2008,1,2009,'2024-04-15','2024-04-26','1',NULL,'test'),(3007,1,2009,'2024-04-19','2024-04-30','1',NULL,'project5'),(4007,1,NULL,'2024-05-07','2024-05-01','1',NULL,'123'),(4008,1,2009,'2024-05-07','2024-05-23','0',2005,'12345'),(4009,1,2009,'2024-05-08','2024-05-25','0',2005,'test'),(4010,1,2009,'2024-05-08','2024-05-08','1',2005,'project manager'),(5,1,2009,'2024-03-19','2024-03-21','0',NULL,'hello'),(5007,1,2009,'2024-05-08','2024-05-08','1',4005,'test5'),(6,1,2009,'2024-03-20','2024-03-22','1',NULL,'project1'),(6007,2,NULL,'2024-05-13','2024-05-31','0',NULL,'dayoff'),(6008,2,2009,'2024-05-13','2024-05-22','0',2005,'dayoff'),(6011,2,2009,'2024-05-15',NULL,'1',5005,'Day off'),(7,1,2009,'2024-03-20','2024-03-21','1',NULL,'project3');
 /*!40000 ALTER TABLE `project` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -759,8 +758,7 @@ DROP TABLE IF EXISTS `projecttype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `projecttype` (
-  `ID` int NOT NULL,
-  `projecttypeid` varchar(12) NOT NULL,
+  `projecttypeid` int NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`projecttypeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -772,7 +770,7 @@ CREATE TABLE `projecttype` (
 
 LOCK TABLES `projecttype` WRITE;
 /*!40000 ALTER TABLE `projecttype` DISABLE KEYS */;
-INSERT INTO `projecttype` VALUES (1,'PT1','Memory Compiler'),(2,'PT2','Non-Project');
+INSERT INTO `projecttype` VALUES (1,'Memory Compiler'),(2,'Non-Project');
 /*!40000 ALTER TABLE `projecttype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -784,7 +782,7 @@ DROP TABLE IF EXISTS `qualification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `qualification` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `typeQualification` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `filename` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `linkurl` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -812,7 +810,7 @@ DROP TABLE IF EXISTS `relationtype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `relationtype` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -836,7 +834,7 @@ DROP TABLE IF EXISTS `role_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role_user` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `role_name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -860,7 +858,7 @@ DROP TABLE IF EXISTS `rolegroupuser`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rolegroupuser` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `rolename` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -911,10 +909,10 @@ DROP TABLE IF EXISTS `taskproject`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `taskproject` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(200) DEFAULT NULL,
   `createdate` date DEFAULT NULL,
-  `projectid` varchar(11) DEFAULT NULL,
+  `projectid` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -937,7 +935,7 @@ DROP TABLE IF EXISTS `user_account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_account` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `id_other_app` varchar(50) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL,
@@ -973,7 +971,7 @@ DROP TABLE IF EXISTS `user_avatar`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_avatar` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `idinformationuser` int DEFAULT NULL,
   `pic_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -998,7 +996,7 @@ DROP TABLE IF EXISTS `user_cccd`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_cccd` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `idinformationuser` int DEFAULT NULL,
   `front_pic_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `back_pic_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -1023,7 +1021,7 @@ DROP TABLE IF EXISTS `user_healthyinsurance`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_healthyinsurance` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `idinformationuser` int DEFAULT NULL,
   `front_pic_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `back_pic_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -1048,8 +1046,8 @@ DROP TABLE IF EXISTS `weeklytimesheet`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `weeklytimesheet` (
-  `id` int NOT NULL,
-  `projectid` varchar(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `projectid` int DEFAULT NULL,
   `componentid` int DEFAULT NULL,
   `taskid` int DEFAULT NULL,
   `statustimesheet` varchar(50) DEFAULT NULL,
@@ -1065,6 +1063,7 @@ CREATE TABLE `weeklytimesheet` (
   `sat` int DEFAULT '0',
   `sun` int DEFAULT '0',
   `progress` int DEFAULT '0',
+  PRIMARY KEY (`id`),
   KEY `fk_weeklytimesheet_project` (`projectid`),
   KEY `fk_weeklytimesheet_component` (`componentid`),
   KEY `fk_weeklytimesheet_task` (`taskid`),

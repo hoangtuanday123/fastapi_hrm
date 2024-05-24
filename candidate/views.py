@@ -14,8 +14,8 @@ def candidatepage_get(request: Request,image_path, fullname,current_user: User =
    
     conn=db.connection()
     cursor1=conn.cursor()
-    sql1="select * from informationUser where id_useraccount=?"
-    value1=(decode_id(current_user.id))
+    sql1="select * from informationUser where id_useraccount=%s"
+    value1=(decode_id(current_user.id),)
     cursor1.execute(sql1,value1)
     user_temp=cursor1.fetchone()
     context={
@@ -33,8 +33,8 @@ def candidatepage_get(request: Request,image_path, fullname,current_user: User =
 def candidatepage(request: Request,image_path, fullname,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor1=conn.cursor()
-    sql1="select * from informationUser where id_useraccount=?"
-    value1=(decode_id(current_user.id))
+    sql1="select * from informationUser where id_useraccount=%s"
+    value1=(decode_id(current_user.id),)
     cursor1.execute(sql1,value1)
     user_temp=cursor1.fetchone()
     context={
