@@ -324,7 +324,7 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
             conn=db.connection()
             cursor=conn.cursor()
             sql="select g.id,gd.iduser from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser  where g.id=%s"
-            value=(form["group"])
+            value=(form["group"],)
             cursor.execute(sql,value)
             groups_temp1=cursor.fetchone()
             conn.commit()

@@ -15,7 +15,7 @@ leave = APIRouter()
 async def leavelist(request:Request,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select p.projectid,p.projectname,pt.Name,p.startdate,p.status from project p join projecttype pt on pt.projecttypeid=p.projecttypeid where p.projecttypeid='PT2' and p.status=1"
+    sql="select p.projectid,p.projectname,pt.Name,p.startdate,p.status from project p join projecttype pt on pt.projecttypeid=p.projecttypeid where p.projecttypeid='2' and p.status=1"
     cursor.execute(sql)
     leave_temp=cursor.fetchall()
     conn.commit()
@@ -68,19 +68,18 @@ async def createleave(request:Request,current_user: User = Depends(get_current_u
         conn=db.connection()
         cursor=conn.cursor()
         sql="""
-            SET NOCOUNT ON;
-            DECLARE @id int;
-            insert into project(projecttypeid,startdate,projectname) values(?,GETDATE(),?)
-            SET @id = SCOPE_IDENTITY();            
-            SELECT @id AS the_output;"""
-        values=(projecttype[0],form.project)
+           
+            insert into project(projecttypeid,startdate,projectname) values(%s,NOW(),%s)
+           """
+        values=(projecttype[0],form.project,)
         cursor.execute(sql,values)
+        conn.commit()
+        cursor.execute("SELECT LAST_INSERT_ID();")
         idproject=cursor.fetchone()
-        idproject="P"+str(idproject[0])
         conn.commit()
         conn.close()
         messages=[('success','create project '+form.project+" sucessfully")]
-        return RedirectResponse(url=f"/ERP/createtaskandcomponent/{idproject}",status_code=status.HTTP_302_FOUND)
+        return RedirectResponse(url=f"/ERP/createtaskandcomponent/{idproject[0]}",status_code=status.HTTP_302_FOUND)
             
     context={
         "request":request,
@@ -111,8 +110,8 @@ async def annualleave_get(request:Request,year,current_user: User = Depends(get_
     cursor=conn.cursor()
     sql="""select d.id, p.projectid,p.projectname,t.name,c.name,d.startdate,d.enddate,d.total,d.statustimesheet 
 from dayofftimesheet d join project p on d.projectid=p.projectid join taskproject t on d.taskid=t.id
-LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date  where d.iduser=? and da.Year=?"""
-    values=(decode_id(current_user.idinformationuser),year)
+LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date  where d.iduser=%s and da.Year=%s"""
+    values=(decode_id(current_user.idinformationuser),year,)
     cursor.execute(sql,values)
     annualeave_temp=cursor.fetchall()
     conn.commit()
@@ -146,8 +145,8 @@ async def annualleave(request:Request,year,current_user: User = Depends(get_curr
     cursor=conn.cursor()
     sql="""select d.id ,p.projectid,p.projectname,t.name,c.name,d.startdate,d.enddate,d.total,d.statustimesheet 
 from dayofftimesheet d join project p on d.projectid=p.projectid join taskproject t on d.taskid=t.id
-LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date  where d.iduser=? and da.Year=? """
-    values=(decode_id(current_user.idinformationuser),year)
+LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date  where d.iduser=%s and da.Year=%s """
+    values=(decode_id(current_user.idinformationuser),year,)
     cursor.execute(sql,values)
     annualeave_temp=cursor.fetchall()
     conn.commit()
@@ -209,16 +208,16 @@ LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=d
 def removetasks(dayoffid):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="delete dayofftimesheet where id=?"
-    cursor.execute(sql,dayoffid)
+    sql="delete from dayofftimesheet where id=%s"
+    cursor.execute(sql,(dayoffid,))
     conn.commit()
     conn.close()
 
 def recalltasks(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update dayofftimesheet set statustimesheet='recalling' where id=? and statustimesheet !='saved' and statustimesheet !='approval'"
-    cursor.execute(sql,select)
+    sql="update dayofftimesheet set statustimesheet='recalling' where id=%s and statustimesheet !='saved' and statustimesheet !='approval'"
+    cursor.execute(sql,(select,))
     conn.commit()
     conn.close()
 
@@ -226,8 +225,8 @@ def savetasks(id):
   
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update dayofftimesheet set statustimesheet='saved' where id=? and statustimesheet !='pending approval' and statustimesheet !='approval'"
-    value=(id)
+    sql="update dayofftimesheet set statustimesheet='saved' where id=%s and statustimesheet !='pending approval' and statustimesheet !='approval'"
+    value=(id,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -235,8 +234,8 @@ def savetasks(id):
 def submittasks(id):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update dayofftimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval' "
-    cursor.execute(sql,id)
+    sql="update dayofftimesheet set statustimesheet='pending approval' where id=%s and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval' "
+    cursor.execute(sql,(id,))
     conn.commit()
     conn.close()      
   
@@ -248,9 +247,9 @@ async def addtask_get(request:Request,iduser,year,current_user: User = Depends(g
     cursor=conn.cursor()
     sql="""
     select p.projectid,p.projectname from project p join groupuser g on p.projectteamid=g.id 
-    join groupuserdetail gd on gd.idgroupuser=g.id join projecttype pt on pt.projecttypeid=p.projecttypeid  where  gd.iduser=? and p.status=1 and pt.Name='Non-Project'
+    join groupuserdetail gd on gd.idgroupuser=g.id join projecttype pt on pt.projecttypeid=p.projecttypeid  where  gd.iduser=%s and p.status=1 and pt.Name='Non-Project'
         """
-    value=(decode_id(iduser))
+    value=(decode_id(iduser),)
     cursor.execute(sql,value)
     project_temp=cursor.fetchall()
     conn.commit()
@@ -259,8 +258,8 @@ async def addtask_get(request:Request,iduser,year,current_user: User = Depends(g
    
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     tasks_temp=cursor.fetchall()
     conn.commit()
@@ -268,8 +267,8 @@ async def addtask_get(request:Request,iduser,year,current_user: User = Depends(g
     tasks = [(task[0],task[1])for task in tasks_temp]
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     components_temp=cursor.fetchall()
     conn.commit()
@@ -296,8 +295,8 @@ async def addtask(request:Request,iduser,year,current_user: User = Depends(get_c
     #form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select p.projectid,p.projectname from project p join groupuser g on p.projectteamid=g.id join groupuserdetail gd on gd.idgroupuser=g.id where  gd.iduser=? and p.status=1"
-    value=(decode_id(iduser))
+    sql="select p.projectid,p.projectname from project p join groupuser g on p.projectteamid=g.id join groupuserdetail gd on gd.idgroupuser=g.id where  gd.iduser=%s and p.status=1"
+    value=(decode_id(iduser),)
     cursor.execute(sql,value)
     project_temp=cursor.fetchall()
     conn.commit()
@@ -306,8 +305,8 @@ async def addtask(request:Request,iduser,year,current_user: User = Depends(get_c
     
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     tasks_temp=cursor.fetchall()
     conn.commit()
@@ -316,8 +315,8 @@ async def addtask(request:Request,iduser,year,current_user: User = Depends(get_c
     
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     components_temp=cursor.fetchall()
     conn.commit()
@@ -332,16 +331,16 @@ async def addtask(request:Request,iduser,year,current_user: User = Depends(get_c
             if 'component' in form_method and  form_method['component'] is not None:
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="insert into dayofftimesheet(iduser,projectid,componentid,taskid,startdate,enddate,statustimesheet,total) values(?,?,?,?,?,?,'initialization',?)"
-                value=(decode_id(iduser),form_method['project'],form_method['component'],form_method['task'],form_method['startdate'],form_method['enddate'],total_days)
+                sql="insert into dayofftimesheet(iduser,projectid,componentid,taskid,startdate,enddate,statustimesheet,total) values(%s,%s,%s,%s,%s,%s,'initialization',%s)"
+                value=(decode_id(iduser),form_method['project'],form_method['component'],form_method['task'],form_method['startdate'],form_method['enddate'],total_days,)
                 cursor.execute(sql,value)
                 conn.commit()
                 conn.close()
             else:
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="insert into dayofftimesheet(iduser,projectid,componentid,taskid,startdate,enddate,statustimesheet,total) values(?,?,?,?,?,?,'initialization',?)"
-                value=(decode_id(iduser),form_method['project'],None,form_method['task'],form_method['startdate'],form_method['enddate'],total_days)
+                sql="insert into dayofftimesheet(iduser,projectid,componentid,taskid,startdate,enddate,statustimesheet,total) values(%s,%s,%s,%s,%s,%s,'initialization',%s)"
+                value=(decode_id(iduser),form_method['project'],None,form_method['task'],form_method['startdate'],form_method['enddate'],total_days,)
                 cursor.execute(sql,value)
                 conn.commit()
                 conn.close()
@@ -369,8 +368,8 @@ async def annualleave_view_get(request:Request,year,current_user: User = Depends
     sql="""select d.id,i.Fullname ,p.projectid,p.projectname,t.name,c.name,d.startdate,d.enddate,d.total,d.statustimesheet 
 from dayofftimesheet d join project p on d.projectid=p.projectid join taskproject t on d.taskid=t.id
 LEFT join componentproject c on d.componentid=c.id join DATE da on d.startdate=da.Date join DATE da1 on d.enddate=da1.Date
-join informationUser i on d.iduser=i.id  where  da.Year=? """
-    values=(year)
+join informationUser i on d.iduser=i.id  where  da.Year=%s """
+    values=(year,)
     cursor.execute(sql,values)
     annualeave_temp=cursor.fetchall()
     conn.commit()
@@ -407,8 +406,8 @@ def approvaldayoff(selectionItem):
     for item in selectionItem:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update dayofftimesheet set statustimesheet='approval' where id=?"
-        cursor.execute(sql,item)
+        sql="update dayofftimesheet set statustimesheet='approval' where id=%s"
+        cursor.execute(sql,(item,))
         conn.commit()
         conn.close()
 
@@ -416,8 +415,8 @@ def pendingapprovaldayoff(selectionItem):
     for item in selectionItem:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update dayofftimesheet set statustimesheet='pending approval' where id=?"
-        cursor.execute(sql,item)
+        sql="update dayofftimesheet set statustimesheet='pending approval' where id=%s"
+        cursor.execute(sql,(item,))
         conn.commit()
         conn.close()
 

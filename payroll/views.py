@@ -160,14 +160,14 @@ def dayoffinmonth(id,last_month_25_str,current_month_25_str):
 #  from weeklytimesheet w join project p on w.projectid=p.projectid join
 #  projecttype pt on pt.projecttypeid=p.projecttypeid LEFT JOIN componentproject c on w.componentid =c.id join 
 #  taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where d.Year=2024 and 
-#  d.date BETWEEN ? AND ? and w.iduser=? and w.status=1 and w.statustimesheet='approval' and pt.Name='Non-Project' and t.name='unpaid days off'
+#  d.date BETWEEN %s AND %s and w.iduser=%s and w.status=1 and w.statustimesheet='approval' and pt.Name='Non-Project' and t.name='unpaid days off'
 #  """
 #     value=(last_month_25_str,current_month_25_str,id)
     sql="""
     select d.* from dayofftimesheet d join date da on d.startdate=da.Date join date da1 on da1.Date=d.enddate 
-where d.iduser=? and d.startdate BETWEEN ? AND ? or d.iduser=? and d.enddate BETWEEN ? AND ?
+where d.iduser=%s and d.startdate BETWEEN %s AND %s or d.iduser=%s and d.enddate BETWEEN %s AND %s
 """
-    values=(id,last_month_25,current_month_25,id,last_month_25,current_month_25)
+    values=(id,last_month_25,current_month_25,id,last_month_25,current_month_25,)
     cursor.execute(sql,values)
     temp=cursor.fetchall()
     conn.commit()
@@ -277,8 +277,8 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
             if d[0]==g[9]:
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="select * from Allowance where iduser=? and month=? and year=?"
-                values=(g[9],month,year)
+                sql="select * from Allowance where iduser=%s and month=%s and year=%s"
+                values=(g[9],month,year,)
                 cursor.execute(sql,values)
                 allowance_temp=cursor.fetchone()
                 conn.commit()
@@ -286,8 +286,8 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
 
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
-                values=(g[9],month,year)
+                sql="select * from phucloichiuthueTNCN where iduser=%s and month=%s and year=%s"
+                values=(g[9],month,year,)
                 cursor.execute(sql,values)
                 phucloichiuthuethunhapcanhan_temp=cursor.fetchone()
                 conn.commit()
@@ -396,7 +396,7 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
             if d[0]==g[9]:
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="select * from Allowance where iduser=? and month=? and year=?"
+                sql="select * from Allowance where iduser=%s and month=%s and year=%s"
                 values=(g[9],month,year)
                 cursor.execute(sql,values)
                 allowance_temp=cursor.fetchone()
@@ -405,7 +405,7 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
 
                 conn=db.connection()
                 cursor=conn.cursor()
-                sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
+                sql="select * from phucloichiuthueTNCN where iduser=%s and month=%s and year=%s"
                 values=(g[9],month,year)
                 cursor.execute(sql,values)
                 phucloichiuthuethunhapcanhan_temp=cursor.fetchone()
@@ -489,8 +489,8 @@ GROUP BY i.id, i.companysitecode, l.dayoff, f.Annualsalary, f.Monthlysalaryincon
 def exportfilepdf(request:Request,iduser,month,year):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from payroll where iduser=? and month=? and year=?"
-    values=(iduser,month,year)
+    sql="select * from payroll where iduser=%s and month=%s and year=%s"
+    values=(iduser,month,year,)
     cursor.execute(sql,values)
     payrolldetail=cursor.fetchone()
     conn.commit()
@@ -505,8 +505,8 @@ def exportfilepdf(request:Request,iduser,month,year):
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from Allowance where iduser=? and month=? and year=?"
-    values=(iduser,month,year)
+    sql="select * from Allowance where iduser=%s and month=%s and year=%s"
+    values=(iduser,month,year,)
     cursor.execute(sql,values)
     allowancedetail=cursor.fetchone()
     conn.commit()
@@ -514,8 +514,8 @@ def exportfilepdf(request:Request,iduser,month,year):
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
-    values=(iduser,month,year)
+    sql="select * from phucloichiuthueTNCN where iduser=%s and month=%s and year=%s"
+    values=(iduser,month,year,)
     cursor.execute(sql,values)
     phucloichiuthueTNCN=cursor.fetchone()
     conn.commit()
@@ -546,8 +546,8 @@ def exportexcels(iduserlist,month,year):
     for id in iduserlist:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select p.*,l.Position from payroll p join informationUser i on p.iduser=i.id join informationUserJob ij on i.id=ij.idinformationuser join laborContract l on l.idinformationUserJob=ij.id where p.iduser=? and p.month=? and p.year=?"
-        values=(id,month,year)
+        sql="select p.*,l.Position from payroll p join informationUser i on p.iduser=i.id join informationUserJob ij on i.id=ij.idinformationuser join laborContract l on l.idinformationUserJob=ij.id where p.iduser=%s and p.month=%s and p.year=%s"
+        values=(id,month,year,)
         cursor.execute(sql,values)
         export=cursor.fetchone()
         conn.commit()
@@ -555,8 +555,8 @@ def exportexcels(iduserlist,month,year):
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from Allowance where iduser=? and month=? and year=?"
-        values=(id,month,year)
+        sql="select * from Allowance where iduser=%s and month=%s and year=%s"
+        values=(id,month,year,)
         cursor.execute(sql,values)
         allowance_temp=cursor.fetchone()
         conn.commit()
@@ -564,8 +564,8 @@ def exportexcels(iduserlist,month,year):
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
-        values=(id,month,year)
+        sql="select * from phucloichiuthueTNCN where iduser=%s and month=%s and year=%s"
+        values=(id,month,year,)
         cursor.execute(sql,values)
         phucloichiuthueTNCN=cursor.fetchone()
         conn.commit()
@@ -592,8 +592,8 @@ def savepayroll(salarylist,month,year):
        
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from payroll where iduser=? and month=? and year=?"
-        values=(salary[17],month,year)
+        sql="select * from payroll where iduser=%s and month=%s and year=%s"
+        values=(salary[17],month,year,)
         cursor.execute(sql,values)
         temp=cursor.fetchone()
         conn.commit()
@@ -602,16 +602,16 @@ def savepayroll(salarylist,month,year):
             conn=db.connection()
             cursor=conn.cursor()
             sql="""
-            update payroll set offset=?, standardofworkingday=?,
-            actualday=?, grosssalaryincontract=?, grosssalary=?, dependants=?, bhxh=?, 
-            bhyt=?, bhtn=?, giacanhbanthan=?, giacanhnguoiphuthuoc=?, thunhaptruocthue=?, 
-            thunhapchiuthue=?, thuethunhap=?, netsalary=?, bhxhct=?, bhtnldct=?, 
-            bhytct=?, bhtnct=?, tongcongtytra=?,amoundgrosssalary=?, createdate=getdate() where iduser=? and month=? and year=?
+            update payroll set offset=%s, standardofworkingday=%s,
+            actualday=%s, grosssalaryincontract=%s, grosssalary=%s, dependants=%s, bhxh=%s, 
+            bhyt=%s, bhtn=%s, giacanhbanthan=%s, giacanhnguoiphuthuoc=%s, thunhaptruocthue=%s, 
+            thunhapchiuthue=%s, thuethunhap=%s, netsalary=%s, bhxhct=%s, bhtnldct=%s, 
+            bhytct=%s, bhtnct=%s, tongcongtytra=%s,amoundgrosssalary=%s, createdate=NOW() where iduser=%s and month=%s and year=%s
             """
             values=(salary[20],salary[19],salary[21],salary[22],
                     salary[0],salary[18],salary[1],salary[2],salary[3],salary[4],salary[5],salary[6],
                     salary[7],salary[8],salary[9],salary[10],salary[11],salary[12],salary[13],salary[14],
-                    salary[24],salary[17],month,year)
+                    salary[24],salary[17],month,year,)
             cursor.execute(sql,values)
             conn.commit()
             conn.close()
@@ -624,12 +624,12 @@ def savepayroll(salarylist,month,year):
     bhyt, bhtn, giacanhbanthan, giacanhnguoiphuthuoc, thunhaptruocthue, 
     thunhapchiuthue, thuethunhap, netsalary, bhxhct, bhtnldct, 
     bhytct, bhtnct, tongcongtytra,amoundgrosssalary, createdate, month, year) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, GETDATE(), ?, ?)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, NOW(), %s, %s)
     """
             values=(salary[17],salary[15],salary[23],salary[20],salary[19],salary[21],salary[22],
                     salary[0],salary[18],salary[1],salary[2],salary[3],salary[4],salary[5],salary[6],
                     salary[7],salary[8],salary[9],salary[10],salary[11],salary[12],salary[13],salary[14],salary[24],
-                    month,year)
+                    month,year,)
             cursor.execute(sql,values)
             conn.commit()
             conn.close()
@@ -639,8 +639,8 @@ def savepayroll(salarylist,month,year):
 async def payrolldetail(request:Request,iduser,month,year,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from payroll where iduser=? and month=? and year=?"
-    values=(iduser,month,year)
+    sql="select * from payroll where iduser=%s and month=%s and year=%s"
+    values=(iduser,month,year,)
     cursor.execute(sql,values)
     payrolldetail=cursor.fetchone()
     conn.commit()
@@ -655,8 +655,8 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from Allowance where iduser=? and month=? and year=?"
-    values=(iduser,month,year)
+    sql="select * from Allowance where iduser=%s and month=%s and year=%s"
+    values=(iduser,month,year,)
     cursor.execute(sql,values)
     allowancedetail=cursor.fetchone()
     conn.commit()
@@ -664,8 +664,8 @@ async def payrolldetail(request:Request,iduser,month,year,current_user: User = D
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from phucloichiuthueTNCN where iduser=? and month=? and year=?"
-    values=(iduser,month,year)
+    sql="select * from phucloichiuthueTNCN where iduser=%s and month=%s and year=%s"
+    values=(iduser,month,year,)
     cursor.execute(sql,values)
     phucloichiuthueTNCN=cursor.fetchone()
     conn.commit()
@@ -726,8 +726,8 @@ async def payrolllistemployee_get(request:Request,month,year,current_user: User 
  
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from payroll where iduser=? and month=? and year=?"
-    values=(decode_id(current_user.idinformationuser),month,year)
+    sql="select * from payroll where iduser=%s and month=%s and year=%s"
+    values=(decode_id(current_user.idinformationuser),month,year,)
     cursor.execute(sql,values)
     payroll=cursor.fetchone()
     conn.commit()
@@ -783,8 +783,8 @@ async def payrolllistemployee(request:Request,month,year,current_user: User = De
  
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from payroll where iduser=? and month=? and year=?"
-    values=(decode_id(current_user.idinformationuser),month,year)
+    sql="select * from payroll where iduser=%s and month=%s and year=%s"
+    values=(decode_id(current_user.idinformationuser),month,year,)
     cursor.execute(sql,values)
     payroll=cursor.fetchone()
     conn.commit()
@@ -818,8 +818,8 @@ async def createallowance_get(request:Request,month,year,current_user: User = De
     sql="""
     SELECT id,email
 FROM informationUser
-WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
-    value=(month,year)
+WHERE id NOT IN (SELECT iduser FROM Allowance where month=%s and year=%s);"""
+    value=(month,year,)
     cursor.execute(sql,value)
     email_temp=cursor.fetchall()
     conn.commit()
@@ -830,8 +830,8 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
     cursor=conn.cursor()
     sql="""
 select a.*,i.Email,i.Fullname,p.Premium_Insurance from  Allowance a join informationUser i on i.id=a.iduser 
-join phucloichiuthueTNCN p on p.iduser=i.id where a.month=? and a.year=?"""
-    value=(month,year)
+join phucloichiuthueTNCN p on p.iduser=i.id where a.month = %s and p.month=%s AND a.year = %s and p.year=%s"""
+    value=(month,month,year,year,)
     cursor.execute(sql,value)
     listalowance_temp=cursor.fetchall()
     conn.commit()
@@ -863,8 +863,8 @@ async def createallowance(request:Request,month,year,current_user: User = Depend
     sql="""
     SELECT id,email
 FROM informationUser
-WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
-    value=(month,year)
+WHERE id NOT IN (SELECT iduser FROM Allowance where month=%s and year=%s);"""
+    value=(month,year,)
     cursor.execute(sql,value)
     email_temp=cursor.fetchall()
     conn.commit()
@@ -874,54 +874,54 @@ WHERE id NOT IN (SELECT iduser FROM Allowance where month=? and year=?);"""
     if "yearform" in form_method and form_method.get("yearform")=="yearform":
         return RedirectResponse(url=f"/createallowance/{form_method["month"]}/{form_method["year"]}",status_code=status.HTTP_302_FOUND)
     elif "addallowance" in form_method and form_method.get("addallowance")=="addallowance":
+        # conn=db.connection()
+        # cursor=conn.cursor()
+        # sql="SELECT * FROM Allowance where iduser=%s and month=%s and year=%s"
+        # value=(form_method["email"],month,year,)
+        # cursor.execute(sql,value)
+        # temp=cursor.fetchone()
+        # conn.commit()
+        # conn.close()
+        # if temp:
+    #         conn=db.connection()
+    #         cursor=conn.cursor()
+    #         sql="""
+    #         update Allowance set Internet_Allowance=%s,Meal_Allowance=%s,Phone_Allowance=%s,Transportation_Allowance=%s,
+    # Other_Cash_Allowance=%s,Year_End_Bonus=%s,Unused_Annual_Leave=%s where iduser=%s and month=%s and year=%s"""
+    #         value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
+    #             ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
+    #             form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year,)
+    #         cursor.execute(sql,value)
+    #         conn.commit()
+    #         conn.close()
+
+    #         conn=db.connection()
+    #         cursor=conn.cursor()
+    #         sql="update phucloichiuthueTNCN set Premium_Insurance=%s where iduser=%s and month=%s and year=%s"
+    #         value=(form_method["Premium_Insurance"],form_method["email"],month,year,)
+    #         cursor.execute(sql,value)
+    #         conn.commit()
+    #         conn.close()
+        # else:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="SELECT * FROM Allowance where iduser=? and month=? and year=?"
-        value=(form_method["email"],month,year)
-        cursor.execute(sql,value)
-        temp=cursor.fetchone()
+        sql="""
+        insert into Allowance(Internet_Allowance,Meal_Allowance,Phone_Allowance,Transportation_Allowance,
+Other_Cash_Allowance,Year_End_Bonus,Unused_Annual_Leave,iduser,month,year) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
+            ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
+            form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year)
+        cursor.execute(sql,value,)
         conn.commit()
         conn.close()
-        if temp:
-            conn=db.connection()
-            cursor=conn.cursor()
-            sql="""
-            update Allowance set Internet_Allowance=?,Meal_Allowance=?,Phone_Allowance=?,Transportation_Allowance=?,
-    Other_Cash_Allowance=?,Year_End_Bonus=?,Unused_Annual_Leave=? where iduser=? and month=? and year=?"""
-            value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
-                ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
-                form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year)
-            cursor.execute(sql,value)
-            conn.commit()
-            conn.close()
 
-            conn=db.connection()
-            cursor=conn.cursor()
-            sql="update phucloichiuthueTNCN set Premium_Insurance=? where iduser=? and month=? and year=?"
-            value=(form_method["Premium_Insurance"],form_method["email"],month,year)
-            cursor.execute(sql,value)
-            conn.commit()
-            conn.close()
-        else:
-            conn=db.connection()
-            cursor=conn.cursor()
-            sql="""
-            insert into Allowance(Internet_Allowance,Meal_Allowance,Phone_Allowance,Transportation_Allowance,
-    Other_Cash_Allowance,Year_End_Bonus,Unused_Annual_Leave,iduser,month,year) values(?,?,?,?,?,?,?,?,?,?)"""
-            value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
-                ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
-                form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],form_method["email"],month,year)
-            cursor.execute(sql,value)
-            conn.commit()
-            conn.close()
-
-            conn=db.connection()
-            cursor=conn.cursor()
-            sql="insert into phucloichiuthueTNCN(Premium_Insurance,iduser,month,year) values(?,?,?,?)"
-            value=(form_method["Premium_Insurance"],form_method["email"],month,year)
-            cursor.execute(sql,value)
-            conn.commit()
-            conn.close()
+        conn=db.connection()
+        cursor=conn.cursor()
+        sql="insert into phucloichiuthueTNCN(Premium_Insurance,iduser,month,year) values(%s,%s,%s,%s)"
+        value=(form_method["Premium_Insurance"],form_method["email"],month,year,)
+        cursor.execute(sql,value)
+        conn.commit()
+        conn.close()
         return RedirectResponse(url=f"/createallowance/{month}/{year}",status_code=status.HTTP_302_FOUND)
     
 @payroll.get("/updateallowance/{iduser}/{month}/{year}",tags=['payroll'], response_class=HTMLResponse)
@@ -929,8 +929,8 @@ async def updateallowance_get(request:Request,iduser,month,year,current_user: Us
     conn=db.connection()
     cursor=conn.cursor()
     sql="""select a.*,p.Premium_Insurance from  Allowance a join informationUser i on i.id=a.iduser 
-join phucloichiuthueTNCN p on p.iduser=i.id where a.iduser=? and a.month=? and a.year=?"""
-    value=(iduser,month,year)
+join phucloichiuthueTNCN p on p.iduser=i.id where a.iduser=%s and a.month = %s and p.month=%s AND a.year = %s and p.year=%s"""
+    value=(iduser,month,month,year,year,)
     cursor.execute(sql,value)
     allowance=cursor.fetchone()
     conn.commit()
@@ -957,14 +957,18 @@ async def updateallowance(request:Request,iduser,month,year,current_user: User =
     form_method=await request.form()
     conn=db.connection()
     cursor=conn.cursor()
-    sql="""update Allowance set Internet_Allowance=?,Meal_Allowance=?,Phone_Allowance=?,Transportation_Allowance=?,
-    Other_Cash_Allowance=?,Year_End_Bonus=?,Unused_Annual_Leave=? where iduser=? and month=? and year=?
-    update phucloichiuthueTNCN set Premium_Insurance=? where iduser=? and month=? and year=?
+    sql="""update Allowance set Internet_Allowance=%s,Meal_Allowance=%s,Phone_Allowance=%s,Transportation_Allowance=%s,
+    Other_Cash_Allowance=%s,Year_End_Bonus=%s,Unused_Annual_Leave=%s where iduser=%s and month=%s and year=%s
+    
     """
     value=(form_method["Internet_Allowance"],form_method["Meal_Allowance"],form_method["Phone_Allowance"]
                 ,form_method["Transportation_Allowance"],form_method["Other_Cash_Allowance"],
                 form_method["Year_End_Bonus"],form_method["Unused_Annual_Leave"],iduser,month,year,
-                form_method["Premium_Insurance"],iduser,month,year)
+                )
+    cursor.execute(sql,value)
+    conn.commit()
+    sql="update phucloichiuthueTNCN set Premium_Insurance=%s where iduser=%s and month=%s and year=%s"
+    value=(form_method["Premium_Insurance"],iduser,month,year,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
