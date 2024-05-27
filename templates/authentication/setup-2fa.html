@@ -1,38 +1,42 @@
 {% extends "_base.html" %}
 
 {% block content %}
-
-  <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-      <main class="form-signin w-100 m-auto">
-        <form role="form">
-          <h5>Instructions!</h5>
-            <ul>
-              <li>Download <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US" target="_blank">Google Authenticator</a> on your mobile.</li>
-              <li>Set up a new authenticator.</li>
-              <li>Once you have scanned the QR, please click <a href="/verify-2fa">here.</li>
-            </ul>
-            <div class="text-center">
-              <img src="data:image/png;base64, {{ qr_image }}" alt="Secret Token" style="width:200px;height:200px"/>
+<div class="container">
+  <div class="card card-body">
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <main class="form-signin w-100 m-auto">
+          <form role="form">
+            <h5>Instructions!</h5>
+              <ul>
+                <li>Download <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US" target="_blank">Google Authenticator</a> on your mobile.</li>
+                <li>Set up a new authenticator.</li>
+                <li>Once you have scanned the QR, please click <a href="/signin">here.</li>
+              </ul>
+              <div class="text-center">
+                <img src="data:image/png;base64, {{ qr_image }}" alt="Secret Token" style="width:200px;height:200px"/>
+              </div>
+            <div class="form-group">
+              <label for="secret">Secret Token</label>
+              <input type="text" class="form-control" id="secret" value="{{ secret }}" readonly>
             </div>
-          <div class="form-group">
-            <label for="secret">Secret Token</label>
-            <input type="text" class="form-control" id="secret" value="{{ secret }}" readonly>
-          </div>
-          <div class="text-center mt-2">
-            <button type="button" class="btn btn-primary" onclick="copySecret()">
-              Copy Secret
-            </button>
-          </div>
-          <p class="mt-4 text-center">
-            Once you have scanned the QR, please click <a href="/verify-2fa">here</a>.
-          </p>
-        </form>
-      </main>
+            <div class="text-center mt-2">
+              <button type="button" class="btn btn-primary" onclick="copySecret()">
+                Copy Secret
+              </button>
+            </div>
+            <p class="mt-4 text-center">
+              Once you have scanned the QR, please click <a href="/verify-2fa">here</a>.
+            </p>
+          </form>
+        </main>
+      </div>
+      <div class="col-md-4"></div>
     </div>
-    <div class="col-md-4"></div>
   </div>
+  
+</div>
   
   {% endblock %}
   
