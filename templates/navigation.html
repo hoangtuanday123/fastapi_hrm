@@ -8,17 +8,21 @@
     </style>
   
   <nav class="navbar navbar-expand-lg  ml-auto fixed-top p-1" style="background-color: #4e73df;">
-      
-  
-    <a class="navbar-brand text-white" href="/home">
-      <img class="img" style="object-fit: cover; max-width: 100%; height: 50px;" src="{{ url_for('static', path='source/logo_company.png') }}">
+    {%if current_user.is_authenticated %}
+    <a href="/home" onclick="resetLocalStorage()">
+      <img class="img-fluid img-thumbnail" style="max-width: 100%; height: 60px;" src="{{ url_for('static', path='source/logo_company.png') }}">
     </a>
+    {%else%}
+    <a href="/signin" onclick="resetLocalStorage()">
+      <img class="img-fluid img-thumbnail" style="max-width: 100%; height: 60px;" src="{{ url_for('static', path='source/logo_company.png') }}">
+    </a>
+    {%endif%}
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"><i class="fa-solid fa-bars"></i></span>
     </button>
     <!-- <p>role:{{roleuser}}; Role_admin: {{roleadmin}}</p> -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      {%if current_user.is_authenticated and roleadmin == "admin" and roleuser == "admin" or  current_user.is_authenticated and roleadmin == "admin" and roleuser != "admin" %}
+      {%if current_user.is_authenticated and roleadmin == "admin" and roleuser == "admin" and fullname_admin or  current_user.is_authenticated and roleadmin == "admin" and roleuser != "admin" and fullname_admin %}
       {%if roleuser != "admin" and roleuser%}
       <ul class="navbar-nav mr-auto ml-2">
         
@@ -149,7 +153,7 @@
       </ul>
       {%endif%}
 
-      {% elif current_user.is_authenticated and roleuser == "employee" %}
+      {% elif current_user.is_authenticated and roleuser == "employee" and fullname %}
       <ul class="navbar-nav ml-auto ml-2">
         
         <li class="nav-item dropdown">
@@ -170,7 +174,7 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" href="#" role="button" aria-expanded="false" onclick="updatePath('ERP', 1)">ERP</a>
           <div class="dropdown-menu">
-            <a class="dropdown-item " href="/WeeklyTimesheet/{{idinformationuser}}" onclick="updatePath('Weekly Timesheet', 1)"></a>>Weekly Timesheet</a>
+            <a class="dropdown-item " href="/WeeklyTimesheet/{{idinformationuser}}" onclick="updatePath('Weekly Timesheet', 1)">Weekly Timesheet</a>
           </div>
         </li>
   
@@ -203,15 +207,33 @@
           </div>
         </li>
       </ul>
+      {% elif current_user.is_authenticated and fullname %}
+      <ul class="navbar-nav ml-auto ml-2">
+        <li class="nav-item dropdown ml-2 mr-2">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="updatePath('My Profile', 1)">
+            <img class="mr-1 d-inline" style="width: 30px; height: 30px; border-radius: 50%;" src="{{ url_for('static', path='source/' + image_path) }}">
+            {{ fullname }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right dropdown-menu-custom" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/profile" onclick="updatePath('Profile', 2)">
+              <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              Profile
+            </a>
+            <a class="dropdown-item" href="\getcodechangepassword" onclick="updatePath('Change Password', 2)">
+              <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+              Change Password
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout" onclick="resetLocalStorage()">
+              <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+              Logout
+            </a>
+          </div>
+        </li>
+      </ul>
       {% else %}
       <ul class="navbar-nav ml-auto ml-2">
         
-                <li class="nav-item dropdown">
-                    <a class="nav-link  text-white"  href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                      <span class="mr-4 d-none d-lg-inline text-gray-1000"><i class="fas fa-home fa-fw"></i></span>
-                    </a> 
-                </li>
-  
                 <li class="nav-item dropdown">
                   <a class="nav-link  text-white"  href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     <span class="mr-4 d-none d-lg-inline text-gray-1000">ABOUT</span>
@@ -228,7 +250,7 @@
               <a class="nav-link  text-white"  href="/register" role="button" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-4 d-none d-lg-inline text-gray-1000">REGISTER</span>
               </a> 
-          </li>
+          </li> 
   
           <li class="nav-item dropdown">
             <a class="nav-link  text-white"  href="#" role="button" aria-haspopup="true" aria-expanded="false">

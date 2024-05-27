@@ -249,11 +249,6 @@ select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from inf
 def addlist(informationuserid,employeerelativeid,type):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="""
-        CALL pr_employeerelative_informationuser(%s, %s, %s, @result);
-        SELECT @result AS the_output;
-
-        """
     cursor.execute("CALL pr_employeerelative_informationuser(%s, %s, %s, @result);", (decode_id(informationuserid), employeerelativeid,type))
     cursor.execute("SELECT @result AS the_output")
     result = cursor.fetchone()

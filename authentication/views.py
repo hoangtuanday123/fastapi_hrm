@@ -81,14 +81,9 @@ async def register(request: Request):
             created_date=datetime.now()
             conn=db.connection()
             cursor=conn.cursor()
-            sql="""
-                SET NOCOUNT ON;
-                DECLARE @out int;
-                EXEC register_user @email=%s,@password=%s,@created_date=%s,@authenticated_by=%s,@secret_token=%s,@id = @out OUTPUT;
-                SELECT @out AS the_output;
-                """
             value=(form.email,form.password,created_date,'normal',secret,)
-            cursor.execute(sql,value)
+            cursor.execute("CALL register_user(%s, %s, %s, %s, %s, @user_id);",value)
+            cursor.execute("SELECT @user_id")
             id_user = cursor.fetchone()
             conn.commit()
             conn.close()
@@ -153,6 +148,7 @@ async def verify_two_factor_auth_get(request: Request,current_user: User = Depen
     context={
         "request":request,
         "form":form,
+        "image_path":file_path_default,
         "current_user":current_user
     }
     return templates.TemplateResponse("authentication/verify-2fa.html",context)
@@ -162,6 +158,7 @@ async def verify_two_factor_auth(request: Request,current_user: User = Depends(g
     form = TwoFactorForm(request)
     # totp=pyotp.TOTP(current_user.secret_token)
     # return str(totp.now())
+
     await form.load_data()
     if await form.is_valid(): 
         if current_user.is_otp_valid(form.otp):
@@ -460,7 +457,13 @@ async def changepassword_get(request:Request):
         "request":request,
         "form":form,
         "messages":messages.message_array(),
-        "current_user":current_user
+        "current_user":current_user,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("authentication/changepassword.html",context)
 
@@ -495,7 +498,13 @@ async def changepassword(request:Request):
         "request":request,
         "form":form,
         "messages":messages.message_array(),
-        "current_user":current_user 
+        "current_user":current_user,
+        "image_path":request.cookies.get("image_path_session"),
+        "roleuser":request.cookies.get("roleuser"),
+        "fullname":request.cookies.get("fullname_session"),
+        "image_path_admin":request.cookies.get("image_path_adminsession"),
+        "roleadmin":request.cookies.get("roleadmin"),
+        "fullname_admin":request.cookies.get("fullname_adminsession")
     }
     return templates.TemplateResponse("authentication/changepassword.html",context)
     #return render_template("authentication/changepassword.html",form=form)

@@ -47,8 +47,8 @@ async def informationuser(request: Request,current_user: User = Depends(get_curr
         
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select * from informationUser where id_useraccount=?"
-        value=(decode_id(current_user.id))
+        sql="select * from informationUser where id_useraccount=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         user_temp=cursor.fetchone()
         conn.commit()
@@ -57,12 +57,8 @@ async def informationuser(request: Request,current_user: User = Depends(get_curr
 
             conn=db.connection()
             cursor=conn.cursor()
-            sql="""SET NOCOUNT ON;
-                    insert into informationUser(Fullname,Nickname,Email,Contactaddress,id_useraccount) values(?,?,?,?,?)
-                    DECLARE @id int;
-                    SET @id = SCOPE_IDENTITY();    
-                    insert into latestEmployment(idinformationuser) values (@id)"""
-            value=(form.Fullname,form.Nickname,email,form.Contactaddress,decode_id(current_user.id))
+            sql="""CALL insert_user(%s, %s, %s, %s, %s, @idinformationuser);"""
+            value=(form.Fullname,form.Nickname,email,form.Contactaddress,decode_id(current_user.id),)
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
@@ -133,8 +129,8 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
     if current_user.is_information_validate:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(decode_id(current_user.id))
+        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
@@ -145,8 +141,8 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
     email = confirm_token(token)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from informationUser where id_useraccount=?"
-    value=(decode_id(current_user.id))
+    sql="select * from informationUser where id_useraccount=%s"
+    value=(decode_id(current_user.id),)
     cursor.execute(sql,value)
     information=cursor.fetchone()
     conn.commit()
@@ -155,16 +151,16 @@ async def confirm_email(token,request: Request,current_user: User = Depends(get_
         current_user.is_information_validate = True
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update user_account set infor_validate=1 where id=?"
-        value=(decode_id(current_user.id))
+        sql="update user_account set infor_validate=1 where id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(decode_id(current_user.id))
+        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
@@ -186,8 +182,8 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
     if current_user.is_information_validate:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(decode_id(current_user.id))
+        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
@@ -198,8 +194,8 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
     email = confirm_token(token)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from informationUser where id_useraccount=?"
-    value=(decode_id(current_user.id))
+    sql="select * from informationUser where id_useraccount=%s"
+    value=(decode_id(current_user.id),)
     cursor.execute(sql,value)
     information=cursor.fetchone()
     conn.commit()
@@ -208,16 +204,16 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
         current_user.is_information_validate = True
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update user_account set infor_validate=1 where id=?"
-        value=(decode_id(current_user.id))
+        sql="update user_account set infor_validate=1 where id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=?"
-        value=(decode_id(current_user.id))
+        sql="select i.id from user_account u join informationUser i on i.id_useraccount=u.id where u.id=%s"
+        value=(decode_id(current_user.id),)
         cursor.execute(sql,value)
         userinfor=cursor.fetchone()
         conn.commit()
@@ -227,7 +223,7 @@ async def confirm_email_get(token,request: Request,current_user: User = Depends(
     else:
         # conn=db.connection()
         # cursor=conn.cursor()
-        # sql="update informationUser where id_useraccount=?"
+        # sql="update informationUser where id_useraccount=%s"
         # value=(current_user.id)
         # cursor.execute(sql,value)
         # conn.commit()
