@@ -42,8 +42,8 @@ class user_avatar():
         cursor=conn.cursor()
 
         # insert data
-        sql = "insert into user_avatar values(?,?)"
-        cursor.execute(sql,self.informationuserid,self.pic_name)
+        sql = "insert into user_avatar(idinformationuser,pic_name) values(%s,%s)"
+        cursor.execute(sql,(self.informationuserid,self.pic_name,))
         conn.commit()
         conn.close()     
         # Trả về ID của tài liệu đã chèn
@@ -101,7 +101,7 @@ class user_cccd():
         cursor=conn.cursor()
 
         # insert data
-        sql = "insert into user_cccd values(%s,%s,%s)"
+        sql = "insert into user_cccd(idinformationuser,front_pic_name,back_pic_name) values(%s,%s,%s)"
         cursor.execute(sql,(self.informationuserid,self.front_pic_name, self.back_pic_name,))
         conn.commit()
         conn.close()     
@@ -158,8 +158,8 @@ class user_healthyInsurance():
         cursor=conn.cursor()
 
         # insert data
-        sql = "insert into user_healthyInsurance values(?,?,?)"
-        cursor.execute(sql,self.informationuserid,self.front_pic_name, self.back_pic_name)
+        sql = "insert into user_healthyInsurance(idinformationuser,front_pic_name,back_pic_name) values(%s,%s,%s)"
+        cursor.execute(sql,(self.informationuserid,self.front_pic_name, self.back_pic_name,))
         conn.commit()
         conn.close()     
         # Trả về ID của tài liệu đã chèn

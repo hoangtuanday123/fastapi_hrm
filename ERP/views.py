@@ -122,15 +122,14 @@ async def createproject(request:Request,current_user: User = Depends(get_current
             conn=db.connection()
             cursor=conn.cursor()
             sql="""
-                SET NOCOUNT ON;
-                DECLARE @id int;
-                insert into project(projecttypeid,startdate,endate,projectname) values(?,GETDATE(),?,?)
-                SET @id = SCOPE_IDENTITY();            
-                SELECT @id AS the_output;"""
-            values=(form_method['projecttype'],form.enddate,form.project)
+               
+                insert into project(projecttypeid,startdate,endate,projectname) values(%s,NOW(),%s,%s)
+               """
+            values=(form_method['projecttype'],form.enddate,form.project,)
             cursor.execute(sql,values)
+            conn.commit()
+            cursor.execute("SELECT LAST_INSERT_ID();")
             idproject=cursor.fetchone()
-            idproject="P"+str(idproject[0])
             conn.commit()
             conn.close()
             messages=[('success','create project '+form.project+" sucessfully")]
@@ -155,8 +154,8 @@ async def createtaskandcomponent_get(request:Request,idproject,current_user: Use
     form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from taskproject where projectid=?"
-    value=(idproject)
+    sql="select * from taskproject where projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     tasks_temp=cursor.fetchall()
     conn.commit()
@@ -165,8 +164,8 @@ async def createtaskandcomponent_get(request:Request,idproject,current_user: Use
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from componentproject where projectid=?"
-    value=(idproject)
+    sql="select * from componentproject where projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     components_temp=cursor.fetchall()
     conn.commit()
@@ -194,8 +193,8 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
     form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from taskproject where projectid=?"
-    value=(idproject)
+    sql="select * from taskproject where projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     tasks_temp=cursor.fetchall()
     conn.commit()
@@ -204,8 +203,8 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from componentproject where projectid=?"
-    value=(idproject)
+    sql="select * from componentproject where projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     components_temp=cursor.fetchall()
     conn.commit()
@@ -216,8 +215,8 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
     if request.method=='POST' and 'taskbutton' in  form_method and form_method['taskbutton']=='taskbutton':
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into taskproject(name,createdate,projectid) values(?,GETDATE(),?)"
-        value=(form.task,idproject)
+        sql="insert into taskproject(name,createdate,projectid) values(%s,NOW(),%s)"
+        value=(form.task,idproject,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -226,8 +225,8 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
     if request.method=='POST' and 'componentbutton' in form_method and form_method['componentbutton']=='componentbutton':
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into componentproject(name,createdate,projectid) values(?,GETDATE(),?)"
-        value=(form.component,idproject)
+        sql="insert into componentproject(name,createdate,projectid) values(%s,NOW(),%s)"
+        value=(form.component,idproject,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -253,8 +252,8 @@ async def createtaskandcomponent(request:Request,idproject,current_user: User = 
 def deleteTask(idproject,idtask):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="delete taskproject where id=?"
-    value=(idtask)
+    sql="delete from taskproject where id=%s"
+    value=(idtask,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -264,8 +263,8 @@ def deleteTask(idproject,idtask):
 def deleteComponent(idproject,idcomponent):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="delete componentproject where id=?"
-    value=(idcomponent)
+    sql="delete from componentproject where id=%s"
+    value=(idcomponent,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -315,8 +314,8 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
     if request.method=="POST":
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select pt.Name from projecttype pt join project p on p.projecttypeid= pt.projecttypeid where p.projectid=?"
-        value=(idproject)
+        sql="select pt.Name from projecttype pt join project p on p.projecttypeid= pt.projecttypeid where p.projectid=%s"
+        value=(idproject,)
         cursor.execute(sql,value)
         projecttype=cursor.fetchone()
         conn.commit()
@@ -324,7 +323,7 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
         if projecttype[0]=="Non-Project":
             conn=db.connection()
             cursor=conn.cursor()
-            sql="select g.id,gd.iduser from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser  where g.id=?"
+            sql="select g.id,gd.iduser from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser  where g.id=%s"
             value=(form["group"])
             cursor.execute(sql,value)
             groups_temp1=cursor.fetchone()
@@ -333,16 +332,16 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
 
             conn=db.connection()
             cursor=conn.cursor()
-            sql="update project set managerid=?,projectteamid=? where projectid=?"
-            value=(int(groups_temp1[1]),int(groups_temp1[0]),idproject)
+            sql="update project set managerid=%s,projectteamid=%s where projectid=%s"
+            value=(int(groups_temp1[1]),int(groups_temp1[0]),idproject,)
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
             return RedirectResponse(url="/LeaveManagement/leaveList",status_code=status.HTTP_302_FOUND)
         conn=db.connection()
         cursor=conn.cursor()
-        sql="select g.id,gd.iduser from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser join rolegroupuser rg on rg.id=gd.idrolegroupuser where rg.rolename='manager' and g.id=?"
-        value=(form["group"])
+        sql="select g.id,gd.iduser from groupuser g join groupuserdetail gd on g.id=gd.idgroupuser join rolegroupuser rg on rg.id=gd.idrolegroupuser where rg.rolename='manager' and g.id=%s"
+        value=(form["group"],)
         cursor.execute(sql,value)
         groups_temp1=cursor.fetchone()
         conn.commit()
@@ -353,8 +352,8 @@ async def assigngroupproject(request:Request,idproject,current_user: User = Depe
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update project set managerid=?,projectteamid=? where projectid=?"
-        value=(int(groups_temp1[1]),int(groups_temp1[0]),idproject)
+        sql="update project set managerid=%s,projectteamid=%s where projectid=%s"
+        value=(int(groups_temp1[1]),int(groups_temp1[0]),idproject,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -386,8 +385,8 @@ async def updateproject_get(request:Request,idproject,current_user: User = Depen
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select p.projectid,p.projectname,pt.projecttypeid,pt.Name from project p join projecttype pt on p.projecttypeid=pt.projecttypeid where p.projectid=?"
-    value=(idproject)
+    sql="select p.projectid,p.projectname,pt.projecttypeid,pt.Name from project p join projecttype pt on p.projecttypeid=pt.projecttypeid where p.projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     project=cursor.fetchone()
     conn.commit()
@@ -423,8 +422,8 @@ async def updateproject(request:Request,idproject,current_user: User = Depends(g
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select p.projectid,p.projectname,pt.projecttypeid,pt.Name from project p join projecttype pt on p.projecttypeid=pt.projecttypeid where p.projectid=?"
-    value=(idproject)
+    sql="select p.projectid,p.projectname,pt.projecttypeid,pt.Name from project p join projecttype pt on p.projecttypeid=pt.projecttypeid where p.projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     project=cursor.fetchone()
     conn.commit()
@@ -433,8 +432,8 @@ async def updateproject(request:Request,idproject,current_user: User = Depends(g
     if request.method=="POST":
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update project set projectname=?,projecttypeid=? where projectid=?"
-        value=(form["projectname"],form["projecttype"],idproject)
+        sql="update project set projectname=%s,projecttypeid=%s where projectid=%s"
+        value=(form["projectname"],form["projecttype"],idproject,)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -463,16 +462,16 @@ async def updateproject(request:Request,idproject,current_user: User = Depends(g
 def deleteproject(idproject,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update project set status=0 where projectid=?"
-    value=(idproject)
+    sql="update project set status=0 where projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select pt.Name from project p join projecttype pt on pt.projecttypeid=p.projecttypeid where p.projectid=?"
-    value=(idproject)
+    sql="select pt.Name from project p join projecttype pt on pt.projecttypeid=p.projecttypeid where p.projectid=%s"
+    value=(idproject,)
     cursor.execute(sql,value)
     projecttype=cursor.fetchone()
     conn.commit()
@@ -524,8 +523,8 @@ JOIN project p ON w.projectid = p.projectid
 JOIN projecttype pt ON pt.projecttypeid = p.projecttypeid
 LEFT JOIN componentproject c ON w.componentid = c.id -- Sử dụng LEFT JOIN để lấy giá trị nếu có, nếu không thì null
 JOIN taskproject t ON w.taskid = t.id
-JOIN DATE d ON d.Date = w.Date where d.Year=? and d.WeekNumber=? and w.iduser=? and w.status=1"""
-    values=(year,weeknum,decode_id(iduser))
+JOIN DATE d ON d.Date = w.Date where d.Year=%s and d.WeekNumber=%s and w.iduser=%s and w.status=1"""
+    values=(year,weeknum,decode_id(iduser),)
     cursor.execute(sql,values)
     weeklytimesheet_temp=cursor.fetchall()
     conn.commit()
@@ -603,8 +602,8 @@ JOIN project p ON w.projectid = p.projectid
 JOIN projecttype pt ON pt.projecttypeid = p.projecttypeid
 LEFT JOIN componentproject c ON w.componentid = c.id -- Sử dụng LEFT JOIN để lấy giá trị nếu có, nếu không thì null
 JOIN taskproject t ON w.taskid = t.id
-JOIN DATE d ON d.Date = w.Date where d.Year=? and d.WeekNumber=? and w.iduser=? and w.status=1"""
-    values=(year,weeknum,decode_id(iduser))
+JOIN DATE d ON d.Date = w.Date where d.Year=%s and d.WeekNumber=%s and w.iduser=%s and w.status=1"""
+    values=(year,weeknum,decode_id(iduser),)
     cursor.execute(sql,values)
     weeklytimesheet_temp=cursor.fetchall()
     conn.commit()
@@ -713,12 +712,12 @@ def copytasks():
     conn=db.connection()
     cursor=conn.cursor()
     sql="""insert into weeklytimesheet(projectid,componentid,taskid,statustimesheet,note,Date,status,iduser,mon,tue,wed,thu,fri,sat,sun,progress)
-        select w.projectid,w.componentid,w.taskid,w.statustimesheet,w.note,CONVERT(date, getdate()) as Date,w.status,w.iduser,w.mon,w.tue,w.wed,
-        w.thu,w.fri,w.sat,w.sun,w.progress from weeklytimesheet w join DATE d on w.Date=d.Date where d.WeekNumber=(select WeekNumber from DATE where DATE=CONVERT(date, DATEADD(day, -7, GETDATE()))
+        select w.projectid,w.componentid,w.taskid,w.statustimesheet,w.note,DATE(NOW()) as Date,w.status,w.iduser,w.mon,w.tue,w.wed,
+        w.thu,w.fri,w.sat,w.sun,w.progress from weeklytimesheet w join DATE d on w.Date=d.Date where d.WeekNumber=(select WeekNumber from DATE where DATE=DATE_SUB(CURDATE(), INTERVAL 7 DAY)
         ) and w.statustimesheet!='pending approval' and w.statustimesheet!='copied'
 
         update weeklytimesheet set statustimesheet='copied' from weeklytimesheet w join DATE d on w.Date=d.Date where
-        d.WeekNumber=(select WeekNumber from DATE where DATE=CONVERT(date, DATEADD(day, -7, GETDATE()))) and w.statustimesheet!='pending approval and statustimesheet !='approval'
+        d.WeekNumber=(select WeekNumber from DATE where DATE=DATE_SUB(CURDATE(), INTERVAL 7 DAY) and w.statustimesheet!='pending approval and statustimesheet !='approval'
         """
     cursor.execute(sql)
     conn.commit()
@@ -727,24 +726,24 @@ def copytasks():
 def submittasks(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set statustimesheet='pending approval' where id=? and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval' "
-    cursor.execute(sql,select)
+    sql="update weeklytimesheet set statustimesheet='pending approval' where id=%s and statustimesheet !='pending approval' and statustimesheet!='initialization' and statustimesheet !='approval' "
+    cursor.execute(sql,(select,))
     conn.commit()
     conn.close()
 
 def recalltasks(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set statustimesheet='recalling' where id=? and statustimesheet !='saved' and statustimesheet !='approval'"
-    cursor.execute(sql,select)
+    sql="update weeklytimesheet set statustimesheet='recalling' where id=%s and statustimesheet !='saved' and statustimesheet !='approval'"
+    cursor.execute(sql,(select,))
     conn.commit()
     conn.close()
 
 def resetValueTask(select):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update weeklytimesheet set mon=0,tue=0,wed=0,thu=0, fri=0,sat=0,sun=0,progress=0 where id=? and statustimesheet !='pending approval' and statustimesheet !='approval"
-    value=(select)
+    sql="update weeklytimesheet set mon=0,tue=0,wed=0,thu=0, fri=0,sat=0,sun=0,progress=0 where id=%s and statustimesheet !='pending approval' and statustimesheet !='approval"
+    value=(select,)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -755,10 +754,10 @@ def savetasks(listweeklytimesheet):
         
         conn=db.connection()
         cursor=conn.cursor()
-        sql="""update weeklytimesheet set mon=?,tue=?,wed=?,thu=?, fri=?,sat=?,sun=?,statustimesheet='saved' where id=? and statustimesheet !='pending approval' and statustimesheet !='approval'
-        update weeklytimesheet set progress=(mon+tue+wed+thu+fri+sat+sun) where id=? and statustimesheet !='pending approval' and statustimesheet !='approval'
+        sql="""update weeklytimesheet set mon=%s,tue=%s,wed=%s,thu=%s, fri=%s,sat=%s,sun=%s,statustimesheet='saved' where id=%s and statustimesheet !='pending approval' and statustimesheet !='approval'
+        update weeklytimesheet set progress=(mon+tue+wed+thu+fri+sat+sun) where id=%s and statustimesheet !='pending approval' and statustimesheet !='approval'
         """
-        value=(weeklytimesheet[1],weeklytimesheet[2],weeklytimesheet[3],weeklytimesheet[4],weeklytimesheet[5],weeklytimesheet[6],weeklytimesheet[7],weeklytimesheet[0],weeklytimesheet[0])
+        value=(weeklytimesheet[1],weeklytimesheet[2],weeklytimesheet[3],weeklytimesheet[4],weeklytimesheet[5],weeklytimesheet[6],weeklytimesheet[7],weeklytimesheet[0],weeklytimesheet[0],)
         cursor.execute(sql,value)
         conn.commit()
         conn.close()
@@ -767,8 +766,8 @@ def savetasks(listweeklytimesheet):
 def removetasks(weeklytimesheetid):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="delete weeklytimesheet where id=?"
-    cursor.execute(sql,weeklytimesheetid)
+    sql="delete weeklytimesheet where id=%s"
+    cursor.execute(sql,(weeklytimesheetid,))
     conn.commit()
     conn.close()
 
@@ -777,8 +776,8 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
         #form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select p.projectid,p.projectname from project p join groupuser g on p.projectteamid=g.id join groupuserdetail gd on gd.idgroupuser=g.id where  gd.iduser=? and p.status=1"
-    value=(decode_id(iduser))
+    sql="select p.projectid,p.projectname from project p join groupuser g on p.projectteamid=g.id join groupuserdetail gd on gd.idgroupuser=g.id where  gd.iduser=%s and p.status=1"
+    value=(decode_id(iduser),)
     cursor.execute(sql,value)
     project_temp=cursor.fetchall()
     conn.commit()
@@ -787,8 +786,8 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
    
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     tasks_temp=cursor.fetchall()
     conn.commit()
@@ -796,8 +795,8 @@ async def addtask_get(request:Request,iduser,year,weeknum,weekdates,current_user
     tasks = [(task[0],task[1])for task in tasks_temp]
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     components_temp=cursor.fetchall()
     conn.commit()
@@ -823,8 +822,8 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
     #form=addtaskweeklytimesheetForm(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select p.projectid,p.projectname from project p join groupuser g on p.projectteamid=g.id join groupuserdetail gd on gd.idgroupuser=g.id where  gd.iduser=? and p.status=1"
-    value=(decode_id(iduser))
+    sql="select p.projectid,p.projectname from project p join groupuser g on p.projectteamid=g.id join groupuserdetail gd on gd.idgroupuser=g.id where  gd.iduser=%s and p.status=1"
+    value=(decode_id(iduser),)
     cursor.execute(sql,value)
     project_temp=cursor.fetchall()
     conn.commit()
@@ -833,8 +832,8 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
     
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     tasks_temp=cursor.fetchall()
     conn.commit()
@@ -843,8 +842,8 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
     
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=? and p.status=1"
-    value=(projects[0][0])
+    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=%s and p.status=1"
+    value=(projects[0][0],)
     cursor.execute(sql,value)
     components_temp=cursor.fetchall()
     conn.commit()
@@ -859,8 +858,8 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
                 a=form_method['component']
             conn=db.connection()
             cursor=conn.cursor()
-            sql="insert into weeklytimesheet(projectid,componentid,taskid,statustimesheet,Date,iduser) values(?,?,?,'initialization',CONVERT(date, GETDATE()),?)"
-            value=(form_method['project'],a,form_method['task'],decode_id(iduser))
+            sql="insert into weeklytimesheet(projectid,componentid,taskid,statustimesheet,Date,iduser) values(%s,%s,%s,'initialization',CONVERT(date, NOW()),%s)"
+            value=(form_method['project'],a,form_method['task'],decode_id(iduser),)
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
@@ -870,8 +869,8 @@ async def addtask(request:Request,iduser,year,weeknum,weekdates,current_user: Us
                 a=form_method['component']
             conn=db.connection()
             cursor=conn.cursor()
-            sql="insert into weeklytimesheet(projectid,componentid,taskid,statustimesheet,Date,iduser) values(?,?,?,'initialization',?,?)"
-            value=(form_method['project'],a,form_method['task'],str(weekdates[2:12]),decode_id(iduser))
+            sql="insert into weeklytimesheet(projectid,componentid,taskid,statustimesheet,Date,iduser) values(%s,%s,%s,'initialization',%s,%s)"
+            value=(form_method['project'],a,form_method['task'],str(weekdates[2:12]),decode_id(iduser),)
             cursor.execute(sql,value)
             conn.commit()
             conn.close()
@@ -898,8 +897,8 @@ async def get_tasks_and_components(request:Request):
     selected_project = form['selected_project']
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=? and p.status=1"
-    value=(selected_project)
+    sql="select t.id,t.name from taskproject t join project p on t.projectid=p.projectid where t.projectid=%s and p.status=1"
+    value=(selected_project,)
     cursor.execute(sql,value)
     tasks_temp=cursor.fetchall()
     conn.commit()
@@ -908,8 +907,8 @@ async def get_tasks_and_components(request:Request):
     
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=? and p.status=1"
-    value=(selected_project)
+    sql="select c.id,c.name from componentproject c join project p on c.projectid=p.projectid where c.projectid=%s and p.status=1"
+    value=(selected_project,)
     cursor.execute(sql,value)
     components_temp=cursor.fetchall()
     conn.commit()
@@ -949,8 +948,8 @@ async def weeklytimesheetview(request:Request,current_user: User = Depends(get_c
         sql="""select p.projectid,pt.Name,p.projectname,c.name,t.name,w.mon,w.tue,w.wed,w.thu,w.fri,w.sat,w.sun,w.statustimesheet,w.note,w.id,w.progress,w.Date
     from weeklytimesheet w join project p on w.projectid=p.projectid join
     projecttype pt on pt.projecttypeid=p.projecttypeid LEFT JOIN componentproject c on w.componentid =c.id join 
-    taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' or w.statustimesheet ='approval' and w.projectid=? """
-        cursor.execute(sql,form_method['project'])
+    taskproject t on w.taskid=t.id join DATE d on d.Date=w.Date where w.statustimesheet ='pending approval' or w.statustimesheet ='approval' and w.projectid=%s """
+        cursor.execute(sql,form_method['project'],)
         weeklytimesheet=cursor.fetchall()
         conn.commit()
         conn.close()
@@ -1019,8 +1018,8 @@ def approvalWeeklytimesheet(selectionItem):
     for item in selectionItem:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update weeklytimesheet set statustimesheet='approval' where id=?"
-        cursor.execute(sql,item)
+        sql="update weeklytimesheet set statustimesheet='approval' where id=%s"
+        cursor.execute(sql,(item,))
         conn.commit()
         conn.close()
 
@@ -1028,8 +1027,8 @@ def pendingapprovalWeeklytimesheet(selectionItem):
     for item in selectionItem:
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update weeklytimesheet set statustimesheet='pending approval' where id=?"
-        cursor.execute(sql,item)
+        sql="update weeklytimesheet set statustimesheet='pending approval' where id=%s"
+        cursor.execute(sql,(item,))
         conn.commit()
         conn.close()
 

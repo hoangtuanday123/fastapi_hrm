@@ -87,7 +87,7 @@ async def displayRoles(request:Request,current_user: User = Depends(get_current_
     if await form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into role_user values(%s)"
+        sql="insert into role_user(role_name) values(%s)"
         value=(form.role,)
         cursor.execute(sql,value)
         conn.commit()
@@ -146,7 +146,7 @@ async def rolepage(request:Request,idrole,current_user: User = Depends(get_curre
         new_role_name = form["user_role"]
         conn=db.connection()
         cursor=conn.cursor()
-        sql="update role_user set role_name=$s where id=%s"
+        sql="update role_user set role_name=%s where id=%s"
         value=(new_role_name,idrole,)
         cursor.execute(sql,value)
         conn.commit()
@@ -168,8 +168,7 @@ async def rolepage(request:Request,idrole,current_user: User = Depends(get_curre
 def deleterole(idrole):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="""SET NOCOUNT ON;
-            EXEC deleteRole @role_id=%s"""
+    sql="CALL deleteRole(%s)"
     value=(idrole,)
     cursor.execute(sql,value)
     conn.commit()
@@ -346,27 +345,19 @@ async def displayusers(request:Request,response:Response,current_user: User = De
             Alluser=[(user[0],user[1],user[2],user[3],user[4],user[6],user[7],user[8],user[9],user[10],user[11],user[12],user[13]) for user in users]
     elif 'exportexcel' in form and form['exportexcel']=='exportexcel':
         selecttionitem=form.getlist('checkbox')
-        response.set_cookie(key="selectionItem", value=selecttionitem)
+        #response.set_cookie(key="selectionItem", value=selecttionitem)
         
         #table=session.get('table')
         table=request.cookies.get("tablesession")
         if(table==None or table=='ALL'):
             table='ALL'
             typerole=table
-            return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
+            return exportfileexcel(typerole,selecttionitem)
         else:
             typerole=table
-            return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
-        # check1=is_all_null(selecttionitem)
-        # if check1==False:
-        #     #return str(table)
-        #     typerole=table
-        #     return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
-        # else:
-        #     #session['selectionItem']=[]
-        #      response.set_cookie(key="selectionItem", value=None)=[]
-        #     typerole=table
-        #     return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
+            return exportfileexcel(typerole,selecttionitem)
+            #return RedirectResponse(url=f"/adminpage/usersmanager/exportfileexcel/{typerole}")
+        
     elif 'exportpdf' in form and form['exportpdf']=='exportpdf':
         selecttionitem=form.getlist('checkbox')
         response.set_cookie(key="selectionItem", value=selecttionitem)
@@ -448,18 +439,15 @@ def is_all_null(array):
             return False  # Nếu có ít nhất một phần tử không phải None, trả về False
     return True  # Nếu tất cả các phần tử đều là None, trả về True
 
-@admin.post('/adminpage/usersmanager/exportfileexcel/{typerole}',tags=['user managerment'], response_class=HTMLResponse)
-def exportfileexcel(typerole,request:Request,current_user: User = Depends(get_current_user_from_token)):
+#@admin.post('/adminpage/usersmanager/exportfileexcel/{typerole}',tags=['user managerment'], response_class=HTMLResponse)
+def exportfileexcel(typerole,idlist):
     #Selecttionitem=session.get('selectionItem', [])
-    Selecttionitem=[]
-    if request.cookies.get("selectionItem"):
-        Selecttionitem=request.cookies.get("selectionItem")
     if typerole=='ALL':
         usersrole=[]
          
-        if Selecttionitem !=[]:
+        if idlist !=[]:
             
-            for id in Selecttionitem:
+            for id in idlist:
                 if(str(id)!='None'):
                     
                     conn=db.connection()
@@ -494,8 +482,8 @@ def exportfileexcel(typerole,request:Request,current_user: User = Depends(get_cu
         
     elif typerole=='candidate':
         usersrole=[]
-        if Selecttionitem !=[]:
-            for id in Selecttionitem:
+        if idlist !=[]:
+            for id in idlist:
                 if(str(id)!='None'):
                     
                     conn=db.connection()
@@ -530,8 +518,8 @@ def exportfileexcel(typerole,request:Request,current_user: User = Depends(get_cu
     elif typerole=='employee':
         usersrole=[]
         
-        if Selecttionitem !=[]:
-            for id in Selecttionitem:
+        if idlist !=[]:
+            for id in idlist:
                 if(str(id)!='None'):
                     
                     conn=db.connection()
@@ -938,13 +926,13 @@ async def groupuserpage(request:Request,response:Response,current_user: User = D
     if  form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="""SET NOCOUNT ON;
-                DECLARE @id int;
-                insert into groupuser(name,createddate) values($s,GETDATE())
-                SET @id = SCOPE_IDENTITY();            
-                SELECT @id AS the_output;"""
-        value=(form.group)
+        sql="""
+                insert into groupuser(name,createddate) values(%s,NOW())
+                """
+        value=(form.group,)
         cursor.execute(sql,value)
+        conn.commit()
+        cursor.execute("SELECT LAST_INSERT_ID();")
         idgrouptemp=cursor.fetchone()
         conn.commit()
         conn.close()
@@ -1113,7 +1101,7 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
     users=[(user[0],user[1],user[2],user[3],user[4],encode_id(user[5])) for user in userstemp]
     await form.load_data()
     form_method = await request.form() 
-    if await form.is_valid() and 'updategroup' in form_method and form_method['updategroup']=='updategroup':
+    if  'updategroup' in form_method and form_method['updategroup']=='updategroup':
         groupuser = form.group
         
         conn=db.connection()
@@ -1125,7 +1113,6 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
         notifyemail=cursor.fetchall()
         conn.commit()
         conn.close()
-
         conn=db.connection()
         cursor=conn.cursor()
         sql="update groupuser set name=%s,alias=%s,email=%s,url=%s,description=%s where id=%s"
@@ -1160,14 +1147,13 @@ async def updategropuser(request:Request,response:Response,idgroup,rolegroupvalu
             conn=db.connection()
             cursor=conn.cursor()
             sql="""
-            SET NOCOUNT ON;
-            DECLARE @id int;
-            insert into groupuserdetail(iduser,idrolegroupuser,idgroupuser,createddate) values(%s,%s,%s,GETDATE())
-            SET @id = SCOPE_IDENTITY();            
-            SELECT @id AS the_output;
+            insert into groupuserdetail(iduser,idrolegroupuser,idgroupuser,createddate) values(%s,%s,%s,NOW())
+            
             """
             value=(usersSelect,grouprole,idgroup,)
             cursor.execute(sql,value)
+            conn.commit()
+            cursor.execute("SELECT LAST_INSERT_ID();")
             idgroupuserdetail=cursor.fetchone()
             conn.commit()
             conn.close()
@@ -1249,7 +1235,7 @@ def deleteuser(idgroupuserdetail,idgroup,rolegroupvalue,current_user: User = Dep
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="delete groupuserdetail where id=%s"
+    sql="delete from groupuserdetail where id=%s"
     value=(idgroupuserdetail,)
     cursor.execute(sql,value)
     conn.commit()
@@ -1277,12 +1263,14 @@ def deletegroupuser(idgroup,current_user: User = Depends(get_current_user_from_t
 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="""
-            update project set projectteamid=null where projectteamid=%s
-            delete groupuserdetail where idgroupuser=%s
-            delete groupuser where id=%s"""
-    value=(idgroup,idgroup,idgroup,)
-    cursor.execute(sql,value)
+    update_query = "UPDATE project SET projectteamid = NULL WHERE projectteamid = %s"
+    delete_groupuserdetail_query = "DELETE FROM groupuserdetail WHERE idgroupuser = %s"
+    delete_groupuser_query = "DELETE FROM groupuser WHERE id = %s"
+
+    cursor.execute(update_query, (idgroup,))
+    cursor.execute(delete_groupuserdetail_query, (idgroup,))
+    cursor.execute(delete_groupuser_query, (idgroup,))
+    
     conn.commit()
     conn.close()
     messages=[("success","removed  group user  is successful")]
@@ -1394,7 +1382,9 @@ async def createemployeeinfor(request:Request,idinformation,current_user: User =
             code=form_method['companysitecode']
             conn=db.connection()
             cursor=conn.cursor()
-            sql="insert into informationUserJob values($s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s)"
+            sql="""insert into informationUserJob(companysitecode,department,directmanager,
+            workfortype,bankaccount,bankname,taxcode,Socialinsurancecode,Healthinsurancecardcode,
+            Registeredhospitalname,Registeredhospitalcode) values($s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s,$s)"""
             value=(code,form.department,form.directmanager,
                 form.workfortype,form.Bankaccount,form.bankname,form.Taxcode,
                 form.Socialinsurancecode,form.Healthinsurancecardcode,form.Registeredhospitalname,
@@ -1489,7 +1479,7 @@ async def createlaborcontract(request:Request,idinformation,current_user: User =
 
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into dayoffincontract values($s,$s,$s)"
+        sql="insert into dayoffincontract(idcontract,remainingdayoff,year) values($s,$s,$s)"
         value=(idcontract[0],form.dayoff,current_year)
         cursor.execute(sql,value)
         conn.commit()
@@ -1552,7 +1542,8 @@ async def createforexsalary(request:Request,idinformation,current_user: User = D
     if await form.is_valid():
         conn=db.connection()
         cursor=conn.cursor()
-        sql="insert into forexSalary values($s,$s,$s,$s,$s,$s,$s,1)"
+        sql="""insert into forexSalary(forextypeid,Annualsalary,Monthlysalary,
+        Monthlysalaryincontract,Quaterlybonustarget,Annualbonustarget,idinformationUserJob) values($s,$s,$s,$s,$s,$s,$s,1)"""
         value=(form.forextype,form.Annualsalary,form.Monthlysalary,
                form.Monthlysalaryincontract,form.Quaterlybonustarget,form.Annualbonustarget,idinformationuserjob[0])
         cursor.execute(sql,value)
