@@ -170,7 +170,7 @@ CREATE TABLE `dayofftimesheet` (
 
 LOCK TABLES `dayofftimesheet` WRITE;
 /*!40000 ALTER TABLE `dayofftimesheet` DISABLE KEYS */;
-INSERT INTO `dayofftimesheet` VALUES (4,2009,'P6011',NULL,6011,'2024-05-20','2024-05-20','approval',1);
+INSERT INTO `dayofftimesheet` VALUES (4,2009,'6011',NULL,6011,'2024-05-20','2024-05-20','approval',1);
 /*!40000 ALTER TABLE `dayofftimesheet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -923,7 +923,7 @@ CREATE TABLE `taskproject` (
 
 LOCK TABLES `taskproject` WRITE;
 /*!40000 ALTER TABLE `taskproject` DISABLE KEYS */;
-INSERT INTO `taskproject` VALUES (2,'TASK1','2024-03-19','P1'),(3,'TASK2','2024-03-19','P1'),(4,'task1','2024-03-19','3'),(5,'task1','2024-03-19','P5'),(6,'task1','2024-03-20','P6'),(7,'task2','2024-03-20','P6'),(1006,'task1','2024-03-22','P1006'),(1008,'task1','2024-04-14','P1007'),(2007,'task1','2024-04-15','P2007'),(2008,'task2','2024-04-15','P1006'),(2009,'task3','2024-04-15','P2008'),(3007,'task1','2024-04-19','P3007'),(4007,'task1','2024-05-07','P4007'),(4008,'task1','2024-05-07','P4008'),(4010,'task1','2024-05-08','P4009'),(4011,'task1','2024-05-08','P4010'),(5007,'task1','2024-05-08','P5007'),(6007,'task1','2024-05-13','P6007'),(6008,'task1','2024-05-13','P6008'),(6009,'TASK1','2024-05-15','P6009'),(6011,'unpaid days off','2024-05-15','P6011'),(6012,'New Year Holidays','2024-05-16','P6011'),(6013,'Lunar New Year Holidays','2024-05-16','P6011'),(6014,'Victory Day','2024-05-16','P6011'),(6015,'International Labor Day','2024-05-16','P6011'),(6016,'National Day','2024-05-16','P6011'),(6017,'Annual Leave','2024-05-16','P6011'),(6018,'Hùng Kings\' Commemoration Day','2024-05-16','P6011');
+INSERT INTO `taskproject` VALUES(6011,'unpaid days off','2024-05-15','6011'),(6012,'New Year Holidays','2024-05-16','6011'),(6013,'Lunar New Year Holidays','2024-05-16','6011'),(6014,'Victory Day','2024-05-16','6011'),(6015,'International Labor Day','2024-05-16','6011'),(6016,'National Day','2024-05-16','6011'),(6017,'Annual Leave','2024-05-16','6011'),(6018,'Hùng Kings\' Commemoration Day','2024-05-16','6011');
 /*!40000 ALTER TABLE `taskproject` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1081,11 +1081,7 @@ CREATE TABLE `weeklytimesheet` (
 -- Dumping data for table `weeklytimesheet`
 --
 
-LOCK TABLES `weeklytimesheet` WRITE;
-/*!40000 ALTER TABLE `weeklytimesheet` DISABLE KEYS */;
-INSERT INTO `weeklytimesheet` VALUES (1014,'P6',4,6,'recalling',NULL,'2024-03-22',1,2009,0,0,0,0,0,0,0,0),(1016,'P6',4,6,'recalling',NULL,'2024-03-27',1,2009,8,8,8,8,8,8,8,56),(1017,'P6',4,6,'recalling',NULL,'2024-12-30',1,2009,0,0,0,0,0,0,0,0),(1018,'P6',4,6,'recalling',NULL,'2024-12-30',1,2009,0,0,0,0,0,0,0,0),(1021,'P6',4,6,'recalling',NULL,'2024-01-01',1,2009,0,0,0,0,0,0,0,0),(1022,'P6',4,6,'recalling',NULL,'2024-01-08',1,2009,0,0,0,0,0,0,0,0),(2017,'P1006',2006,1006,'recalling',NULL,'2024-04-15',1,2009,2,0,2,0,0,0,0,4),(2018,'P1006',2007,2008,'approval',NULL,'2024-04-15',1,2009,0,2,0,0,8,0,0,10),(2019,'P6',2006,1006,'recalling',NULL,'2024-04-08',1,2009,0,0,0,0,0,0,0,0),(2020,'P6',2006,1006,'recalling',NULL,'2024-04-15',1,2009,0,0,0,0,0,0,0,0),(4016,'P5007',4004,5007,'approval',NULL,'2024-05-08',1,2009,8,0,0,0,0,0,0,2),(5016,'P6008',5005,6008,'approval',NULL,'2024-05-13',1,2009,16,16,16,16,16,16,16,112),(15,'P6',4,6,'recalling',NULL,'2024-03-14',1,2009,10,10,0,0,0,0,0,20),(17,'P6',4,7,'approval',NULL,'2024-03-14',1,2009,0,20,0,0,0,0,0,20),(1019,'P6',4,6,'recalling',NULL,'2024-12-30',1,2009,0,0,0,0,0,0,0,0),(3018,'P4008',3005,4008,'recalling',NULL,'2024-05-07',1,2009,6,0,0,0,0,0,0,6),(1020,'P6',4,6,'recalling',NULL,'2024-01-29',1,2009,0,0,0,0,0,0,0,0);
-/*!40000 ALTER TABLE `weeklytimesheet` ENABLE KEYS */;
-UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1097,3 +1093,178 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-05-21 13:17:13
+DELIMITER //
+
+-- Create the stored procedure
+CREATE PROCEDURE CountHealthCheckCertificates(
+    IN p_IdInformationUser INT,
+    OUT Count INT
+)
+BEGIN
+    SELECT COUNT(*)
+    INTO Count
+    FROM healthCheckCertificates
+    WHERE idinformationuser = p_IdInformationUser;
+END //
+
+-- Reset the delimiter back to the default
+DELIMITER ;
+
+
+
+-- Create the stored procedure
+DELIMITER //
+CREATE PROCEDURE CountQualification(
+    IN p_IdInformationUser INT,
+    OUT Count INT
+)
+BEGIN
+    
+    SELECT COUNT(*)
+    INTO Count
+    FROM qualification
+    WHERE idinformationuser = p_IdInformationUser;
+END //
+DELIMITER ;
+
+DELIMITER //
+
+-- Create the stored procedure
+CREATE PROCEDURE deleteRole(
+    IN p_role_id INT
+)
+BEGIN
+    -- Update the user_account table
+    UPDATE user_account SET role_id = NULL WHERE role_id = p_role_id;
+    
+    -- Delete from the role_user table
+    DELETE FROM role_user WHERE id = p_role_id;
+END //
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE CountEducationBackground(
+    IN p_IdInformationUser INT,
+    OUT Count INT
+)
+BEGIN
+    SELECT COUNT(*)
+    INTO Count
+    FROM educationbackground
+    WHERE idinformationuser = p_IdInformationUser;
+END //
+
+DELIMITER ;
+DELIMITER //
+CREATE PROCEDURE sp_delete_employeerelative(IN p_idemployeerelative INT)
+BEGIN
+    DELETE FROM employeerelative_informationuser WHERE idemployeerelative = p_idemployeerelative;
+    DELETE FROM employeeRelative WHERE id = p_idemployeerelative;
+END;
+DELIMITER ;
+DELIMITER //
+CREATE PROCEDURE pr_delete_employeerelative_informationuser (
+    IN p_idinformationuser INT,
+    IN p_idemployeerelative INT,
+    IN p_type VARCHAR(50)
+)
+BEGIN
+    IF p_type = 'Privateinsurance' THEN
+        UPDATE employeerelative_informationuser SET col_Privateinsurance = 0 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSEIF p_type = 'Additionalprivateinsurance' THEN
+        UPDATE employeerelative_informationuser SET col_Additionalprivateinsurance = 0 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSEIF p_type = 'Dependant' THEN
+        UPDATE employeerelative_informationuser SET col_Dependant = 0 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSEIF p_type = 'Emergencycontact' THEN
+        UPDATE employeerelative_informationuser SET col_Emergencycontact = 0 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSE
+        UPDATE employeerelative_informationuser SET col_Beneficiarycontact = 0 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    END IF;
+END//
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE pr_employeerelative_informationuser(
+    IN p_idinformationuser INT,
+    IN p_idemployeerelative INT,
+    IN p_type VARCHAR(50),
+    OUT p_result INT
+)
+BEGIN
+    DECLARE row_count INT;
+
+    -- Kiểm tra xem có dòng dữ liệu nào tồn tại trong bảng employeerelative_informationuser với idemployeerelative và idinformationuser tương ứng không
+    SELECT COUNT(*) INTO row_count FROM employeerelative_informationuser WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+
+    -- Nếu không có dòng dữ liệu nào tồn tại, thêm một dòng mới vào bảng
+    IF row_count = 0 THEN
+        INSERT INTO employeerelative_informationuser (idemployeerelative, idinformationuser) VALUES (p_idemployeerelative, p_idinformationuser);
+    END IF;
+
+    -- Cập nhật cột tương ứng với giá trị của biến @type
+    IF p_type = 'Privateinsurance' THEN
+        UPDATE employeerelative_informationuser SET col_Privateinsurance = 1 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSEIF p_type = 'Additionalprivateinsurance' THEN
+        UPDATE employeerelative_informationuser SET col_Additionalprivateinsurance = 1 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSEIF p_type = 'Dependant' THEN
+        UPDATE employeerelative_informationuser SET col_Dependant = 1 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSEIF p_type = 'Emergencycontact' THEN
+        UPDATE employeerelative_informationuser SET col_Emergencycontact = 1 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    ELSE
+        UPDATE employeerelative_informationuser SET col_Beneficiarycontact = 1 WHERE idemployeerelative = p_idemployeerelative AND idinformationuser = p_idinformationuser;
+    END IF;
+
+    -- Thiết lập giá trị cho biến out
+    SET p_result = 1;
+END;
+
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE register_user (
+    IN p_email VARCHAR(50),
+    IN p_password VARCHAR(50),
+    IN p_created_date VARCHAR(50),
+    IN p_authenticated_by VARCHAR(50),
+    IN p_secret_token VARCHAR(100),
+    OUT p_id INT
+)
+BEGIN
+    DECLARE user_exists INT;
+
+    -- Kiểm tra xem email đã tồn tại hay chưa
+    SELECT COUNT(*) INTO user_exists
+    FROM user_account
+    WHERE email = p_email;
+
+    IF user_exists > 0 THEN
+        SET p_id = 0;
+    ELSE
+        INSERT INTO user_account (email, password, created_date, authenticated_by, secret_token, enabled_authentication,infor_validate,email_validate,role_id,is_active)
+        VALUES (p_email, p_password, p_created_date, p_authenticated_by, p_secret_token, 0, 0, 0, 6, 1);
+
+        SET p_id = LAST_INSERT_ID();
+    END IF;
+END
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE login_user(
+    IN p_Email VARCHAR(50),
+    IN p_Password VARCHAR(50),
+    OUT idtemp INT
+)
+BEGIN
+	DECLARE user_count INT;
+    DECLARE user_id INT;
+    SELECT COUNT(*) INTO user_count FROM user_account WHERE email = p_Email AND password = p_Password;
+    IF user_count = 0 THEN
+        SET idtemp = 0;
+    ELSE
+        -- Retrieve the user id
+        SELECT id INTO user_id FROM user_account WHERE email = p_Email AND password = p_Password ;
+        SET idtemp = user_id;
+    END IF;
+END //
+
+DELIMITER ;
