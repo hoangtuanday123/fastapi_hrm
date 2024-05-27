@@ -325,7 +325,7 @@ def userinformation_get(response:Response,request:Request,idaccount,current_user
         form.Ethnicgroup=user_temp[11]
         form.Religion=user_temp[12]
         response = Response()
-        found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
+        # found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
         # if found_avatar and found_avatar[2] != "":
         #     response.set_cookie(key="image_path_session", value=found_avatar[2])
         #     #image_path_session.value = found_avatar[2]
@@ -410,19 +410,18 @@ def userinformation(response:Response,request:Request,idaccount,current_user: Us
         form.Religion=user_temp[12]
 
         found_avatar = user_avatar.find_picture_name_by_id(user_temp[0])
-        # if found_avatar and found_avatar[2] != "":
-        #     response.set_cookie(key="image_path_session", value=found_avatar[2])
-        #     #image_path_session.value = found_avatar[2]
-        # else:
-        #     #image_path_session.value = file_path_default
-        #     response.set_cookie(key="image_path_session", value=file_path_default)
+        if found_avatar and found_avatar[2] != "":
+            response.set_cookie(key="image_path_session", value=found_avatar[2])
+            #image_path_session.value = found_avatar[2]
+        else:
+            #image_path_session.value = file_path_default
+            response.set_cookie(key="image_path_session", value=file_path_default)
         
-
     context={
         "request":request,
         "current_user":current_user,
         "form":form,
-        "image_path":request.cookies.get("image_path_session"),
+        "image_path":found_avatar[2],
         "informationuserid":encode_id(str(user_temp[0])),
         "fullname":user_temp[1],
         "roleuser":request.cookies.get("roleuser"),
@@ -973,74 +972,68 @@ async def uploadCCCD(request:Request,informationuserid,current_user: User = Depe
     return templates.TemplateResponse("core/user_cccd.html",context)
 
 @core_bp.post('/update_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
-async def update_avatar(request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
-  
-    #request.cookies.get("readrights")=None    
+async def update_avatar(request: Request, response: Response, informationuserid: str, idaccount: str, current_user: User = Depends(get_current_user_from_token)):
     form = AvatarForm(request)
     await form.load_data()
     informationuserid = decode_id(informationuserid)
     file = form.file
-    # idaccount = decode_id(idaccount)
-
     
-    if file.filename == '' and file.filename == '':
-        return RedirectResponse(f'/userinformation/{idaccount}')
+    if file.filename == '':
+        return RedirectResponse(f'/userinformation/{idaccount}', status_code=303)
+    
     if file and allowed_file(file.filename):
-        print("file.filename: " + str(file.filename))
         filename = secure_filename(file.filename)
         file_path = os.path.join(Config.UPLOAD_FOLDER, filename)
-        print("filename: " + str(filename))
+        
         # Saving the file received to the upload folder
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        id = informationuserid
-        found_avatar = user_avatar.find_picture_name_by_id(id)
+        
+        found_avatar = user_avatar.find_picture_name_by_id(informationuserid)
         if found_avatar:
-            user_avatar.update_pic_name(informationuserid,file.filename)
-            image_path_session.value = filename
-            idaccount= (idaccount)
-            return RedirectResponse(f'/userinformation/{idaccount}')
+            user_avatar.update_pic_name(informationuserid, filename)
+            response.set_cookie(key="image_path_session", value=filename)
         else:
-            new_avatar = user_avatar(informationuserid = id, pic_name= file.filename)
-            id_pic = new_avatar.save()
-            idaccount= idaccount
-            return RedirectResponse(f'/userinformation/{idaccount}')
-    else:
-        #messages.categorary="danger"
-        #messages.message='Allowed media types are - png, jpg, jpeg, gif'
-        context = {
-        "request":request,
-            "current_user":current_user,
-            "form":form,
-            "image_path":request.cookies.get("image_path_session"),
-            "image_path_admin":request.cookies.get("image_path_adminsession"),
-            "informationuserid":encode_id(informationuserid),
-            "fullname":request.cookies.get("fullname_session"),
-            "roleuser":request.cookies.get("roleuser"),
-            "idaccount":idaccount,
-            "fullname_admin":request.cookies.get("fullname_adminsession"),
-            "readrights":request.cookies.get("readrights"),
-            "front_cccd": "",
-            "back_cccd": ""
-            #"messages":#messages.message_array(),
-        }
-        return templates.TemplateResponse("core/user_information.html",context)
+            new_avatar = user_avatar(informationuserid=informationuserid, pic_name=filename)
+            new_avatar.save()
+        
+        response = RedirectResponse(f'/userinformation/{idaccount}', status_code=303)
+        response.set_cookie(key="image_path_session", value=filename)
+        return response
+    
+    context = {
+        "request": request,
+        "current_user": current_user,
+        "form": form,
+        "image_path": file.filename,
+        "image_path_admin": request.cookies.get("image_path_adminsession"),
+        "informationuserid": encode_id(informationuserid),
+        "fullname": request.cookies.get("fullname_session"),
+        "roleuser": request.cookies.get("roleuser"),
+        "idaccount": idaccount,
+        "fullname_admin": request.cookies.get("fullname_adminsession"),
+        "readrights": request.cookies.get("readrights"),
+        "front_cccd": "",
+        "back_cccd": ""
+    }
+    return templates.TemplateResponse("core/user_information.html", context)
 @core_bp.get('/remove_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
 async def remove_avatar_get(response:Response,request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
-   
+    response=RedirectResponse(f'/userinformation/{idaccount}')
     #request.cookies.get("readrights")=None
     response.set_cookie(key="image_path_session", value=file_path_default)
     #image_path_session.value = file_path_default
     user_avatar.update_pic_name(decode_id(informationuserid),file_path_default)
-    return RedirectResponse(f'/userinformation/{idaccount}')
+    return response
 
 @core_bp.post('/remove_avatar/{informationuserid}/{idaccount}', response_class=HTMLResponse)
 async def remove_avatar(response:Response,request:Request,informationuserid,idaccount,current_user: User = Depends(get_current_user_from_token)):
-    # request.cookies.get("readrights")=None
-    # image_path_session.value = file_path_default
+    response=RedirectResponse(f'/userinformation/{idaccount}')
+    #request.cookies.get("readrights")=None
     response.set_cookie(key="image_path_session", value=file_path_default)
+    #image_path_session.value = file_path_default
     user_avatar.update_pic_name(decode_id(informationuserid),file_path_default)
-    return RedirectResponse(f'/userinformation/{idaccount}')
+    return response
 
 @core_bp.post('/display/{filename}', response_class=HTMLResponse)
 def display_image(request:Request,filename,current_user: User = Depends(get_current_user_from_token)):

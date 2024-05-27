@@ -51,14 +51,14 @@ async def employeepage(request:Request,response:Response,image_path,fullname,cur
 
 @employee.get("/informationuserjob/{informationuserid}",tags=['employee'],response_class=HTMLResponse)
 async def informationuserjob_get(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
-    #return str(decode_id(informationuserid))
+    #return str((decode_id(informationuserid),))
     #session['readrights']=None
     #request.cookies.get("readrights")=None
     form=Employeeinformation(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select e.id,e.fullname from employeeRelative e join informationUser i on e.idinformationuser=i.id where i.id=?  "
-    value=(decode_id(informationuserid))
+    sql="select e.id,e.fullname from employeeRelative e join informationUser i on e.idinformationuser=i.id where i.id=%s  "
+    value=(decode_id(informationuserid),)
     cursor.execute(sql,value)
     employeerelative_temp=cursor.fetchall()
     conn.commit()
@@ -69,8 +69,8 @@ async def informationuserjob_get(request:Request,informationuserid,current_user:
     sql="""
         
 select ei.id,e.fullname,e.Relationship,ei.col_Privateinsurance,ei.col_Additionalprivateinsurance,ei.col_Dependant,ei.col_Emergencycontact ,ei.col_Beneficiarycontact,e.id,r.type
-        from employeerelative_informationuser ei join employeeRelative e on ei.idemployeerelative=e.id join informationUser i on i.id=ei.idinformationuser join relationtype r on r.id=e.relationtypeid where i.id=?"""
-    value=decode_id(informationuserid)
+        from employeerelative_informationuser ei join employeeRelative e on ei.idemployeerelative=e.id join informationUser i on i.id=ei.idinformationuser join relationtype r on r.id=e.relationtypeid where i.id=%s"""
+    value=(decode_id(informationuserid),)
     cursor.execute(sql,value)
     temp=cursor.fetchall()
     conn.commit()
@@ -86,8 +86,8 @@ select ei.id,e.fullname,e.Relationship,ei.col_Privateinsurance,ei.col_Additional
     sql="""
 select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from informationUserJob i join informationUser 
         iu on i.idinformationuser=iu.id join user_account u on
-        u.id=iu.id_useraccount join role_user r on r.id = u.role_id JOIN user_avatar ua on iu.id = ua.idinformationuser  where i.idinformationuser=? and i.is_active=1"""
-    value=(decode_id(informationuserid))
+        u.id=iu.id_useraccount join role_user r on r.id = u.role_id JOIN user_avatar ua on iu.id = ua.idinformationuser  where i.idinformationuser=%s and i.is_active=1"""
+    value=(decode_id(informationuserid),)
     cursor.execute(sql,value)
     user=cursor.fetchone()
     conn.commit()
@@ -146,8 +146,8 @@ async def informationuserjob(request:Request,response:Response,informationuserid
     form=Employeeinformation(request)
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select e.id,e.fullname from employeeRelative e join informationUser i on e.idinformationuser=i.id where i.id=?  "
-    value=(decode_id(informationuserid))
+    sql="select e.id,e.fullname from employeeRelative e join informationUser i on e.idinformationuser=i.id where i.id=%s  "
+    value=((decode_id(informationuserid),))
     cursor.execute(sql,value)
     employeerelative_temp=cursor.fetchall()
     conn.commit()
@@ -175,8 +175,8 @@ async def informationuserjob(request:Request,response:Response,informationuserid
     cursor=conn.cursor()
     sql="""
         select ei.id,e.fullname,e.Relationship,ei.col_Privateinsurance,ei.col_Additionalprivateinsurance,ei.col_Dependant,ei.col_Emergencycontact ,ei.col_Beneficiarycontact,e.id
-        from employeerelative_informationuser ei join employeeRelative e on ei.idemployeerelative=e.id join informationUser i on i.id=ei.idinformationuser where i.id=?"""
-    value=decode_id(informationuserid)
+        from employeerelative_informationuser ei join employeeRelative e on ei.idemployeerelative=e.id join informationUser i on i.id=ei.idinformationuser where i.id=%s"""
+    value=(decode_id(informationuserid),)
     cursor.execute(sql,value)
     temp=cursor.fetchall()
     conn.commit()
@@ -192,8 +192,8 @@ async def informationuserjob(request:Request,response:Response,informationuserid
     sql="""
 select i.*,iu.Email,iu.phone,u.id, r.role_name,iu.Fullname, ua.pic_name from informationUserJob i join informationUser 
         iu on i.idinformationuser=iu.id join user_account u on
-        u.id=iu.id_useraccount join role_user r on r.id = u.role_id JOIN user_avatar ua on iu.id = ua.idinformationuser  where i.idinformationuser=? and i.is_active=1"""
-    value=(decode_id(informationuserid))
+        u.id=iu.id_useraccount join role_user r on r.id = u.role_id JOIN user_avatar ua on iu.id = ua.idinformationuser  where i.idinformationuser=%s and i.is_active=1"""
+    value=((decode_id(informationuserid),))
     cursor.execute(sql,value)
     user=cursor.fetchone()
     conn.commit()
@@ -250,13 +250,12 @@ def addlist(informationuserid,employeerelativeid,type):
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-        SET NOCOUNT ON;
-        DECLARE @result int;
-        exec pr_employeerelative_informationuser @idinformationuser=?,@idemployeerelative=?,@type=?,@result=@result OUTPUT;
+        CALL pr_employeerelative_informationuser(%s, %s, %s, @result);
         SELECT @result AS the_output;
+
         """
-    value=(decode_id(informationuserid),employeerelativeid,type)
-    cursor.execute(sql,value)
+    cursor.execute("CALL pr_employeerelative_informationuser(%s, %s, %s, @result);", (decode_id(informationuserid), employeerelativeid,type))
+    cursor.execute("SELECT @result AS the_output")
     result = cursor.fetchone()
     conn.commit()
     conn.close()
@@ -272,8 +271,8 @@ def laborcontract(request:Request,response:Response,informationuserjobid,informa
         idaccount=request.cookies.get("idaccountadminmanager") 
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select * from laborContract where idinformationUserJob=? and is_active=1"
-    value=(informationuserjobid)
+    sql="select * from laborContract where idinformationUserJob=%s and is_active=1"
+    value=((informationuserjobid),)
     cursor.execute(sql,value)
     contract=cursor.fetchone()
     conn.commit()
@@ -308,8 +307,8 @@ def laborcontract(request:Request,response:Response,informationuserjobid,informa
 def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select f.*,ft.type from forexsalary f join forextype ft on f.forextypeid=ft.id where idinformationUserJob=? and is_active=1"
-    value=(informationuserjobid)
+    sql="select f.*,ft.type from forexsalary f join forextype ft on f.forextypeid=ft.id where idinformationUserJob=%s and is_active=1"
+    value=((informationuserjobid),)
     cursor.execute(sql,value)
     forexsalarytemp=cursor.fetchone()
     conn.commit()
@@ -346,8 +345,8 @@ def forexsalaryfunction(request:Request,informationuserjobid,informationuserid,c
 def employeerelativelist(request:Request,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select e.id,e.Relationship,e.fullname,r.type from employeeRelative e join relationtype r on e.relationtypeid=r.id where e.idinformationuser=?"
-    value=(decode_id(informationuserid))
+    sql="select e.id,e.Relationship,e.fullname,r.type from employeeRelative e join relationtype r on e.relationtypeid=r.id where e.idinformationuser=%s"
+    value=((decode_id(informationuserid),))
     cursor.execute(sql,value)
     employeerelativetemp=cursor.fetchall()
     conn.commit()
@@ -361,7 +360,7 @@ def employeerelativelist(request:Request,informationuserid,current_user: User = 
     context={
         "request":request,
         "current_user":current_user,
-        "image_path":file_path_default,
+        "image_path":request.cookies.get("image_path_session"),
         "roleuser":request.cookies.get("roleuser"),
         "fullname":request.cookies.get("fullname_session"),
         "image_path_admin":request.cookies.get("image_path_adminsession"),
@@ -391,8 +390,8 @@ async def addemployeerelative_get(request:Request,informationuserid,current_user
     
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select u.id from user_account u join informationUser i on u.id=i.id_useraccount where i .id=?"
-    value=(decode_id(informationuserid))
+    sql="select u.id from user_account u join informationUser i on u.id=i.id_useraccount where i .id=%s"
+    value=((decode_id(informationuserid),))
     cursor.execute(sql,value)
     idaccounttemp=cursor.fetchone()
     conn.commit()
@@ -431,8 +430,8 @@ async def addemployeerelative(request:Request,informationuserid,current_user: Us
     
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select u.id from user_account u join informationUser i on u.id=i.id_useraccount where i .id=?"
-    value=(decode_id(informationuserid))
+    sql="select u.id from user_account u join informationUser i on u.id=i.id_useraccount where i .id=%s"
+    value=((decode_id(informationuserid),))
     cursor.execute(sql,value)
     idaccounttemp=cursor.fetchone()
     conn.commit()
@@ -446,11 +445,11 @@ async def addemployeerelative(request:Request,informationuserid,current_user: Us
     cursor = conn.cursor()
     sql = """
         INSERT INTO employeeRelative(Relationship, phone, email, contactaddress, career, idinformationuser, critizenIdentìicationNo,
-        fullname, dateofbirth, placeofbirth, issuedon, address,relationtypeid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+        fullname, dateofbirth, placeofbirth, issuedon, address,relationtypeid) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
     """
     value = (
-        form.Relationship, form.phone, form.email, form.contactaddress, form.career, decode_id(informationuserid),
-        form.citizenIdentificationNo, form.fullname, form.dateofbirth, form.placeofbirth, form.issued, form.address,form_method.get("relativetype")
+        (form.Relationship, form.phone, form.email, form.contactaddress, form.career, decode_id(informationuserid),
+        form.citizenIdentificationNo, form.fullname, form.dateofbirth, form.placeofbirth, form.issued, form.address,form_method.get("relativetype"),)
         )
     cursor.execute(sql, value)
     conn.commit()
@@ -465,9 +464,9 @@ def delete(employeerelativeid,informationuserid,current_user: User = Depends(get
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-    SET NOCOUNT ON;
-    exec sp_delete_employeerelative @idemployeerelative=?;"""
-    value=(employeerelativeid)
+CALL sp_delete_employeerelative(%s);
+"""
+    value=((employeerelativeid),)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -478,8 +477,8 @@ def employeerelative(request:Request,employeerelativeid,informationuserid,curren
      
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select e.*,r.type from employeeRelative e join relationtype r on e.relationtypeid=r.id where e.id=?"
-    value=(employeerelativeid)
+    sql="select e.*,r.type from employeeRelative e join relationtype r on e.relationtypeid=r.id where e.id=%s"
+    value=((employeerelativeid),)
     cursor.execute(sql,value)
     employeerelativetemp=cursor.fetchone()
     form=EmployeeRelativeForm(request.form)
@@ -522,10 +521,9 @@ def deleterelative(informationuserid,employeerelativeid,type,current_user: User 
     conn=db.connection()
     cursor=conn.cursor()
     sql="""
-        SET NOCOUNT ON;
-        exec pr_delete_employeerelative_informationuser @idinformationuser=?,@idemployeerelative=?,@type=?;
+        CALL pr_delete_employeerelative_informationuser(%s, %s, %s);
         """
-    value=(decode_id(informationuserid),employeerelativeid,str(type))
+    value=(decode_id(informationuserid),employeerelativeid,str(type),)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
@@ -535,7 +533,7 @@ def deleterelative(informationuserid,employeerelativeid,type,current_user: User 
 async def edit_employeeinformation_get(request:Request,col,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
+    sql="select id from informationUser where id_useraccount=%s"
     cursor.execute(sql,decode_id(current_user.id))
     verify_user=cursor.fetchone()
     conn.commit()
@@ -545,19 +543,19 @@ async def edit_employeeinformation_get(request:Request,col,informationuserid,cur
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        sql = f"UPDATE informationUserJob SET {col} = %s WHERE idinformationuser = %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,new_value,decode_id(informationuserid),)
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
     elif request.cookies.get("readrights")==1:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        sql = f"UPDATE informationUserJob SET {col} = %s WHERE idinformationuser = %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,new_value,decode_id(informationuserid),)
+        conn.commit()
         cursor.close()
 
         idaccount= request.cookies.get("idaccountadminmanager")
@@ -570,32 +568,34 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
         idaccount=request.cookies.get("idaccountadminmanager")
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(idaccount))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(idaccount),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
     form = EditForm(request,col)
     await form.load_data(col)
     if str(decode_id(informationuserid))==str(verify_user[0]):
+        
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        sql = f"UPDATE informationUserJob SET {col} = %s WHERE idinformationuser = %s"
         new_value = getattr(form, col)
         print("new_value" + str(new_value))
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        value=(new_value,decode_id(informationuserid),)
+        cursor.execute(sql,value)
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
     elif request.cookies.get("readrights")==1:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE informationUserJob SET {col} = ? WHERE idinformationuser = ?"
+        sql = f"UPDATE informationUserJob SET {col} = %s WHERE idinformationuser = %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,new_value,decode_id(informationuserid),)
+        conn.commit()
         cursor.close()
-        
+
         return RedirectResponse(f'/informationuserjob/{informationuserid}',status_code=status.HTTP_302_FOUND)
 
 
@@ -603,8 +603,8 @@ async def edit_employeeinformation(request:Request,col,informationuserid,current
 async def edit_employeerelative(request:Request,col,employeerelativeid,informationuserid,current_user: User = Depends(get_current_user_from_token)):
     conn=db.connection()
     cursor=conn.cursor()
-    sql="select id from informationUser where id_useraccount=?"
-    cursor.execute(sql,decode_id(current_user.id))
+    sql="select id from informationUser where id_useraccount=%s"
+    cursor.execute(sql,(decode_id(current_user.id),))
     verify_user=cursor.fetchone()
     conn.commit()
     conn.close()
@@ -616,19 +616,21 @@ async def edit_employeerelative(request:Request,col,employeerelativeid,informati
     if str(decode_id(informationuserid))==str(verify_user[0]):
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE employeeRelative SET {col} = ? WHERE idinformationuser= ?"
+        return col
+        sql = f"UPDATE employeeRelative SET {col} = %s WHERE idinformationuser= %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        value = (new_value,decode_id(informationuserid),)
+        cursor.execute(sql,value)
+        conn.commit()
         cursor.close()
         return RedirectResponse(f'/employeepage/informationuserjob/employeerelative/{employeerelativeid}/{informationuserid}/{idaccount}',status_code=status.HTTP_302_FOUND)
     elif request.cookies.get("readrights")==4:
         conn= db.connection()
         cursor = conn.cursor()
-        sql = f"UPDATE employeeRelative SET {col} = ? WHERE idinformationuser= ?"
+        sql = f"UPDATE employeeRelative SET {col} = %s WHERE idinformationuser= %s"
         new_value = getattr(form, col)
-        cursor.execute(sql,new_value,decode_id(informationuserid))
-        cursor.commit()
+        cursor.execute(sql,new_value,(decode_id(informationuserid)),)
+        conn.commit()
         cursor.close()
 
         idaccount= request.cookies.get("idaccountadminmanager")
