@@ -33,10 +33,10 @@ async def exception_post(request: Request,current_user: User = Depends(get_curre
     form_method=await request.form()
     conn=db.connection()
     cursor=conn.cursor()
-    sql="update Exception set luongcoso=?,vung1=?,vung2=?,vung3=?,vung4=?,giacanhbanthan=?,giacanhnguoiphuthuoc=? "
+    sql="update Exception set luongcoso=%s,vung1=%s,vung2=%s,vung3=%s,vung4=%s,giacanhbanthan=%s,giacanhnguoiphuthuoc=%s "
     value=(form_method["basicsalary"],form_method["companysitecode1"],form_method["companysitecode2"],
            form_method["companysitecode3"],form_method["companysitecode4"],form_method["PersonalDeduction"],
-           form_method["DependentsDeduction"])
+           form_method["DependentsDeduction"],)
     cursor.execute(sql,value)
     conn.commit()
     conn.close()
